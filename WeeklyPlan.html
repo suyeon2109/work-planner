@@ -617,7 +617,7 @@
       <!-- Actions -->
       <div class="btn-row">
         <button class="btn btn-secondary" onclick="clearAll()">🗑 초기화</button>
-        <button class="btn btn-secondary" onclick="copyToClipboard()">📋 텍스트 복사</button>
+        <button class="btn btn-secondary" onclick="importLastWeek()">⬅ 지난주 내용 가져오기</button>
         <button class="btn btn-secondary" onclick="printPlan()">🖨 인쇄</button>
         <button class="btn btn-primary" onclick="saveData()">💾 저장</button>
       </div>
@@ -1030,6 +1030,33 @@ function loadPersonWeek(personId, offset) {
   autoResize(instructionsText);
 }
 
+// 지난주(현재 보고 있는 주의 바로 전 주) 업무 내용을 그대로 가져와 현재 주에 채워넣기
+function importLastWeek() {
+  if (!selectedPersonId) { showToast('선택된 구성원이 없습니다.', true); return; }
+
+  const raw = safeGet(dataKey(selectedPersonId, currentWeekOffset - 1));
+  if (!raw) { showToast('지난주에 저장된 내용이 없습니다.', true); return; }
+
+  let data = null;
+  try { data = JSON.parse(raw); } catch(e) {}
+  if (!data) { showToast('지난주 내용을 불러올 수 없습니다.', true); return; }
+
+  const hasCurrentContent = DAYS.some(d => document.querySelectorAll(`#tasks-${d.code} .task-text`).length > 0)
+    || document.getElementById('instructionsText').value.trim() !== '';
+  if (hasCurrentContent && !confirm('현재 주의 내용을 지난주 내용으로 덮어쓸까요?')) return;
+
+  DAYS.forEach(d => { document.getElementById(`tasks-${d.code}`).innerHTML = ''; });
+  if (data.tasks) {
+    DAYS.forEach(d => (data.tasks[d.code] || []).forEach(t => addTaskItem(d.code, t)));
+  }
+
+  const instructionsText = document.getElementById('instructionsText');
+  instructionsText.value = data.instructions || '';
+  autoResize(instructionsText);
+
+  showToast('지난주 내용을 가져왔습니다 ✓');
+}
+
 function saveCurrentState(silent) {
   if (!selectedPersonId) { if (!silent) showToast('선택된 구성원이 없습니다.', true); return; }
 
@@ -1077,28 +1104,6 @@ function clearAll() {
   document.getElementById('instructionsText').value = '';
   autoResize(document.getElementById('instructionsText'));
   if (selectedPersonId) safeRemove(dataKey(selectedPersonId, currentWeekOffset));
-}
-
-function copyToClipboard() {
-  const week = getWeekLabel(currentWeekOffset);
-  const found = findPerson(selectedPersonId);
-  const member = found ? `${found.team.name} ${found.person.name}` : '';
-  let text = `[주간 계획] ${week}\n${member}\n\n`;
-
-  DAYS.forEach((d, i) => {
-    const mon = getWeekStart(currentWeekOffset);
-    const dt = new Date(mon);
-    dt.setDate(mon.getDate() + i);
-    const tasks = [...document.querySelectorAll(`#tasks-${d.code} .task-text`)].map(t => t.value).filter(Boolean);
-    text += `[${formatDate(dt)} ${d.label}]\n`;
-    tasks.forEach(t => { text += `  • ${t}\n`; });
-    text += '\n';
-  });
-
-  const instr = document.getElementById('instructionsText').value;
-  if (instr) text += `[지시사항]\n${instr}\n\n`;
-
-  navigator.clipboard.writeText(text).then(() => showToast('클립보드에 복사되었습니다 ✓'));
 }
 
 function printPlan() {
