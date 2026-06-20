@@ -200,9 +200,10 @@
   .page-title::placeholder { color: #c1bdb7; }
 
   .page-meta {
-    display: flex;
+    display: grid;
+    grid-template-columns: 230px 230px 1fr;
+    column-gap: 12px;
     margin-bottom: 28px;
-    flex-wrap: wrap;
   }
   .meta-item {
     display: flex;
@@ -210,9 +211,16 @@
     gap: 8px;
     font-size: 14px;
     color: #787774;
-    flex: 0 0 200px;
+    min-width: 0;
   }
-  .meta-item:last-child { flex: 0 0 auto; }
+  .meta-week-badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 4px;
+    font-weight: 600;
+    background: #e7f3fb;
+    color: #0b6e99;
+  }
   .meta-label { font-weight: 500; color: #37352f; min-width: 60px; }
   .meta-input {
     border: none;
@@ -263,6 +271,12 @@
     border: 1px solid #e3e2df;
     vertical-align: top;
     padding: 0;
+  }
+  .daily-table tbody tr {
+    transition: background 0.1s;
+  }
+  .daily-table tbody tr:hover {
+    background: #f7f6f3;
   }
   .day-tag {
     display: inline-flex;
@@ -562,6 +576,9 @@
 
       <!-- Meta -->
       <div class="page-meta">
+        <div class="meta-item meta-week">
+          <span class="meta-text meta-week-badge" id="metaWeek">—</span>
+        </div>
         <div class="meta-item">
           <span class="meta-label">팀</span>
           <span class="meta-text" id="metaTeam">—</span>
@@ -737,6 +754,8 @@ function goToNextWeek() {
 
 function renderWeek() {
   document.getElementById('weekLabel').textContent = getWeekLabel(currentWeekOffset);
+  const metaWeekEl = document.getElementById('metaWeek');
+  if (metaWeekEl) metaWeekEl.textContent = getWeekLabel(currentWeekOffset);
   const mon = getWeekStart(currentWeekOffset);
   const picker = document.getElementById('weekNavPicker');
   if (picker) picker.value = String(currentWeekOffset);
