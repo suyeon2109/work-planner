@@ -145,7 +145,8 @@
   }
   .person-row.active .person-dot { background: #2eaadc; }
   .person-name-input {
-    flex: 1;
+    flex: 0 1 auto;
+    width: 110px;
     min-width: 0;
     border: none;
     background: transparent;
@@ -153,6 +154,14 @@
     font-family: inherit;
     font-size: 13px;
     color: #37352f;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .person-spacer {
+    flex: 1;
+    align-self: stretch;
+    min-width: 8px;
+    cursor: pointer;
   }
   .person-action {
     border: none;
@@ -476,6 +485,44 @@
     vertical-align: middle;
   }
 
+  /* PDF export (mobile "save as PDF") — hide chrome while capturing */
+  .pdf-export .btn-row,
+  .pdf-export .week-nav .nav-group,
+  .pdf-export .sidebar,
+  .pdf-export .sidebar-toggle,
+  .pdf-export .add-task-btn,
+  .pdf-export .task-remove,
+  .pdf-export .team-action,
+  .pdf-export .person-action,
+  .pdf-export .add-person-btn,
+  .pdf-export .sidebar-add-team {
+    display: none !important;
+  }
+
+  /* PDF export — force the desktop layout regardless of actual screen width.
+     (html2canvas's windowWidth option doesn't reliably re-evaluate the mobile
+     @media rules in this pipeline, so the mobile-only rules must be overridden
+     explicitly here instead.) */
+  .page.pdf-export { padding: 60px 72px !important; border-radius: 4px !important; }
+  .pdf-export .page-title { font-size: 32px !important; }
+  .pdf-export .page-meta {
+    display: grid !important;
+    grid-template-columns: 230px 230px 1fr !important;
+    column-gap: 12px !important;
+  }
+  .pdf-export .week-nav { flex-direction: row !important; align-items: center !important; }
+  .pdf-export .daily-table th { padding: 8px 12px !important; }
+  .pdf-export .daily-table td { padding: 0 !important; }
+  .pdf-export .day-col { width: 80px !important; min-width: 80px !important; }
+  .pdf-export .day-tag { padding: 10px 12px !important; font-size: 13px !important; gap: 6px !important; }
+  .pdf-export .daily-table colgroup col:nth-child(2) { width: 60px !important; }
+  .pdf-export .daily-table td:nth-child(2) {
+    padding: 10px 8px !important;
+    font-size: 13px !important;
+  }
+  .pdf-export .task-list { padding: 8px 12px !important; }
+  .pdf-export .task-text { font-size: 14px !important; }
+
   @media (max-width: 880px) {
     .app-layout { display: block; }
     .sidebar {
@@ -519,8 +566,59 @@
   }
 
   @media (max-width: 600px) {
-    .page { padding: 32px 20px; }
-    .page-title { font-size: 24px; }
+    .main-wrap { padding: 60px 8px 60px; }
+    .page { padding: 20px 14px; border-radius: 4px; }
+    .page-title { font-size: 22px; }
+
+    /* meta: 세로로 */
+    .page-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      margin-bottom: 18px;
+    }
+
+    /* week nav: 위 라벨 / 아래 버튼 */
+    .week-nav {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+    .nav-group {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+      width: 100%;
+    }
+    .nav-group select.nav-btn.week-picker {
+      grid-column: 1 / -1;
+      width: 100%;
+    }
+
+    /* 테이블: 날짜 열 좁게 */
+    .daily-table th,
+    .daily-table td { padding: 0; }
+    .day-col { width: 56px; min-width: 56px; }
+    .day-tag { padding: 8px 6px; font-size: 12px; gap: 4px; }
+    .daily-table colgroup col:nth-child(2) { width: 32px; }
+    .daily-table td:nth-child(2) {
+      padding: 8px 4px;
+      font-size: 12px;
+    }
+    .task-list { padding: 6px 8px; }
+    .task-text { font-size: 13px; }
+    .add-task-btn { padding: 3px 8px 8px; font-size: 12px; }
+
+    /* 버튼 행: 2열 그리드 */
+    .btn-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-top: 20px;
+      justify-content: initial;
+    }
+    .btn { font-size: 13px; padding: 8px 10px; justify-content: center; }
   }
 
   /* ─── Print ──────────────────────────────────────────── */
@@ -710,6 +808,8 @@
 <!-- Firebase SDK -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<!-- html2pdf.js: 모바일에서 인쇄 버튼을 눌렀을 때 PDF로 직접 저장하기 위함 -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
 
 <script>
 // ─── Constants ──────────────────────────────────────────────────────────────
@@ -920,11 +1020,62 @@ function addTaskItem(dayCode, value = '') {
   ta.placeholder = '업무 내용 입력…';
   ta.rows = 1;
   ta.oninput = () => autoResize(ta);
+
+  // 한글 입력기(IME)에서는 Enter 한 번에
+  // ① 마지막 글자 확정 이벤트와 ② 일반 Enter 이벤트가 연달아 올 수 있습니다.
+  // 같은 Enter를 한 번만 처리하도록 잠금값을 둡니다.
+  let isComposing = false;
+  let pendingEnter = false;
+  let ignoreEnterUntil = 0;
+
+  function addTaskOnce() {
+    // 동일한 Enter 이벤트가 중복으로 전달되는 경우를 한 번만 처리
+    if (Date.now() < ignoreEnterUntil) return;
+    ignoreEnterUntil = Date.now() + 180;
+    addTask(dayCode);
+  }
+
+  ta.addEventListener('compositionstart', () => {
+    isComposing = true;
+  });
+
+  ta.addEventListener('compositionend', () => {
+    isComposing = false;
+
+    // 한글 조합 중 Enter를 눌렀다면, 글자가 확정된 뒤 업무칸을 정확히 한 번만 추가
+    if (pendingEnter) {
+      pendingEnter = false;
+      requestAnimationFrame(() => addTaskOnce());
+    }
+  });
+
+  // textarea 안에 실제 줄바꿈이 생기는 것은 항상 차단
+  ta.addEventListener('beforeinput', (e) => {
+    if (e.inputType === 'insertLineBreak' || e.inputType === 'insertParagraph') {
+      e.preventDefault();
+    }
+  });
+
   ta.onkeydown = (e) => {
     if (e.key === 'Enter' && !e.shiftKey) {
+      // 한글 조합 중인 Enter는 글자 확정을 우선 허용하고,
+      // compositionend에서 새 업무칸을 한 번만 만듭니다.
+      if (isComposing || e.isComposing || e.keyCode === 229) {
+        pendingEnter = true;
+        return;
+      }
+
+      // 직전에 한글 확정용 Enter가 처리되었다면 이어지는 중복 Enter는 무시
+      if (pendingEnter || Date.now() < ignoreEnterUntil) {
+        e.preventDefault();
+        return;
+      }
+
       e.preventDefault();
-      addTask(dayCode);
+      addTaskOnce();
+      return;
     }
+
     if (e.key === 'Backspace' && ta.value === '') {
       e.preventDefault();
       li.remove();
@@ -988,13 +1139,18 @@ function renderSidebar() {
       pRow.innerHTML = `
         <span class="person-dot"></span>
         <input class="person-name-input" value="${escapeAttr(person.name)}" />
+        <span class="person-spacer" title="선택하고 계획 보기"></span>
         <button class="person-action" title="구성원 삭제">✕</button>
       `;
       const pInput = pRow.querySelector('.person-name-input');
+      const pSpacer = pRow.querySelector('.person-spacer');
       const pRemove = pRow.querySelector('.person-action');
 
       pRow.addEventListener('click', () => selectPerson(person.id));
-      pInput.addEventListener('click', (e) => { e.stopPropagation(); selectPerson(person.id); });
+      // 이름(텍스트) 클릭 → 이름 변경 모드로만 진입 (모바일 사이드바는 닫지 않음)
+      pInput.addEventListener('click', (e) => { e.stopPropagation(); selectPerson(person.id, false, true); });
+      // 이름 오른쪽 빈 공간 클릭 → 선택 + 모바일 사이드바 접고 계획 보기
+      pSpacer.addEventListener('click', (e) => { e.stopPropagation(); selectPerson(person.id); });
       pInput.addEventListener('input', () => {
         person.name = pInput.value;
         persistTeams();
@@ -1002,7 +1158,7 @@ function renderSidebar() {
       });
       pInput.addEventListener('keydown', (e) => {
         // e.isComposing / keyCode 229: 한글 등 IME 조합 중 Enter는 무시 (마지막 글자 중복 입력 방지)
-        if (e.key === 'Enter' && !e.isComposing && e.keyCode !== 229) { e.preventDefault(); pInput.blur(); }
+        if (e.key === 'Enter' && !e.isComposing && e.keyCode !== 229) { e.preventDefault(); pInput.blur(); closeSidebarMobile(); }
       });
       pRemove.addEventListener('click', (e) => { e.stopPropagation(); removeMember(team.id, person.id); });
 
@@ -1055,13 +1211,14 @@ function removeTeam(teamId) {
   renderSidebar();
 }
 
-function addMember(teamId) {
+async function addMember(teamId) {
   const team = TEAMS.find(t => t.id === teamId);
   if (!team) return;
   const person = { id: uid('p'), name: '새 구성원' };
   team.members.push(person);
   persistTeams();
-  selectPerson(person.id, true);
+  // skipMobileClose=true: 새 구성원 이름을 입력하는 동안 모바일 사이드바가 닫히지 않도록 유지
+  await selectPerson(person.id, true, true);
   requestAnimationFrame(() => {
     const el = document.querySelector(`.person-row[data-person-id="${person.id}"] .person-name-input`);
     if (el) { el.focus(); el.select(); }
@@ -1085,14 +1242,14 @@ async function removeMember(teamId, personId) {
   renderSidebar();
 }
 
-async function selectPerson(personId, skipSave) {
-  if (personId === selectedPersonId) { closeSidebarMobile(); return; }
+async function selectPerson(personId, skipSave, skipMobileClose) {
+  if (personId === selectedPersonId) { if (!skipMobileClose) closeSidebarMobile(); return; }
   if (!skipSave) await saveCurrentState(true);
   selectedPersonId = personId;
   await safeSet(SELECTED_KEY, personId || '');
   renderSidebar();
   await loadPersonWeek(selectedPersonId, currentWeekOffset);
-  closeSidebarMobile();
+  if (!skipMobileClose) closeSidebarMobile();
 }
 
 function updateMemberLabel() {
@@ -1219,10 +1376,85 @@ async function printPlan() {
   const week = getWeekLabel(currentWeekOffset);
   const found = findPerson(selectedPersonId);
   const member = (found ? `${found.team.name}_${found.person.name}` : '주간계획');
-  const prevTitle = document.title;
-  document.title = `${member}_${week}`.replace(/\s+/g, '_');
-  window.print();
-  setTimeout(() => { document.title = prevTitle; }, 500);
+  const label = `${member}_${week}`.replace(/\s+/g, '_');
+
+  const isMobile = window.innerWidth <= 880 || /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+  if (isMobile && window.html2pdf) {
+    showToast('PDF 생성 중...');
+    const pageEl = document.querySelector('.page');
+
+    // html2canvas는 현재 스크롤 위치를 기준으로 캡처 영역을 잡기 때문에,
+    // 페이지가 스크롤된 상태에서 캡처하면 위쪽에 빈 여백이 생기고 아래쪽 내용이 잘립니다.
+    // → 캡처 전 항상 맨 위로 스크롤하고, scrollX/scrollY를 0으로 고정합니다.
+    const prevScrollX = window.scrollX, prevScrollY = window.scrollY;
+    window.scrollTo(0, 0);
+    await new Promise(resolve => setTimeout(resolve, 80));
+
+    document.body.classList.add('pdf-export');
+    pageEl.classList.add('pdf-export'); // html2canvas only clones pageEl's own subtree, not <body> — the class must live on pageEl itself to survive into the clone
+    try {
+      // A4 한 장에 내용이 잘리지 않고 딱 맞게 들어가도록, 캡처한 이미지를 직접 계산해서 배치합니다.
+      // (html2pdf의 자동 페이지분할에 맡기면 세로가 긴 내용이 landscape 페이지 높이를 넘겨
+      //  두 페이지로 나뉘거나, scale 옵션과 맞물려 오른쪽이 잘리는 문제가 있어 직접 한 장으로 만듭니다.)
+      const worker = html2pdf().set({
+        margin: 0,
+        filename: `${label}.pdf`,
+        image: { type: 'png' },
+        html2canvas: {
+          scale: 2,
+          useCORS: true,
+          scrollX: 0,
+          scrollY: 0,
+          windowWidth: 1000,
+        },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+      }).from(pageEl);
+
+      // .get()은 이미 만들어진 값을 읽기만 할 뿐 직접 만들어주지 않으므로,
+      // toCanvas()/toPdf()를 명시적으로 먼저 실행해야 합니다.
+      await worker.toCanvas();
+      const canvas = await worker.get('canvas');
+      // 캡처된 내용의 가로/세로 비율을 보고 더 잘 맞는 A4 방향을 자동으로 선택
+      const orientation = canvas.width >= canvas.height ? 'landscape' : 'portrait';
+      worker.set({ jsPDF: { unit: 'mm', format: 'a4', orientation } });
+
+      await worker.toPdf();
+      const pdf = await worker.get('pdf');
+      // 기본 파이프라인이 만든 페이지(여러 장으로 잘렸을 수 있음)는 지우고 한 장만 남깁니다.
+      for (let i = pdf.internal.getNumberOfPages(); i > 1; i--) pdf.deletePage(i);
+      pdf.setPage(1);
+
+      const pageWidth = pdf.internal.pageSize.getWidth();
+      const pageHeight = pdf.internal.pageSize.getHeight();
+      pdf.setFillColor(255, 255, 255);
+      pdf.rect(0, 0, pageWidth, pageHeight, 'F'); // 기본 배치로 그려졌던 내용을 지움
+
+      const margin = 8; // mm, 종이 여백
+      const maxW = pageWidth - margin * 2;
+      const maxH = pageHeight - margin * 2;
+      const ratio = Math.min(maxW / canvas.width, maxH / canvas.height);
+      const imgW = canvas.width * ratio;
+      const imgH = canvas.height * ratio;
+      const x = (pageWidth - imgW) / 2;
+      const y = (pageHeight - imgH) / 2;
+      pdf.addImage(canvas.toDataURL('image/png'), 'PNG', x, y, imgW, imgH);
+
+      await worker.save();
+    } catch (e) {
+      console.error(e);
+      showToast('PDF 생성 실패: ' + (e && e.message ? e.message : e), true);
+    } finally {
+      document.body.classList.remove('pdf-export');
+      pageEl.classList.remove('pdf-export');
+      window.scrollTo(prevScrollX, prevScrollY);
+    }
+  } else {
+    const prevTitle = document.title;
+    document.title = label;
+    window.print();
+    setTimeout(() => { document.title = prevTitle; }, 500);
+  }
 }
 
 function showToast(msg, isError = false) {

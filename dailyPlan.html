@@ -6,6 +6,7 @@
 <title>업무 / 연구 일지 — BMD팀</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
 
   :root {
     --bg: #ffffff;
@@ -31,6 +32,7 @@
     font-size: 14px;
     line-height: 1.6;
     min-height: 100vh;
+    overflow-x: hidden;
   }
 
   /* ── Layout ── */
@@ -176,7 +178,8 @@
   }
   .person-row.active .person-dot { background: var(--accent); }
   .person-name-input {
-    flex: 1;
+    flex: 0 1 auto;
+    width: 110px;
     min-width: 0;
     border: none;
     background: transparent;
@@ -184,6 +187,14 @@
     font-family: var(--font);
     font-size: 13px;
     color: var(--text);
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .person-spacer {
+    flex: 1;
+    align-self: stretch;
+    min-width: 8px;
+    cursor: pointer;
   }
   .person-action {
     border: none;
@@ -256,12 +267,23 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
+    column-gap: 12px;
     margin-bottom: 28px;
+  }
+  .date-nav-left {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    min-width: 0;
+    max-width: 100%;
   }
   .date-nav-label {
     font-size: 14px;
     color: var(--text-muted);
     font-weight: 500;
+    max-width: 100%;
+    overflow-wrap: break-word;
   }
   .date-nav-label .today-badge {
     display: inline-block;
@@ -274,6 +296,22 @@
     color: var(--tag-text);
     vertical-align: middle;
   }
+  .search-trigger-btn {
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 5px 10px;
+    cursor: pointer;
+    color: var(--text-muted);
+    font-size: 12.5px;
+    font-family: var(--font);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex-shrink: 0;
+    transition: background 0.12s;
+  }
+  .search-trigger-btn:hover { background: var(--row-hover); }
   .nav-group { display: flex; gap: 6px; }
   .nav-btn {
     background: none;
@@ -391,9 +429,31 @@
     font-size: 12.5px;
     font-family: var(--font);
     color: inherit;
-    width: 100%;
-    min-width: 30px;
+    width: 52px;
+    height: 18px;
+    line-height: 18px;
+    padding: 0;
+    margin: 0;
+    -webkit-appearance: none;
+    appearance: none;
+    align-self: center;
+    flex: 0 0 auto;
     font-weight: 600;
+  }
+  .sns-tag input:last-of-type { width: 40px; margin-right: 12px; }
+  .sns-tag input:first-of-type { text-align: right; margin-left: auto; }
+  /* 글자(/)가 아닌 작은 선으로 그려서, 폰트별 글리프 위치 차이로 인한 세로 어긋남을 원천적으로 없앰.
+     숫자 글자의 cap-height에 맞춘 짧은 직선이라 어느 각도로 봐도 가운데로 보임 */
+  .sns-tag .sns-slash {
+    display: inline-block;
+    width: 1.3px;
+    height: 9.5px;
+    background: currentColor;
+    opacity: .4;
+    transform: rotate(18deg);
+    flex-shrink: 0;
+    align-self: center;
+    margin: 0 3px;
   }
 
   /* ── Table ── */
@@ -416,7 +476,7 @@
 
   .table-row {
     display: grid;
-    grid-template-columns: 160px 1fr 140px;
+    grid-template-columns: 110px 1fr 140px;
     border-bottom: 1px solid #dadad6;
     min-height: 44px;
     transition: background 0.1s;
@@ -525,6 +585,151 @@
     white-space: nowrap;
   }
 
+  /* ── Content search modal ── */
+  .search-modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(15,15,15,.45);
+    z-index: 90;
+  }
+  .search-modal-overlay.show { display: block; }
+
+  .search-modal {
+    display: none;
+    flex-direction: column;
+    position: fixed;
+    top: 8%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 92%;
+    max-width: 480px;
+    max-height: 78vh;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 12px 40px rgba(0,0,0,.25);
+    z-index: 91;
+    overflow: hidden;
+  }
+  .search-modal.show { display: flex; }
+
+  .search-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--border);
+    font-weight: 600;
+    font-size: 14px;
+  }
+  .search-modal-close {
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-size: 14px;
+    color: var(--text-muted);
+    padding: 2px 6px;
+  }
+  .search-modal-close:hover { color: var(--text); }
+
+  .search-modal-body {
+    display: flex;
+    gap: 8px;
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--border);
+  }
+  .search-input {
+    flex: 1;
+    min-width: 0;
+    padding: 8px 10px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 14px;
+    font-family: var(--font);
+    outline: none;
+    color: var(--text);
+  }
+  .search-input:focus { border-color: var(--accent); }
+  .search-run-btn { padding: 8px 14px; font-size: 13px; flex-shrink: 0; }
+
+  .search-results {
+    overflow-y: auto;
+    padding: 6px 8px 14px;
+  }
+  .search-empty {
+    padding: 30px 10px;
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 13px;
+  }
+  .search-result-item {
+    padding: 10px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-bottom: 2px;
+  }
+  .search-result-item:hover { background: var(--row-hover); }
+  .search-result-date {
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--accent);
+    margin-bottom: 3px;
+  }
+  .search-result-snippet {
+    font-size: 12.5px;
+    color: var(--text);
+    line-height: 1.5;
+    word-break: break-word;
+  }
+  .search-result-snippet mark {
+    background: #fff3a0;
+    color: inherit;
+    border-radius: 2px;
+    padding: 0 1px;
+  }
+
+  /* PDF export (mobile "save as PDF") — hide chrome while capturing */
+  .pdf-export .btn-row,
+  .pdf-export .date-nav .nav-group,
+  .pdf-export .search-trigger-btn,
+  .pdf-export .sidebar,
+  .pdf-export .sidebar-toggle {
+    display: none !important;
+  }
+
+  /* PDF export — force the desktop layout regardless of actual screen width.
+     (html2canvas's windowWidth option doesn't reliably re-evaluate the mobile
+     @media rules in this pipeline, so the mobile-only rules — column stacking,
+     hidden 비고 column, etc. — must be overridden explicitly here instead.) */
+  .page.pdf-export { padding: 60px 72px !important; }
+  .pdf-export .page-title { font-size: 28px !important; }
+  .pdf-export .page-meta {
+    display: grid !important;
+    grid-template-columns: 230px 230px 1fr !important;
+    column-gap: 12px !important;
+  }
+  .pdf-export .sns-bar {
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr) !important;
+    column-gap: 12px !important;
+  }
+  .pdf-export .sns-tag { white-space: nowrap !important; }
+  .pdf-export .date-nav {
+    flex-direction: row !important;
+    align-items: center !important;
+  }
+  .pdf-export .date-nav-left { width: auto !important; }
+  .pdf-export .table-row {
+    grid-template-columns: 110px 1fr 140px !important;
+  }
+  .pdf-export .table-row .table-cell:last-child,
+  .pdf-export .table-row.header-row .table-cell:last-child {
+    display: flex !important;
+  }
+  .pdf-export .table-cell { padding: 10px 14px !important; }
+  .pdf-export .cell-label { font-size: 13px !important; }
+  .pdf-export .cell-input { font-size: 13.5px !important; }
+
   /* Empty state */
   .empty-state {
     text-align: center;
@@ -538,9 +743,123 @@
   ::-webkit-scrollbar { width: 6px; }
   ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
 
+  /* ── Mobile ── */
+  .sidebar-toggle, .sidebar-overlay { display: none; }
+
+  @media (max-width: 880px) {
+    .app-layout { display: block; }
+    .sidebar {
+      position: fixed;
+      top: 0; left: 0;
+      height: 100vh;
+      width: 270px;
+      max-width: 82vw;
+      z-index: 50;
+      transform: translateX(-100%);
+      transition: transform 0.2s ease;
+      box-shadow: 2px 0 16px rgba(0,0,0,.15);
+    }
+    .sidebar.open { transform: translateX(0); }
+    .sidebar-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(15,15,15,.35);
+      z-index: 40;
+    }
+    .sidebar-overlay.show { display: block; }
+    .sidebar-toggle {
+      display: flex;
+      position: fixed;
+      top: 14px; left: 14px;
+      z-index: 45;
+      align-items: center;
+      gap: 6px;
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 8px 12px;
+      cursor: pointer;
+      font-size: 13px;
+      font-family: var(--font);
+      color: var(--text);
+      box-shadow: 0 1px 6px rgba(0,0,0,.1);
+    }
+    .main-wrap { padding-top: 68px; }
+  }
+
+  @media (max-width: 600px) {
+    .main-wrap { padding: 60px 8px 60px; }
+    .page { padding: 20px 14px; }
+    .page-title { font-size: 22px; }
+
+    /* meta: 세로 */
+    .page-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 18px;
+    }
+
+    /* SNS 바: 세로 */
+    .sns-bar {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 18px;
+    }
+    .sns-tag { white-space: normal; }
+
+    /* date nav */
+    .date-nav {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 8px;
+      margin-bottom: 18px;
+    }
+    .date-nav-left {
+      width: 100%;
+      justify-content: space-between;
+    }
+    .nav-group {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+      width: 100%;
+    }
+    .nav-group input[type="date"].nav-btn {
+      grid-column: 1 / -1;
+      width: 100%;
+    }
+
+    /* 테이블 3열 → 2열 (비고 숨김) */
+    .table-row {
+      grid-template-columns: 90px 1fr;
+    }
+    .table-row .table-cell:last-child {
+      display: none;
+    }
+    .table-row.header-row .table-cell:last-child {
+      display: none;
+    }
+    .table-cell { padding: 8px 10px; }
+    .cell-label { font-size: 12px; }
+    .cell-input { font-size: 13px; }
+
+    /* 버튼 행 */
+    .btn-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-top: 20px;
+      justify-content: initial;
+    }
+    .btn { font-size: 13px; padding: 8px 10px; justify-content: center; }
+  }
+
   /* ── Print ── */
   @media print {
-    .sidebar, .date-nav .nav-group, .btn-row {
+    .sidebar, .date-nav .nav-group, .btn-row, .search-trigger-btn, .search-modal, .search-modal-overlay {
       display: none !important;
     }
     body { background: #fff; }
@@ -564,8 +883,28 @@
 <body>
 <div class="app-layout">
 
+<!-- Mobile sidebar toggle -->
+<button class="sidebar-toggle" id="sidebarToggle" onclick="toggleSidebar()">☰ 팀 목록</button>
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+<!-- ════════════ 업무일지 내용 검색 모달 ════════════ -->
+<div class="search-modal-overlay" id="searchModalOverlay" onclick="closeSearchModal()"></div>
+<div class="search-modal" id="searchModal">
+  <div class="search-modal-header">
+    <span>🔍 업무일지 내용 검색</span>
+    <button class="search-modal-close" onclick="closeSearchModal()">✕</button>
+  </div>
+  <div class="search-modal-body">
+    <input type="text" id="searchInput" class="search-input" placeholder="검색할 내용을 입력하세요" autocomplete="off">
+    <button class="btn btn-primary search-run-btn" onclick="runSearch()">검색</button>
+  </div>
+  <div class="search-results" id="searchResults">
+    <div class="search-empty">검색어를 입력하세요.</div>
+  </div>
+</div>
+
 <!-- ════════════ SIDEBAR (2-depth: 팀 ▸ 구성원) ════════════ -->
-<aside class="sidebar">
+<aside class="sidebar" id="sidebar">
   <div class="sidebar-header">
     <span class="sidebar-title">팀 / 구성원</span>
     <button class="sidebar-add-team" onclick="addTeam()">+ 팀 추가</button>
@@ -581,7 +920,10 @@
 
     <!-- Date Navigator -->
     <div class="date-nav">
-      <div class="date-nav-label" id="dateNavLabel">—</div>
+      <div class="date-nav-left">
+        <div class="date-nav-label" id="dateNavLabel">—</div>
+        <button class="search-trigger-btn" onclick="openSearchModal()" title="업무일지 내용 검색">🔍 내용 검색</button>
+      </div>
       <div class="nav-group">
         <button class="nav-btn" onclick="changeDate(-1)">← 이전</button>
         <input type="date" class="nav-btn date-picker" id="dateNavPicker" onchange="jumpToDate(this.value)">
@@ -613,6 +955,8 @@
 <!-- Firebase SDK -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<!-- html2pdf.js: 모바일에서 인쇄 버튼을 눌렀을 때 PDF로 직접 저장하기 위함 -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
 
 <script>
 // ══════════════════════════════════════
@@ -859,13 +1203,18 @@ function renderSidebar() {
       pRow.innerHTML = `
         <span class="person-dot"></span>
         <input class="person-name-input" value="${escapeAttr(person.name)}" />
+        <span class="person-spacer" title="선택하고 일지 보기"></span>
         <button class="person-action" title="구성원 삭제">✕</button>
       `;
       const pInput = pRow.querySelector('.person-name-input');
+      const pSpacer = pRow.querySelector('.person-spacer');
       const pRemove = pRow.querySelector('.person-action');
 
       pRow.addEventListener('click', () => selectPerson(person.id));
-      pInput.addEventListener('click', (e) => { e.stopPropagation(); selectPerson(person.id); });
+      // 이름(텍스트) 클릭 → 이름 변경 모드로만 진입 (모바일 사이드바는 닫지 않음)
+      pInput.addEventListener('click', (e) => { e.stopPropagation(); selectPerson(person.id, false, true); });
+      // 이름 오른쪽 빈 공간 클릭 → 선택 + 모바일 사이드바 접고 일지 보기
+      pSpacer.addEventListener('click', (e) => { e.stopPropagation(); selectPerson(person.id); });
       pInput.addEventListener('input', () => {
         person.name = pInput.value;
         persistTeams();
@@ -877,7 +1226,7 @@ function renderSidebar() {
       });
       pInput.addEventListener('keydown', (e) => {
         // e.isComposing / keyCode 229: 한글 등 IME 조합 중 Enter는 무시 (마지막 글자 중복 입력 방지)
-        if (e.key === 'Enter' && !e.isComposing && e.keyCode !== 229) { e.preventDefault(); pInput.blur(); }
+        if (e.key === 'Enter' && !e.isComposing && e.keyCode !== 229) { e.preventDefault(); pInput.blur(); closeSidebarMobile(); }
       });
       pRemove.addEventListener('click', (e) => { e.stopPropagation(); removeMember(team.id, person.id); });
 
@@ -930,13 +1279,14 @@ async function removeTeam(teamId) {
   renderSidebar();
 }
 
-function addMember(teamId) {
+async function addMember(teamId) {
   const team = TEAMS.find(t => t.id === teamId);
   if (!team) return;
   const person = { id: uid('p'), name: '새 구성원' };
   team.members.push(person);
   persistTeams();
-  selectPerson(person.id, true);
+  // skipMobileClose=true: 새 구성원 이름을 입력하는 동안 모바일 사이드바가 닫히지 않도록 유지
+  await selectPerson(person.id, true, true);
   requestAnimationFrame(() => {
     const el = document.querySelector(`.person-row[data-person-id="${person.id}"] .person-name-input`);
     if (el) { el.focus(); el.select(); }
@@ -960,13 +1310,14 @@ async function removeMember(teamId, personId) {
   renderSidebar();
 }
 
-async function selectPerson(personId, skipSave) {
-  if (personId === selectedPersonId) return;
+async function selectPerson(personId, skipSave, skipMobileClose) {
+  if (personId === selectedPersonId) { if (!skipMobileClose) closeSidebarMobile(); return; }
   if (!skipSave) await saveCurrentState(true);
   selectedPersonId = personId;
   storeSet(SELECTED_KEY, personId || '');
   renderSidebar();
   await loadPersonDate();
+  if (!skipMobileClose) closeSidebarMobile();
 }
 
 function updateBreadcrumb() {
@@ -1033,19 +1384,19 @@ function renderEntryPage(found, dateObj, data) {
       <div class="sns-tag youtube">
         ▶ YouTube &nbsp;
         <input id="f_yt" value="${esc(d.yt)}" placeholder="0" title="팔로워">
-        <span style="color:rgba(0,0,0,.3)"> / </span>
+        <span class="sns-slash" aria-hidden="true"></span>
         <input id="f_yt_sub" value="${esc(d.yt_sub)}" placeholder="0" title="최근 시청자수">
       </div>
       <div class="sns-tag instagram">
         📷 Instagram &nbsp;
         <input id="f_ig" value="${esc(d.ig)}" placeholder="0">
-        <span style="color:rgba(0,0,0,.3)"> / </span>
+        <span class="sns-slash" aria-hidden="true"></span>
         <input id="f_ig_sub" value="${esc(d.ig_sub)}" placeholder="0">
       </div>
       <div class="sns-tag blog">
         ✏️ Blog &nbsp;
         <input id="f_blog" value="${esc(d.blog)}" placeholder="0">
-        <span style="color:rgba(0,0,0,.3)"> / </span>
+        <span class="sns-slash" aria-hidden="true"></span>
         <input id="f_blog_sub" value="${esc(d.blog_sub)}" placeholder="0">
       </div>
     </div>
@@ -1153,11 +1504,229 @@ async function printPlan() {
   await saveCurrentState(true);
   const found = findPerson(selectedPersonId);
   const d = dateForOffset(currentDayOffset);
-  const label = found ? `${found.team.name}_${found.person.name}_${dateId(d)}` : '업무일지';
-  const prevTitle = document.title;
-  document.title = label.replace(/\s+/g, '_');
-  window.print();
-  setTimeout(() => { document.title = prevTitle; }, 500);
+  const label = (found ? `${found.team.name}_${found.person.name}_${dateId(d)}` : '업무일지').replace(/\s+/g, '_');
+
+  const isMobile = window.innerWidth <= 880 || /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+  if (isMobile && window.html2pdf) {
+    showToast('PDF 생성 중...');
+    const pageEl = document.querySelector('.page');
+
+    // html2canvas는 현재 스크롤 위치를 기준으로 캡처 영역을 잡기 때문에,
+    // 페이지가 스크롤된 상태에서 캡처하면 위쪽에 빈 여백이 생기고 아래쪽 내용이 잘립니다.
+    // → 캡처 전 항상 맨 위로 스크롤하고, scrollX/scrollY를 0으로 고정합니다.
+    const prevScrollX = window.scrollX, prevScrollY = window.scrollY;
+    window.scrollTo(0, 0);
+    await new Promise(resolve => setTimeout(resolve, 80));
+
+    document.body.classList.add('pdf-export');
+    pageEl.classList.add('pdf-export'); // html2canvas only clones pageEl's own subtree, not <body> — the class must live on pageEl itself to survive into the clone
+
+    // html2canvas는 캡처 시점에 <input>의 실제 화면 표시값을 제대로 못 읽어오는
+    // 알려진 버그가 있어, value/attribute를 바꾸는 방식은 근본적으로 불안정합니다.
+    // → 캡처 직전에 input을 통째로 일반 텍스트(span)로 잠깐 바꿔치기해서 찍고,
+    //   캡처가 끝나면 다시 원래 input으로 되돌립니다.
+    const snsIds = ['f_yt', 'f_yt_sub', 'f_ig', 'f_ig_sub', 'f_blog', 'f_blog_sub'];
+    const snsRestore = [];
+    snsIds.forEach(id => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      const text = el.value.trim() === '' ? '0' : el.value;
+      const cs = window.getComputedStyle(el);
+      const span = document.createElement('span');
+      span.textContent = text;
+      span.style.cssText = [
+        `display:inline-block`,
+        `width:${cs.width}`,
+        `height:${cs.height}`,
+        `line-height:${cs.height}`,
+        `font-size:${cs.fontSize}`,
+        `font-family:${cs.fontFamily}`,
+        `font-weight:${cs.fontWeight}`,
+        `color:${cs.color}`,
+        `text-align:${cs.textAlign}`,
+        `margin:${cs.marginTop} ${cs.marginRight} ${cs.marginBottom} ${cs.marginLeft}`,
+        `padding:0`,
+        `vertical-align:middle`,
+        `flex:0 0 auto`,
+        `white-space:nowrap`,
+      ].join(';');
+      el.insertAdjacentElement('afterend', span);
+      el.style.display = 'none';
+      snsRestore.push({ el, span });
+    });
+
+    try {
+      // A4 한 장에 내용이 잘리지 않고 딱 맞게 들어가도록, 캡처한 이미지를 직접 계산해서 배치합니다.
+      // (html2pdf의 자동 페이지분할에 맡기면 세로가 긴 내용이 landscape 페이지 높이를 넘겨
+      //  두 페이지로 나뉘거나, scale 옵션과 맞물려 오른쪽이 잘리는 문제가 있어 직접 한 장으로 만듭니다.)
+      const worker = html2pdf().set({
+        margin: 0,
+        filename: `${label}.pdf`,
+        image: { type: 'png' },
+        html2canvas: {
+          scale: 2,
+          useCORS: true,
+          scrollX: 0,
+          scrollY: 0,
+          windowWidth: 1000,
+        },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+      }).from(pageEl);
+
+      // .get()은 이미 만들어진 값을 읽기만 할 뿐 직접 만들어주지 않으므로,
+      // toCanvas()/toPdf()를 명시적으로 먼저 실행해야 합니다.
+      await worker.toCanvas();
+      const canvas = await worker.get('canvas');
+      // 캡처된 내용의 가로/세로 비율을 보고 더 잘 맞는 A4 방향을 자동으로 선택
+      const orientation = canvas.width >= canvas.height ? 'landscape' : 'portrait';
+      worker.set({ jsPDF: { unit: 'mm', format: 'a4', orientation } });
+
+      await worker.toPdf();
+      const pdf = await worker.get('pdf');
+      // 기본 파이프라인이 만든 페이지(여러 장으로 잘렸을 수 있음)는 지우고 한 장만 남깁니다.
+      for (let i = pdf.internal.getNumberOfPages(); i > 1; i--) pdf.deletePage(i);
+      pdf.setPage(1);
+
+      const pageWidth = pdf.internal.pageSize.getWidth();
+      const pageHeight = pdf.internal.pageSize.getHeight();
+      pdf.setFillColor(255, 255, 255);
+      pdf.rect(0, 0, pageWidth, pageHeight, 'F'); // 기본 배치로 그려졌던 내용을 지움
+
+      const margin = 8; // mm, 종이 여백
+      const maxW = pageWidth - margin * 2;
+      const maxH = pageHeight - margin * 2;
+      const ratio = Math.min(maxW / canvas.width, maxH / canvas.height);
+      const imgW = canvas.width * ratio;
+      const imgH = canvas.height * ratio;
+      const x = (pageWidth - imgW) / 2;
+      const y = (pageHeight - imgH) / 2;
+      pdf.addImage(canvas.toDataURL('image/png'), 'PNG', x, y, imgW, imgH);
+
+      await worker.save();
+    } catch (e) {
+      console.error(e);
+      showToast('PDF 생성 실패: ' + (e && e.message ? e.message : e), true);
+    } finally {
+      document.body.classList.remove('pdf-export');
+      pageEl.classList.remove('pdf-export');
+      snsRestore.forEach(({ el, span }) => {
+        span.remove();
+        el.style.display = '';
+      });
+      window.scrollTo(prevScrollX, prevScrollY);
+    }
+  } else {
+    const prevTitle = document.title;
+    document.title = label;
+    window.print();
+    setTimeout(() => { document.title = prevTitle; }, 500);
+  }
+}
+
+// ══════════════════════════════════════
+//  업무일지 내용 검색 (선택된 구성원의 모든 날짜를 대상)
+// ══════════════════════════════════════
+function escRegex(s) { return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
+
+function openSearchModal() {
+  if (!selectedPersonId) { showToast('먼저 구성원을 선택하세요.', true); return; }
+  document.getElementById('searchModalOverlay').classList.add('show');
+  document.getElementById('searchModal').classList.add('show');
+  const input = document.getElementById('searchInput');
+  input.value = '';
+  document.getElementById('searchResults').innerHTML = '<div class="search-empty">검색어를 입력하세요.</div>';
+  setTimeout(() => input.focus(), 50);
+}
+function closeSearchModal() {
+  document.getElementById('searchModalOverlay').classList.remove('show');
+  document.getElementById('searchModal').classList.remove('show');
+}
+
+const SEARCH_FIELDS = [
+  ['directive', '교수님 지시사항'], ['directive_note', '교수님 지시사항·비고'],
+  ['tasks', '금일 진행 업무'], ['tasks_note', '금일 진행 업무·비고'],
+  ['tomorrow', '익일 업무'], ['tomorrow_note', '익일 업무·비고'],
+  ['pending', '미진행 업무'], ['pending_note', '미진행 업무·비고'],
+];
+
+function dateIdToDateObj(id) {
+  const y = 2000 + parseInt(id.slice(0,2), 10);
+  const m = parseInt(id.slice(2,4), 10) - 1;
+  const day = parseInt(id.slice(4,6), 10);
+  return new Date(y, m, day);
+}
+
+async function runSearch() {
+  const resultsEl = document.getElementById('searchResults');
+  const q = document.getElementById('searchInput').value.trim();
+  if (!q) { resultsEl.innerHTML = '<div class="search-empty">검색어를 입력하세요.</div>'; return; }
+  if (!selectedPersonId) return;
+
+  resultsEl.innerHTML = '<div class="search-empty">검색 중...</div>';
+  const qLower = q.toLowerCase();
+  const keys = await storeList(`dp_entry_${selectedPersonId}_`);
+
+  const matches = [];
+  for (const key of keys) {
+    const raw = await storeGet(key);
+    if (!raw) continue;
+    let data; try { data = JSON.parse(raw); } catch(e) { continue; }
+
+    for (const [field, fieldLabel] of SEARCH_FIELDS) {
+      const val = data[field] || '';
+      const idx = val.toLowerCase().indexOf(qLower);
+      if (idx === -1) continue;
+      const start = Math.max(0, idx - 18);
+      const end = Math.min(val.length, idx + q.length + 18);
+      const snippet = (start > 0 ? '…' : '') + val.slice(start, end) + (end < val.length ? '…' : '');
+      const dId = key.slice(`dp_entry_${selectedPersonId}_`.length);
+      matches.push({ dateId: dId, fieldLabel, snippet });
+      break; // 항목당 한 번만, 같은 날짜에서 여러 필드가 일치해도 한 결과로
+    }
+  }
+
+  matches.sort((a, b) => b.dateId.localeCompare(a.dateId));
+
+  if (matches.length === 0) {
+    resultsEl.innerHTML = '<div class="search-empty">검색 결과가 없습니다.</div>';
+    return;
+  }
+
+  const re = new RegExp(escRegex(esc(q)), 'gi');
+  resultsEl.innerHTML = matches.map(m => {
+    const dObj = dateIdToDateObj(m.dateId);
+    const dispDate = dateDisplay(dObj);
+    const highlighted = esc(m.snippet).replace(re, s => `<mark>${s}</mark>`);
+    return `<div class="search-result-item" onclick="goToSearchResult('${m.dateId}')">
+      <div class="search-result-date">${dispDate} · ${esc(m.fieldLabel)}</div>
+      <div class="search-result-snippet">${highlighted}</div>
+    </div>`;
+  }).join('');
+}
+
+async function goToSearchResult(dId) {
+  const target = dateIdToDateObj(dId);
+  target.setHours(0,0,0,0);
+  const today = new Date(); today.setHours(0,0,0,0);
+  await saveCurrentState(true);
+  currentDayOffset = dayDiff(today, target);
+  renderDateNav();
+  await loadPersonDate();
+  closeSearchModal();
+  closeSidebarMobile();
+}
+
+// ── Mobile sidebar toggle ──
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('sidebarOverlay').classList.toggle('show');
+}
+function closeSidebarMobile() {
+  if (window.innerWidth <= 880) {
+    document.getElementById('sidebar').classList.remove('open');
+    document.getElementById('sidebarOverlay').classList.remove('show');
+  }
 }
 
 function showToast(msg, isError = false) {
@@ -1185,6 +1754,16 @@ async function init() {
 
   renderSidebar();
   renderDateNav();
+
+  const searchInput = document.getElementById('searchInput');
+  if (searchInput) {
+    searchInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && !e.isComposing && e.keyCode !== 229) { e.preventDefault(); runSearch(); }
+    });
+  }
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeSearchModal();
+  });
 
   if (selectedPersonId) {
     await loadPersonDate();
