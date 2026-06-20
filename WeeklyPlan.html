@@ -12,6 +12,18 @@
     background: #f7f6f3;
     color: #37352f;
     min-height: 100vh;
+  }
+
+  /* ─── Layout ─────────────────────────────────────────── */
+  .app-layout {
+    display: flex;
+    align-items: flex-start;
+    min-height: 100vh;
+  }
+
+  .main-wrap {
+    flex: 1;
+    min-width: 0;
     padding: 40px 20px 80px;
   }
 
@@ -23,6 +35,154 @@
     padding: 60px 72px;
     box-shadow: rgba(15,15,15,.05) 0px 0px 0px 1px, rgba(15,15,15,.1) 0px 3px 6px;
   }
+
+  /* ─── Sidebar ────────────────────────────────────────── */
+  .sidebar {
+    width: 250px;
+    flex-shrink: 0;
+    background: #fbfbfa;
+    border-right: 1px solid #e3e2df;
+    position: sticky;
+    top: 0;
+    align-self: flex-start;
+    height: 100vh;
+    overflow-y: auto;
+    padding: 20px 10px 24px;
+  }
+  .sidebar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 2px 8px 14px;
+  }
+  .sidebar-title {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #9b9a97;
+  }
+  .sidebar-add-team {
+    border: none;
+    background: none;
+    cursor: pointer;
+    color: #9b9a97;
+    font-size: 12px;
+    font-family: inherit;
+    padding: 3px 7px;
+    border-radius: 4px;
+  }
+  .sidebar-add-team:hover { background: #ecebe8; color: #37352f; }
+
+  .team-group { margin-bottom: 2px; }
+
+  .team-row {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 6px 6px;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  .team-row:hover { background: #ecebe8; }
+  .team-row:hover .team-action { opacity: 1; }
+  .team-chevron {
+    width: 13px;
+    flex-shrink: 0;
+    color: #9b9a97;
+    font-size: 9px;
+    display: flex;
+    justify-content: center;
+    transition: transform 0.15s;
+  }
+  .team-group.collapsed .team-chevron { transform: rotate(-90deg); }
+  .team-dot { width: 6px; height: 6px; border-radius: 2px; background: #c1bdb7; flex-shrink: 0; }
+  .team-name-input {
+    flex: 1;
+    min-width: 0;
+    border: none;
+    background: transparent;
+    outline: none;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    color: #37352f;
+  }
+  .team-action {
+    border: none;
+    background: none;
+    cursor: pointer;
+    color: #c1bdb7;
+    font-size: 12px;
+    padding: 2px 5px;
+    flex-shrink: 0;
+    opacity: 0;
+    transition: opacity 0.15s, color 0.15s;
+  }
+  .team-action:hover { color: #eb5757; }
+
+  .member-list { list-style: none; overflow: hidden; }
+  .team-group.collapsed .member-list,
+  .team-group.collapsed .add-person-btn { display: none; }
+
+  .person-row {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 6px 6px 6px 25px;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  .person-row:hover { background: #ecebe8; }
+  .person-row:hover .person-action { opacity: 1; }
+  .person-row.active { background: #e7f3fb; }
+  .person-row.active .person-name-input { color: #0b6e99; font-weight: 600; }
+  .person-dot {
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: #d3d0c8;
+    flex-shrink: 0;
+  }
+  .person-row.active .person-dot { background: #2eaadc; }
+  .person-name-input {
+    flex: 1;
+    min-width: 0;
+    border: none;
+    background: transparent;
+    outline: none;
+    font-family: inherit;
+    font-size: 13px;
+    color: #37352f;
+  }
+  .person-action {
+    border: none;
+    background: none;
+    cursor: pointer;
+    color: #c1bdb7;
+    font-size: 11px;
+    padding: 2px 5px;
+    flex-shrink: 0;
+    opacity: 0;
+    transition: opacity 0.15s, color 0.15s;
+  }
+  .person-action:hover { color: #eb5757; }
+
+  .add-person-btn {
+    display: block;
+    width: 100%;
+    text-align: left;
+    padding: 5px 6px 8px 25px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    color: #b9b6ae;
+    font-size: 12px;
+    font-family: inherit;
+    transition: color 0.15s;
+  }
+  .add-person-btn:hover { color: #787774; }
+
+  .sidebar-toggle, .sidebar-overlay { display: none; }
 
   /* Header */
   .page-title {
@@ -211,41 +371,6 @@
   }
   .instructions-textarea::placeholder { color: #c1bdb7; }
 
-  /* Site progress table */
-  .site-table { width: 100%; border-collapse: collapse; }
-  .site-table th {
-    background: #f7f6f3;
-    font-size: 12px;
-    font-weight: 600;
-    color: #9b9a97;
-    text-align: left;
-    padding: 8px 12px;
-    border: 1px solid #e3e2df;
-  }
-  .site-table td {
-    border: 1px solid #e3e2df;
-    padding: 0;
-  }
-  .site-table td input {
-    border: none;
-    outline: none;
-    background: transparent;
-    font-family: inherit;
-    font-size: 14px;
-    color: #37352f;
-    padding: 10px 12px;
-    width: 100%;
-  }
-  .site-table td input::placeholder { color: #c1bdb7; }
-  .row-num {
-    color: #9b9a97;
-    font-size: 13px;
-    text-align: center;
-    padding: 10px 8px !important;
-    width: 36px;
-    user-select: none;
-  }
-
   /* Buttons */
   .btn-row {
     display: flex;
@@ -319,75 +444,158 @@
     vertical-align: middle;
   }
 
+  @media (max-width: 880px) {
+    .app-layout { display: block; }
+    .sidebar {
+      position: fixed;
+      top: 0; left: 0;
+      height: 100vh;
+      width: 270px;
+      max-width: 82vw;
+      z-index: 50;
+      transform: translateX(-100%);
+      transition: transform 0.2s ease;
+      box-shadow: 2px 0 16px rgba(0,0,0,.15);
+    }
+    .sidebar.open { transform: translateX(0); }
+    .sidebar-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(15,15,15,.35);
+      z-index: 40;
+    }
+    .sidebar-overlay.show { display: block; }
+    .sidebar-toggle {
+      display: flex;
+      position: fixed;
+      top: 14px; left: 14px;
+      z-index: 45;
+      align-items: center;
+      gap: 6px;
+      background: #fff;
+      border: 1px solid #e3e2df;
+      border-radius: 6px;
+      padding: 8px 12px;
+      cursor: pointer;
+      font-size: 13px;
+      font-family: inherit;
+      color: #37352f;
+      box-shadow: 0 1px 6px rgba(0,0,0,.1);
+    }
+    .main-wrap { padding-top: 68px; }
+  }
+
   @media (max-width: 600px) {
     .page { padding: 32px 20px; }
     .page-title { font-size: 24px; }
   }
+
+  /* ─── Print ──────────────────────────────────────────── */
+  @media print {
+    .sidebar, .sidebar-toggle, .sidebar-overlay,
+    .week-nav .nav-group,
+    .btn-row,
+    .add-task-btn, .task-remove,
+    .team-action, .person-action, .add-person-btn, .sidebar-add-team {
+      display: none !important;
+    }
+    body { background: #fff; }
+    .app-layout { display: block; }
+    .main-wrap { padding: 0; }
+    .page {
+      max-width: 100%;
+      box-shadow: none;
+      padding: 16px 8px;
+    }
+    .meta-input { border-bottom: none; }
+    .instructions-box { border: 1px solid #ddd; background: #fff; }
+    .daily-table { page-break-inside: auto; }
+    .daily-table tr { page-break-inside: avoid; }
+  }
 </style>
 </head>
 <body>
-<div class="page">
+<div class="app-layout">
 
-  <!-- Week Navigator -->
-  <div class="week-nav">
-    <div class="week-label" id="weekLabel">2026년 06월 4주차</div>
-    <div class="nav-group">
-      <button class="nav-btn" onclick="changeWeek(-1)">← 이전 주</button>
-      <button class="nav-btn" onclick="changeWeek(1)">다음 주 →</button>
+  <button class="sidebar-toggle" onclick="toggleSidebar()">☰ 팀 목록</button>
+  <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <span class="sidebar-title">팀 / 구성원</span>
+      <button class="sidebar-add-team" onclick="addTeam()">+ 팀 추가</button>
     </div>
-  </div>
+    <div id="sidebarTree"></div>
+  </aside>
 
-  <!-- Title -->
-  <input class="page-title" id="pageTitle" value="주간 계획" placeholder="제목 없음" />
-  
-  <!-- Meta -->
-  <div class="page-meta">
-    <div class="meta-item">
-      <span class="meta-label">소속</span>
-      <input class="meta-input" id="orgInput" value="차인호 공간조명연구소" style="min-width:140px;" />
+  <div class="main-wrap">
+    <div class="page">
+
+      <!-- Week Navigator -->
+      <div class="week-nav">
+        <div class="week-label" id="weekLabel">2026년 06월 4주차</div>
+        <div class="nav-group">
+          <button class="nav-btn" onclick="changeWeek(-1)">← 이전 주</button>
+          <button class="nav-btn" onclick="changeWeek(1)">다음 주 →</button>
+        </div>
+      </div>
+
+      <!-- Title -->
+      <input class="page-title" id="pageTitle" value="주간 계획" placeholder="제목 없음" />
+
+      <!-- Meta -->
+      <div class="page-meta">
+        <div class="meta-item">
+          <span class="meta-label">소속</span>
+          <input class="meta-input" id="orgInput" style="min-width:140px;" />
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">담당자</span>
+          <input class="meta-input" id="memberInput" placeholder="왼쪽에서 구성원을 선택하세요" style="min-width:160px;" />
+        </div>
+      </div>
+
+      <hr class="divider">
+
+      <!-- Daily Tasks -->
+      <div class="section-label">📅 일별 업무</div>
+      <table class="daily-table">
+        <colgroup>
+          <col class="day-col">
+          <col style="width:60px">
+          <col>
+        </colgroup>
+        <thead>
+          <tr>
+            <th colspan="2" style="text-align:center;">일자</th>
+            <th>업무 내용</th>
+          </tr>
+        </thead>
+        <tbody id="dailyBody"></tbody>
+      </table>
+
+      <!-- Instructions -->
+      <div class="instructions-box">
+        <div class="section-label">📌 교수님 지시사항</div>
+        <textarea class="instructions-textarea" id="instructionsText" placeholder="지시사항을 입력하세요..." oninput="autoResize(this)"></textarea>
+      </div>
+
+      <!-- Actions -->
+      <div class="btn-row">
+        <button class="btn btn-secondary" onclick="clearAll()">🗑 초기화</button>
+        <button class="btn btn-secondary" onclick="copyToClipboard()">📋 텍스트 복사</button>
+        <button class="btn btn-secondary" onclick="printPlan()">🖨 인쇄</button>
+        <button class="btn btn-primary" onclick="saveData()">💾 저장</button>
+      </div>
+
     </div>
-    <div class="meta-item">
-      <span class="meta-label">담당자</span>
-      <input class="meta-input" id="memberInput" value="BMD팀 임수연PD" style="min-width:100px;" />
-    </div>
-  </div>
-
-  <hr class="divider">
-
-  <!-- Daily Tasks -->
-  <div class="section-label">📅 일별 업무</div>
-  <table class="daily-table">
-    <colgroup>
-      <col class="day-col">
-      <col style="width:60px">
-      <col>
-    </colgroup>
-    <thead>
-      <tr>
-        <th colspan="2" style="text-align:center;">일자</th>
-        <th>업무 내용</th>
-      </tr>
-    </thead>
-    <tbody id="dailyBody"></tbody>
-  </table>
-
-  <!-- Instructions -->
-  <div class="instructions-box">
-    <div class="section-label">📌 교수님 지시사항</div>
-    <textarea class="instructions-textarea" id="instructionsText" placeholder="지시사항을 입력하세요..." oninput="autoResize(this)"></textarea>
-  </div>
-
-  <!-- Actions -->
-  <div class="btn-row">
-    <button class="btn btn-secondary" onclick="clearAll()">🗑 초기화</button>
-    <button class="btn btn-secondary" onclick="copyToClipboard()">📋 텍스트 복사</button>
-    <button class="btn btn-primary" onclick="saveData()">💾 저장</button>
   </div>
 
 </div>
 
 <script>
-// ─── State ────────────────────────────────────────────────────────────────────
+// ─── Constants ──────────────────────────────────────────────────────────────
 const DAYS = [
   { code: 'Mon', label: '월', cls: 'day-Mon' },
   { code: 'Tue', label: '화', cls: 'day-Tue' },
@@ -396,6 +604,8 @@ const DAYS = [
   { code: 'Fri', label: '금', cls: 'day-Fri' },
 ];
 
+// Demo content shown only the very first time (first member, current week, no saved data yet)
+const DEMO_PERSON_ID = 'p1';
 const DEFAULT_TASKS = {
   Mon: ['YT-S4-001 롱폼 편집', "'셀프 인테리어 My Home' 네이버 카페 활동", '유튜브 숏폼, 인스타 릴스 업로드 (오후 5시)'],
   Tue: ["'셀프 인테리어 My Home' 네이버 카페 활동", '미디어채널 분석자료', '전원속의 내집 인스타그램 카드뉴스 발행'],
@@ -404,7 +614,52 @@ const DEFAULT_TASKS = {
   Fri: ['유튜브 숏폼, 인스타 릴스 업로드 (오후 5시)'],
 };
 
+const DEFAULT_TEAMS = [
+  { id: 't1', name: 'BMD팀', members: [
+      { id: 'p1', name: '임수연PD' },
+      { id: 'p2', name: '박지훈PD' },
+  ]},
+  { id: 't2', name: '디자인팀', members: [
+      { id: 'p3', name: '김서연 디자이너' },
+  ]},
+  { id: 't3', name: '영상팀', members: [
+      { id: 'p4', name: '이도윤 에디터' },
+  ]},
+];
+
+const TEAMS_KEY = 'wp_teams_v1';
+const SELECTED_KEY = 'wp_selected_v1';
+const ORG_KEY = 'wp_org_v1';
+
+// ─── State ────────────────────────────────────────────────────────────────────
+let TEAMS = loadTeams();
+let selectedPersonId = safeGet(SELECTED_KEY) || (TEAMS[0]?.members[0]?.id ?? null);
 let currentWeekOffset = 0;
+const collapsedTeams = new Set();
+
+function safeGet(key) { try { return localStorage.getItem(key); } catch(e) { return null; } }
+function safeSet(key, val) { try { localStorage.setItem(key, val); } catch(e) {} }
+function safeRemove(key) { try { localStorage.removeItem(key); } catch(e) {} }
+
+function loadTeams() {
+  const raw = safeGet(TEAMS_KEY);
+  if (raw) {
+    try { return JSON.parse(raw); } catch(e) {}
+  }
+  return JSON.parse(JSON.stringify(DEFAULT_TEAMS));
+}
+function persistTeams() { safeSet(TEAMS_KEY, JSON.stringify(TEAMS)); }
+function uid(prefix) { return prefix + '_' + Math.random().toString(36).slice(2, 9); }
+function escapeAttr(str) { return String(str ?? '').replace(/&/g, '&amp;').replace(/"/g, '&quot;'); }
+function dataKey(personId, offset) { return `wp_data_${personId}_${offset}`; }
+
+function findPerson(personId) {
+  for (const team of TEAMS) {
+    const m = team.members.find(m => m.id === personId);
+    if (m) return { team, person: m };
+  }
+  return null;
+}
 
 // ─── Week helpers ─────────────────────────────────────────────────────────────
 function getWeekStart(offset = 0) {
@@ -431,8 +686,10 @@ function getWeekLabel(offset) {
 }
 
 function changeWeek(dir) {
+  saveCurrentState(true);
   currentWeekOffset += dir;
   renderWeek();
+  loadPersonWeek(selectedPersonId, currentWeekOffset);
 }
 
 function renderWeek() {
@@ -446,7 +703,7 @@ function renderWeek() {
   });
 }
 
-// ─── Render daily rows ────────────────────────────────────────────────────────
+// ─── Daily table skeleton ──────────────────────────────────────────────────────
 function renderDailyTable() {
   const tbody = document.getElementById('dailyBody');
   tbody.innerHTML = '';
@@ -470,10 +727,6 @@ function renderDailyTable() {
       </td>
     `;
     tbody.appendChild(tr);
-
-    // Populate default tasks
-    const tasks = DEFAULT_TASKS[day.code] || [];
-    tasks.forEach(t => addTaskItem(day.code, t));
   });
 }
 
@@ -517,20 +770,227 @@ function addTaskItem(dayCode, value = '') {
   list.appendChild(li);
 }
 
-// ─── Site progress ─────────────────────────────────────────────────────────────
-function renderSiteTable() {
-  const tbody = document.getElementById('siteBody');
-  tbody.innerHTML = '';
-  for (let i = 1; i <= 5; i++) {
-    const tr = document.createElement('tr');
-    tr.innerHTML = `
-      <td class="row-num">${i}</td>
-      <td><input placeholder="현장명"></td>
-      <td><input placeholder="건축주"></td>
-      <td><input placeholder="진행상황"></td>
-      <td><input placeholder="비고"></td>
+// ─── Sidebar (teams / members, 2-depth) ─────────────────────────────────────────
+function renderSidebar() {
+  const tree = document.getElementById('sidebarTree');
+  tree.innerHTML = '';
+
+  TEAMS.forEach(team => {
+    const group = document.createElement('div');
+    group.className = 'team-group' + (collapsedTeams.has(team.id) ? ' collapsed' : '');
+
+    const row = document.createElement('div');
+    row.className = 'team-row';
+    row.dataset.teamId = team.id;
+    row.innerHTML = `
+      <span class="team-chevron">▾</span>
+      <span class="team-dot"></span>
+      <input class="team-name-input" value="${escapeAttr(team.name)}" />
+      <button class="team-action" title="팀 삭제">✕</button>
     `;
-    tbody.appendChild(tr);
+    const nameInput = row.querySelector('.team-name-input');
+    const removeBtn = row.querySelector('.team-action');
+
+    row.addEventListener('click', () => toggleTeam(team.id));
+    nameInput.addEventListener('click', (e) => e.stopPropagation());
+    nameInput.addEventListener('input', () => {
+      team.name = nameInput.value;
+      persistTeams();
+      if (team.members.some(m => m.id === selectedPersonId)) updateMemberLabel();
+    });
+    nameInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); nameInput.blur(); } });
+    removeBtn.addEventListener('click', (e) => { e.stopPropagation(); removeTeam(team.id); });
+
+    group.appendChild(row);
+
+    const list = document.createElement('ul');
+    list.className = 'member-list';
+    team.members.forEach(person => {
+      const li = document.createElement('li');
+      const pRow = document.createElement('div');
+      pRow.className = 'person-row' + (person.id === selectedPersonId ? ' active' : '');
+      pRow.dataset.personId = person.id;
+      pRow.innerHTML = `
+        <span class="person-dot"></span>
+        <input class="person-name-input" value="${escapeAttr(person.name)}" />
+        <button class="person-action" title="구성원 삭제">✕</button>
+      `;
+      const pInput = pRow.querySelector('.person-name-input');
+      const pRemove = pRow.querySelector('.person-action');
+
+      pRow.addEventListener('click', () => selectPerson(person.id));
+      pInput.addEventListener('click', (e) => { e.stopPropagation(); selectPerson(person.id); });
+      pInput.addEventListener('input', () => {
+        person.name = pInput.value;
+        persistTeams();
+        if (person.id === selectedPersonId) updateMemberLabel();
+      });
+      pInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); pInput.blur(); } });
+      pRemove.addEventListener('click', (e) => { e.stopPropagation(); removeMember(team.id, person.id); });
+
+      li.appendChild(pRow);
+      list.appendChild(li);
+    });
+    group.appendChild(list);
+
+    const addPersonBtn = document.createElement('button');
+    addPersonBtn.className = 'add-person-btn';
+    addPersonBtn.textContent = '+ 구성원 추가';
+    addPersonBtn.addEventListener('click', (e) => { e.stopPropagation(); addMember(team.id); });
+    group.appendChild(addPersonBtn);
+
+    tree.appendChild(group);
+  });
+}
+
+function toggleTeam(teamId) {
+  if (collapsedTeams.has(teamId)) collapsedTeams.delete(teamId);
+  else collapsedTeams.add(teamId);
+  renderSidebar();
+}
+
+function addTeam() {
+  const team = { id: uid('t'), name: '새 팀', members: [] };
+  TEAMS.push(team);
+  persistTeams();
+  renderSidebar();
+  requestAnimationFrame(() => {
+    const el = document.querySelector(`.team-row[data-team-id="${team.id}"] .team-name-input`);
+    if (el) { el.focus(); el.select(); }
+  });
+}
+
+function removeTeam(teamId) {
+  const team = TEAMS.find(t => t.id === teamId);
+  if (!team) return;
+  if (!confirm(`'${team.name}' 팀을 삭제할까요? 구성원과 저장된 계획도 함께 제거됩니다.`)) return;
+
+  team.members.forEach(m => safeRemove(dataKey(m.id, currentWeekOffset)));
+  TEAMS = TEAMS.filter(t => t.id !== teamId);
+  persistTeams();
+
+  if (team.members.some(m => m.id === selectedPersonId)) {
+    selectedPersonId = TEAMS[0]?.members[0]?.id ?? null;
+    safeSet(SELECTED_KEY, selectedPersonId || '');
+    loadPersonWeek(selectedPersonId, currentWeekOffset);
+  }
+  renderSidebar();
+}
+
+function addMember(teamId) {
+  const team = TEAMS.find(t => t.id === teamId);
+  if (!team) return;
+  const person = { id: uid('p'), name: '새 구성원' };
+  team.members.push(person);
+  persistTeams();
+  selectPerson(person.id, true);
+  requestAnimationFrame(() => {
+    const el = document.querySelector(`.person-row[data-person-id="${person.id}"] .person-name-input`);
+    if (el) { el.focus(); el.select(); }
+  });
+}
+
+function removeMember(teamId, personId) {
+  const team = TEAMS.find(t => t.id === teamId);
+  if (!team) return;
+  if (!confirm('이 구성원을 삭제할까요? 저장된 계획도 함께 제거됩니다.')) return;
+
+  team.members = team.members.filter(m => m.id !== personId);
+  persistTeams();
+  safeRemove(dataKey(personId, currentWeekOffset));
+
+  if (selectedPersonId === personId) {
+    selectedPersonId = team.members[0]?.id ?? TEAMS.flatMap(t => t.members)[0]?.id ?? null;
+    safeSet(SELECTED_KEY, selectedPersonId || '');
+    loadPersonWeek(selectedPersonId, currentWeekOffset);
+  }
+  renderSidebar();
+}
+
+function selectPerson(personId, skipSave) {
+  if (personId === selectedPersonId) { closeSidebarMobile(); return; }
+  if (!skipSave) saveCurrentState(true);
+  selectedPersonId = personId;
+  safeSet(SELECTED_KEY, personId || '');
+  renderSidebar();
+  loadPersonWeek(selectedPersonId, currentWeekOffset);
+  closeSidebarMobile();
+}
+
+function updateMemberLabel() {
+  const found = findPerson(selectedPersonId);
+  const memberInput = document.getElementById('memberInput');
+  if (found) memberInput.value = `${found.team.name} ${found.person.name}`;
+}
+
+// ─── Load / save plan data per person + week ────────────────────────────────────
+function loadPersonWeek(personId, offset) {
+  const memberInput = document.getElementById('memberInput');
+  const instructionsText = document.getElementById('instructionsText');
+  const found = findPerson(personId);
+
+  DAYS.forEach(d => { document.getElementById(`tasks-${d.code}`).innerHTML = ''; });
+
+  if (!found) {
+    memberInput.value = '';
+    instructionsText.value = '';
+    return;
+  }
+
+  let data = null;
+  const raw = safeGet(dataKey(personId, offset));
+  if (raw) { try { data = JSON.parse(raw); } catch(e) {} }
+
+  memberInput.value = (data && data.member) ? data.member : `${found.team.name} ${found.person.name}`;
+
+  if (data && data.tasks) {
+    DAYS.forEach(d => (data.tasks[d.code] || []).forEach(t => addTaskItem(d.code, t)));
+  } else if (personId === DEMO_PERSON_ID && offset === 0) {
+    DAYS.forEach(d => (DEFAULT_TASKS[d.code] || []).forEach(t => addTaskItem(d.code, t)));
+  }
+
+  instructionsText.value = (data && data.instructions) || '';
+  autoResize(instructionsText);
+}
+
+function saveCurrentState(silent) {
+  if (!selectedPersonId) { if (!silent) showToast('선택된 구성원이 없습니다.', true); return; }
+
+  const data = {
+    member: document.getElementById('memberInput').value,
+    tasks: {},
+    instructions: document.getElementById('instructionsText').value,
+  };
+  DAYS.forEach(d => {
+    data.tasks[d.code] = [...document.querySelectorAll(`#tasks-${d.code} .task-text`)].map(t => t.value).filter(Boolean);
+  });
+
+  try {
+    localStorage.setItem(dataKey(selectedPersonId, currentWeekOffset), JSON.stringify(data));
+    if (!silent) showToast('저장되었습니다 ✓');
+  } catch(e) {
+    if (!silent) showToast('저장 실패: ' + e.message, true);
+  }
+}
+
+function saveData() { saveCurrentState(false); }
+
+// ─── Org field (shared across the whole lab) ────────────────────────────────────
+function initOrgField() {
+  const orgInput = document.getElementById('orgInput');
+  orgInput.value = safeGet(ORG_KEY) || '차인호 공간조명연구소';
+  orgInput.addEventListener('input', () => safeSet(ORG_KEY, orgInput.value));
+}
+
+// ─── Mobile sidebar toggle ──────────────────────────────────────────────────────
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('sidebarOverlay').classList.toggle('show');
+}
+function closeSidebarMobile() {
+  if (window.innerWidth <= 880) {
+    document.getElementById('sidebar').classList.remove('open');
+    document.getElementById('sidebarOverlay').classList.remove('show');
   }
 }
 
@@ -541,37 +1001,11 @@ function autoResize(el) {
 }
 
 function clearAll() {
-  if (!confirm('모든 내용을 초기화할까요?')) return;
-  DAYS.forEach(d => {
-    document.getElementById(`tasks-${d.code}`).innerHTML = '';
-  });
+  if (!confirm('현재 화면(이 구성원·이 주)의 내용을 초기화할까요?')) return;
+  DAYS.forEach(d => { document.getElementById(`tasks-${d.code}`).innerHTML = ''; });
   document.getElementById('instructionsText').value = '';
-  renderSiteTable();
-}
-
-function saveData() {
-  // Collect data and store in localStorage
-  const data = {
-    week: getWeekLabel(currentWeekOffset),
-    org: document.getElementById('orgInput').value,
-    member: document.getElementById('memberInput').value,
-    tasks: {},
-    instructions: document.getElementById('instructionsText').value,
-    sites: [],
-  };
-  DAYS.forEach(d => {
-    data.tasks[d.code] = [...document.querySelectorAll(`#tasks-${d.code} .task-text`)].map(t => t.value).filter(Boolean);
-  });
-  document.querySelectorAll('#siteBody tr').forEach(tr => {
-    const inputs = tr.querySelectorAll('input');
-    data.sites.push({ name: inputs[0]?.value, client: inputs[1]?.value, status: inputs[2]?.value, note: inputs[3]?.value });
-  });
-  try {
-    localStorage.setItem('weeklyPlan_' + currentWeekOffset, JSON.stringify(data));
-    showToast('저장되었습니다 ✓');
-  } catch(e) {
-    showToast('저장 실패: ' + e.message, true);
-  }
+  autoResize(document.getElementById('instructionsText'));
+  if (selectedPersonId) safeRemove(dataKey(selectedPersonId, currentWeekOffset));
 }
 
 function copyToClipboard() {
@@ -593,20 +1027,17 @@ function copyToClipboard() {
   const instr = document.getElementById('instructionsText').value;
   if (instr) text += `[지시사항]\n${instr}\n\n`;
 
-  const siteRows = [...document.querySelectorAll('#siteBody tr')];
-  const hasSite = siteRows.some(tr => [...tr.querySelectorAll('input')].some(i => i.value));
-  if (hasSite) {
-    text += `[현장 진행 현황]\n`;
-    siteRows.forEach((tr, idx) => {
-      const inputs = tr.querySelectorAll('input');
-      const vals = [...inputs].map(i => i.value);
-      if (vals.some(Boolean)) {
-        text += `  ${idx+1}. ${vals[0]} | ${vals[1]} | ${vals[2]} | ${vals[3]}\n`;
-      }
-    });
-  }
-
   navigator.clipboard.writeText(text).then(() => showToast('클립보드에 복사되었습니다 ✓'));
+}
+
+function printPlan() {
+  saveCurrentState(true);
+  const week = getWeekLabel(currentWeekOffset);
+  const member = document.getElementById('memberInput').value || '주간계획';
+  const prevTitle = document.title;
+  document.title = `${member}_${week}`.replace(/\s+/g, '_');
+  window.print();
+  setTimeout(() => { document.title = prevTitle; }, 500);
 }
 
 function showToast(msg, isError = false) {
@@ -626,10 +1057,11 @@ function showToast(msg, isError = false) {
 
 // ─── Init ─────────────────────────────────────────────────────────────────────
 renderDailyTable();
-renderSiteTable();
+renderSidebar();
+initOrgField();
 renderWeek();
+loadPersonWeek(selectedPersonId, currentWeekOffset);
 
-// Auto-resize all textareas on load
 document.querySelectorAll('textarea').forEach(autoResize);
 </script>
 </body>
