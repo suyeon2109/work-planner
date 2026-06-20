@@ -201,7 +201,6 @@
 
   .page-meta {
     display: flex;
-    gap: 24px;
     margin-bottom: 28px;
     flex-wrap: wrap;
   }
@@ -211,7 +210,9 @@
     gap: 8px;
     font-size: 14px;
     color: #787774;
+    flex: 0 0 200px;
   }
+  .meta-item:last-child { flex: 0 0 auto; }
   .meta-label { font-weight: 500; color: #37352f; min-width: 60px; }
   .meta-input {
     border: none;
@@ -225,6 +226,11 @@
     min-width: 80px;
   }
   .meta-input:focus { border-bottom-color: #2eaadc; }
+  .meta-text {
+    font-size: 14px;
+    color: #37352f;
+    padding-bottom: 1px;
+  }
 
   .divider {
     border: none;
@@ -431,6 +437,14 @@
   }
   .nav-btn:hover { background: #f0efee; }
   .nav-group { display: flex; gap: 6px; }
+  .week-picker {
+    color: #37352f;
+    font-size: 13px;
+    padding: 5px 8px;
+    background: none;
+    cursor: pointer;
+    font-family: inherit;
+  }
 
   .badge {
     display: inline-block;
@@ -537,6 +551,8 @@
         <div class="week-label" id="weekLabel">2026년 06월 4주차</div>
         <div class="nav-group">
           <button class="nav-btn" onclick="changeWeek(-1)">← 이전 주</button>
+          <select class="nav-btn week-picker" id="weekNavPicker" onchange="jumpToWeekOffset(this.value)"></select>
+          <button class="nav-btn" onclick="goToNextWeek()">다음 주로 바로가기</button>
           <button class="nav-btn" onclick="changeWeek(1)">다음 주 →</button>
         </div>
       </div>
@@ -547,12 +563,12 @@
       <!-- Meta -->
       <div class="page-meta">
         <div class="meta-item">
-          <span class="meta-label">소속</span>
-          <input class="meta-input" id="orgInput" style="min-width:140px;" />
+          <span class="meta-label">팀</span>
+          <span class="meta-text" id="metaTeam">—</span>
         </div>
         <div class="meta-item">
           <span class="meta-label">담당자</span>
-          <input class="meta-input" id="memberInput" placeholder="왼쪽에서 구성원을 선택하세요" style="min-width:160px;" />
+          <span class="meta-text" id="metaManager">—</span>
         </div>
       </div>
 
@@ -625,7 +641,6 @@ const DEFAULT_TEAMS = [
 
 const TEAMS_KEY = 'wp_teams_v1';
 const SELECTED_KEY = 'wp_selected_v1';
-const ORG_KEY = 'wp_org_v1';
 
 // ─── State ────────────────────────────────────────────────────────────────────
 let TEAMS = loadTeams();
@@ -681,6 +696,19 @@ function getWeekLabel(offset) {
   return `${year}년 ${String(month).padStart(2, '0')}월 ${weekOfMonth}주차`;
 }
 
+// weekPicker(select)에 표시할 주차 범위: 과거 26주 ~ 미래 26주
+const WEEK_PICKER_RANGE = 26;
+
+function populateWeekPicker() {
+  const picker = document.getElementById('weekNavPicker');
+  if (!picker) return;
+  let html = '';
+  for (let off = -WEEK_PICKER_RANGE; off <= WEEK_PICKER_RANGE; off++) {
+    html += `<option value="${off}">${getWeekLabel(off)}</option>`;
+  }
+  picker.innerHTML = html;
+}
+
 function changeWeek(dir) {
   saveCurrentState(true);
   currentWeekOffset += dir;
@@ -688,9 +716,30 @@ function changeWeek(dir) {
   loadPersonWeek(selectedPersonId, currentWeekOffset);
 }
 
+// weekPicker(select)에서 "2026년 06월 3주차" 같은 주차를 고르면 해당 주로 이동
+function jumpToWeekOffset(value) {
+  const offset = parseInt(value, 10);
+  if (Number.isNaN(offset) || offset === currentWeekOffset) return;
+  saveCurrentState(true);
+  currentWeekOffset = offset;
+  renderWeek();
+  loadPersonWeek(selectedPersonId, currentWeekOffset);
+}
+
+// 매주 금요일 다음 주 계획을 작성하는 워크플로용: 실제 기준 '다음 주'로 바로 이동
+function goToNextWeek() {
+  if (currentWeekOffset === 1) return;
+  saveCurrentState(true);
+  currentWeekOffset = 1;
+  renderWeek();
+  loadPersonWeek(selectedPersonId, currentWeekOffset);
+}
+
 function renderWeek() {
   document.getElementById('weekLabel').textContent = getWeekLabel(currentWeekOffset);
   const mon = getWeekStart(currentWeekOffset);
+  const picker = document.getElementById('weekNavPicker');
+  if (picker) picker.value = String(currentWeekOffset);
   const tbody = document.getElementById('dailyBody');
   tbody.querySelectorAll('tr').forEach((tr, i) => {
     const d = new Date(mon);
@@ -794,7 +843,10 @@ function renderSidebar() {
       persistTeams();
       if (team.members.some(m => m.id === selectedPersonId)) updateMemberLabel();
     });
-    nameInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); nameInput.blur(); } });
+    nameInput.addEventListener('keydown', (e) => {
+      // e.isComposing / keyCode 229: 한글 등 IME 조합 중 Enter는 무시 (마지막 글자 중복 입력 방지)
+      if (e.key === 'Enter' && !e.isComposing && e.keyCode !== 229) { e.preventDefault(); nameInput.blur(); }
+    });
     removeBtn.addEventListener('click', (e) => { e.stopPropagation(); removeTeam(team.id); });
 
     group.appendChild(row);
@@ -821,7 +873,10 @@ function renderSidebar() {
         persistTeams();
         if (person.id === selectedPersonId) updateMemberLabel();
       });
-      pInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); pInput.blur(); } });
+      pInput.addEventListener('keydown', (e) => {
+        // e.isComposing / keyCode 229: 한글 등 IME 조합 중 Enter는 무시 (마지막 글자 중복 입력 방지)
+        if (e.key === 'Enter' && !e.isComposing && e.keyCode !== 229) { e.preventDefault(); pInput.blur(); }
+      });
       pRemove.addEventListener('click', (e) => { e.stopPropagation(); removeMember(team.id, person.id); });
 
       li.appendChild(pRow);
@@ -915,20 +970,26 @@ function selectPerson(personId, skipSave) {
 
 function updateMemberLabel() {
   const found = findPerson(selectedPersonId);
-  const memberInput = document.getElementById('memberInput');
-  if (found) memberInput.value = `${found.team.name} ${found.person.name}`;
+  const teamEl = document.getElementById('metaTeam');
+  const managerEl = document.getElementById('metaManager');
+  if (found) {
+    teamEl.textContent = found.team.name;
+    managerEl.textContent = found.person.name;
+  }
 }
 
 // ─── Load / save plan data per person + week ────────────────────────────────────
 function loadPersonWeek(personId, offset) {
-  const memberInput = document.getElementById('memberInput');
+  const teamEl = document.getElementById('metaTeam');
+  const managerEl = document.getElementById('metaManager');
   const instructionsText = document.getElementById('instructionsText');
   const found = findPerson(personId);
 
   DAYS.forEach(d => { document.getElementById(`tasks-${d.code}`).innerHTML = ''; });
 
   if (!found) {
-    memberInput.value = '';
+    teamEl.textContent = '—';
+    managerEl.textContent = '—';
     instructionsText.value = '';
     return;
   }
@@ -937,7 +998,8 @@ function loadPersonWeek(personId, offset) {
   const raw = safeGet(dataKey(personId, offset));
   if (raw) { try { data = JSON.parse(raw); } catch(e) {} }
 
-  memberInput.value = (data && data.member) ? data.member : `${found.team.name} ${found.person.name}`;
+  teamEl.textContent = found.team.name;
+  managerEl.textContent = found.person.name;
 
   if (data && data.tasks) {
     DAYS.forEach(d => (data.tasks[d.code] || []).forEach(t => addTaskItem(d.code, t)));
@@ -952,8 +1014,9 @@ function loadPersonWeek(personId, offset) {
 function saveCurrentState(silent) {
   if (!selectedPersonId) { if (!silent) showToast('선택된 구성원이 없습니다.', true); return; }
 
+  const found = findPerson(selectedPersonId);
   const data = {
-    member: document.getElementById('memberInput').value,
+    member: found ? `${found.team.name} ${found.person.name}` : '',
     tasks: {},
     instructions: document.getElementById('instructionsText').value,
   };
@@ -970,13 +1033,6 @@ function saveCurrentState(silent) {
 }
 
 function saveData() { saveCurrentState(false); }
-
-// ─── Org field (shared across the whole lab) ────────────────────────────────────
-function initOrgField() {
-  const orgInput = document.getElementById('orgInput');
-  orgInput.value = safeGet(ORG_KEY) || '차인호 공간조명연구소';
-  orgInput.addEventListener('input', () => safeSet(ORG_KEY, orgInput.value));
-}
 
 // ─── Mobile sidebar toggle ──────────────────────────────────────────────────────
 function toggleSidebar() {
@@ -1006,9 +1062,9 @@ function clearAll() {
 
 function copyToClipboard() {
   const week = getWeekLabel(currentWeekOffset);
-  const org = document.getElementById('orgInput').value;
-  const member = document.getElementById('memberInput').value;
-  let text = `[주간 계획] ${week}\n${org} / ${member}\n\n`;
+  const found = findPerson(selectedPersonId);
+  const member = found ? `${found.team.name} ${found.person.name}` : '';
+  let text = `[주간 계획] ${week}\n${member}\n\n`;
 
   DAYS.forEach((d, i) => {
     const mon = getWeekStart(currentWeekOffset);
@@ -1029,7 +1085,8 @@ function copyToClipboard() {
 function printPlan() {
   saveCurrentState(true);
   const week = getWeekLabel(currentWeekOffset);
-  const member = document.getElementById('memberInput').value || '주간계획';
+  const found = findPerson(selectedPersonId);
+  const member = (found ? `${found.team.name}_${found.person.name}` : '주간계획');
   const prevTitle = document.title;
   document.title = `${member}_${week}`.replace(/\s+/g, '_');
   window.print();
@@ -1054,7 +1111,7 @@ function showToast(msg, isError = false) {
 // ─── Init ─────────────────────────────────────────────────────────────────────
 renderDailyTable();
 renderSidebar();
-initOrgField();
+populateWeekPicker();
 renderWeek();
 loadPersonWeek(selectedPersonId, currentWeekOffset);
 
