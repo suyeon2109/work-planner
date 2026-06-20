@@ -263,13 +263,13 @@
     font-size: 12px;
     font-weight: 600;
     color: #9b9a97;
-    text-align: left;
+    text-align: center;
     padding: 8px 12px;
     border: 1px solid #e3e2df;
   }
   .daily-table td {
     border: 1px solid #e3e2df;
-    vertical-align: top;
+    vertical-align: middle;
     padding: 0;
   }
   .daily-table tbody tr {
@@ -305,6 +305,10 @@
     padding: 8px 12px;
     min-height: 48px;
     list-style: none;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 100%;
   }
   .task-item {
     display: flex;
@@ -521,6 +525,11 @@
 
   /* ─── Print ──────────────────────────────────────────── */
   @media print {
+    @page {
+      size: A4 portrait;
+      margin: 12mm 10mm;
+    }
+
     .sidebar, .sidebar-toggle, .sidebar-overlay,
     .week-nav .nav-group,
     .btn-row,
@@ -528,17 +537,88 @@
     .team-action, .person-action, .add-person-btn, .sidebar-add-team {
       display: none !important;
     }
-    body { background: #fff; }
-    .app-layout { display: block; }
-    .main-wrap { padding: 0; }
+
+    html, body {
+      height: 100%;
+      background: #fff;
+    }
+
+    .app-layout {
+      display: block;
+      height: 100%;
+    }
+
+    .main-wrap {
+      padding: 0;
+      height: 100%;
+    }
+
     .page {
       max-width: 100%;
+      width: 100%;
       box-shadow: none;
-      padding: 16px 8px;
+      padding: 10px 12px;
     }
+
+    /* 제목·메타·구분선 고정 영역 */
+    .week-nav { margin-bottom: 10px; }
+    .page-title { font-size: 22px; margin-bottom: 6px; }
+    .page-meta { margin-bottom: 12px; }
+    .divider { margin: 10px 0; }
+
+    /* 업무 테이블 행 높이를 적당히 늘림 */
+    .daily-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 0;
+    }
+
+    /* 각 행의 최소 높이를 고정 */
+    .daily-table tbody tr {
+      height: 90px;
+    }
+
+    .task-list {
+      min-height: 70px;
+    }
+
+    .daily-table td,
+    .daily-table th {
+      border: 1px solid #ccc;
+      vertical-align: middle;
+    }
+
+    .daily-table th {
+      padding: 5px 10px;
+      font-size: 11px;
+    }
+
+    .task-list {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      min-height: unset;
+    }
+
+    /* 지시사항 박스 높이 고정 */
+    .instructions-box {
+      border: 1px solid #ddd;
+      background: #fff;
+      flex-shrink: 0;
+      margin-bottom: 0;
+      padding: 10px 14px;
+    }
+
+    .instructions-textarea {
+      min-height: 50px;
+    }
+
     .meta-input { border-bottom: none; }
-    .instructions-box { border: 1px solid #ddd; background: #fff; }
-    .daily-table { page-break-inside: auto; }
+
+    .section-label { margin-bottom: 6px; }
+
+    /* 페이지 넘김 방지 */
+    .daily-table { page-break-inside: avoid; }
     .daily-table tr { page-break-inside: avoid; }
   }
 </style>
