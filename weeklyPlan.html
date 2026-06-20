@@ -707,6 +707,10 @@
 
 </div>
 
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
 <script>
 // ─── Constants ──────────────────────────────────────────────────────────────
 const DAYS = [
@@ -740,20 +744,44 @@ const TEAMS_KEY = 'wp_teams_v1';
 const SELECTED_KEY = 'wp_selected_v1';
 
 // ─── State ────────────────────────────────────────────────────────────────────
-let TEAMS = loadTeams();
-let selectedPersonId = safeGet(SELECTED_KEY) || (TEAMS[0]?.members[0]?.id ?? null);
+let TEAMS = [];
+let selectedPersonId = null;
 let currentWeekOffset = 0;
 const collapsedTeams = new Set();
 
-function safeGet(key) { try { return localStorage.getItem(key); } catch(e) { return null; } }
-function safeSet(key, val) { try { localStorage.setItem(key, val); } catch(e) {} }
-function safeRemove(key) { try { localStorage.removeItem(key); } catch(e) {} }
+// ─── Firebase ────────────────────────────────────────────────────────────────
+const _firebaseConfig = {
+  apiKey: "AIzaSyC4sYx0-60NVCK2MI9z8cKpKUry4R_bLgM",
+  authDomain: "work-planner-62897.firebaseapp.com",
+  projectId: "work-planner-62897",
+  storageBucket: "work-planner-62897.firebasestorage.app",
+  messagingSenderId: "199105250426",
+  appId: "1:199105250426:web:6cf9f54c659cf5950a67c3"
+};
+let _db = null;
+function getDb() {
+  if (_db) return _db;
+  if (!firebase.apps.length) firebase.initializeApp(_firebaseConfig);
+  _db = firebase.firestore();
+  return _db;
+}
+const FS_COL = 'wp_store';
 
-function loadTeams() {
-  const raw = safeGet(TEAMS_KEY);
-  if (raw) {
-    try { return JSON.parse(raw); } catch(e) {}
-  }
+async function safeGet(key) {
+  try { const snap = await getDb().collection(FS_COL).doc(key).get(); return snap.exists ? snap.data().v : null; }
+  catch(e) { return null; }
+}
+async function safeSet(key, val) {
+  try { await getDb().collection(FS_COL).doc(key).set({ v: val }); }
+  catch(e) { console.error(e); }
+}
+async function safeRemove(key) {
+  try { await getDb().collection(FS_COL).doc(key).delete(); } catch(e) {}
+}
+
+async function loadTeams() {
+  const raw = await safeGet(TEAMS_KEY);
+  if (raw) { try { return JSON.parse(raw); } catch(e) {} }
   return JSON.parse(JSON.stringify(DEFAULT_TEAMS));
 }
 function persistTeams() { safeSet(TEAMS_KEY, JSON.stringify(TEAMS)); }
@@ -806,30 +834,30 @@ function populateWeekPicker() {
   picker.innerHTML = html;
 }
 
-function changeWeek(dir) {
-  saveCurrentState(true);
+async function changeWeek(dir) {
+  await saveCurrentState(true);
   currentWeekOffset += dir;
   renderWeek();
-  loadPersonWeek(selectedPersonId, currentWeekOffset);
+  await loadPersonWeek(selectedPersonId, currentWeekOffset);
 }
 
 // weekPicker(select)에서 "2026년 06월 3주차" 같은 주차를 고르면 해당 주로 이동
-function jumpToWeekOffset(value) {
+async function jumpToWeekOffset(value) {
   const offset = parseInt(value, 10);
   if (Number.isNaN(offset) || offset === currentWeekOffset) return;
-  saveCurrentState(true);
+  await saveCurrentState(true);
   currentWeekOffset = offset;
   renderWeek();
-  loadPersonWeek(selectedPersonId, currentWeekOffset);
+  await loadPersonWeek(selectedPersonId, currentWeekOffset);
 }
 
 // 매주 금요일 다음 주 계획을 작성하는 워크플로용: 실제 기준 '다음 주'로 바로 이동
-function goToNextWeek() {
+async function goToNextWeek() {
   if (currentWeekOffset === 1) return;
-  saveCurrentState(true);
+  await saveCurrentState(true);
   currentWeekOffset = 1;
   renderWeek();
-  loadPersonWeek(selectedPersonId, currentWeekOffset);
+  await loadPersonWeek(selectedPersonId, currentWeekOffset);
 }
 
 function renderWeek() {
@@ -1040,30 +1068,30 @@ function addMember(teamId) {
   });
 }
 
-function removeMember(teamId, personId) {
+async function removeMember(teamId, personId) {
   const team = TEAMS.find(t => t.id === teamId);
   if (!team) return;
   if (!confirm('이 구성원을 삭제할까요? 저장된 계획도 함께 제거됩니다.')) return;
 
   team.members = team.members.filter(m => m.id !== personId);
   persistTeams();
-  safeRemove(dataKey(personId, currentWeekOffset));
+  await safeRemove(dataKey(personId, currentWeekOffset));
 
   if (selectedPersonId === personId) {
     selectedPersonId = team.members[0]?.id ?? TEAMS.flatMap(t => t.members)[0]?.id ?? null;
-    safeSet(SELECTED_KEY, selectedPersonId || '');
-    loadPersonWeek(selectedPersonId, currentWeekOffset);
+    await safeSet(SELECTED_KEY, selectedPersonId || '');
+    await loadPersonWeek(selectedPersonId, currentWeekOffset);
   }
   renderSidebar();
 }
 
-function selectPerson(personId, skipSave) {
+async function selectPerson(personId, skipSave) {
   if (personId === selectedPersonId) { closeSidebarMobile(); return; }
-  if (!skipSave) saveCurrentState(true);
+  if (!skipSave) await saveCurrentState(true);
   selectedPersonId = personId;
-  safeSet(SELECTED_KEY, personId || '');
+  await safeSet(SELECTED_KEY, personId || '');
   renderSidebar();
-  loadPersonWeek(selectedPersonId, currentWeekOffset);
+  await loadPersonWeek(selectedPersonId, currentWeekOffset);
   closeSidebarMobile();
 }
 
@@ -1078,7 +1106,7 @@ function updateMemberLabel() {
 }
 
 // ─── Load / save plan data per person + week ────────────────────────────────────
-function loadPersonWeek(personId, offset) {
+async function loadPersonWeek(personId, offset) {
   const teamEl = document.getElementById('metaTeam');
   const managerEl = document.getElementById('metaManager');
   const instructionsText = document.getElementById('instructionsText');
@@ -1094,7 +1122,7 @@ function loadPersonWeek(personId, offset) {
   }
 
   let data = null;
-  const raw = safeGet(dataKey(personId, offset));
+  const raw = await safeGet(dataKey(personId, offset));
   if (raw) { try { data = JSON.parse(raw); } catch(e) {} }
 
   teamEl.textContent = found.team.name;
@@ -1111,10 +1139,10 @@ function loadPersonWeek(personId, offset) {
 }
 
 // 지난주(현재 보고 있는 주의 바로 전 주) 업무 내용을 그대로 가져와 현재 주에 채워넣기
-function importLastWeek() {
+async function importLastWeek() {
   if (!selectedPersonId) { showToast('선택된 구성원이 없습니다.', true); return; }
 
-  const raw = safeGet(dataKey(selectedPersonId, currentWeekOffset - 1));
+  const raw = await safeGet(dataKey(selectedPersonId, currentWeekOffset - 1));
   if (!raw) { showToast('지난주에 저장된 내용이 없습니다.', true); return; }
 
   let data = null;
@@ -1137,7 +1165,7 @@ function importLastWeek() {
   showToast('지난주 내용을 가져왔습니다 ✓');
 }
 
-function saveCurrentState(silent) {
+async function saveCurrentState(silent) {
   if (!selectedPersonId) { if (!silent) showToast('선택된 구성원이 없습니다.', true); return; }
 
   const found = findPerson(selectedPersonId);
@@ -1151,7 +1179,7 @@ function saveCurrentState(silent) {
   });
 
   try {
-    localStorage.setItem(dataKey(selectedPersonId, currentWeekOffset), JSON.stringify(data));
+    await safeSet(dataKey(selectedPersonId, currentWeekOffset), JSON.stringify(data));
     if (!silent) showToast('저장되었습니다 ✓');
   } catch(e) {
     if (!silent) showToast('저장 실패: ' + e.message, true);
@@ -1178,16 +1206,16 @@ function autoResize(el) {
   el.style.height = el.scrollHeight + 'px';
 }
 
-function clearAll() {
+async function clearAll() {
   if (!confirm('현재 화면(이 구성원·이 주)의 내용을 초기화할까요?')) return;
   DAYS.forEach(d => { document.getElementById(`tasks-${d.code}`).innerHTML = ''; });
   document.getElementById('instructionsText').value = '';
   autoResize(document.getElementById('instructionsText'));
-  if (selectedPersonId) safeRemove(dataKey(selectedPersonId, currentWeekOffset));
+  if (selectedPersonId) await safeRemove(dataKey(selectedPersonId, currentWeekOffset));
 }
 
-function printPlan() {
-  saveCurrentState(true);
+async function printPlan() {
+  await saveCurrentState(true);
   const week = getWeekLabel(currentWeekOffset);
   const found = findPerson(selectedPersonId);
   const member = (found ? `${found.team.name}_${found.person.name}` : '주간계획');
@@ -1213,13 +1241,20 @@ function showToast(msg, isError = false) {
 }
 
 // ─── Init ─────────────────────────────────────────────────────────────────────
-renderDailyTable();
-renderSidebar();
-populateWeekPicker();
-renderWeek();
-loadPersonWeek(selectedPersonId, currentWeekOffset);
+async function init() {
+  renderDailyTable();
+  populateWeekPicker();
+  renderWeek();
 
-document.querySelectorAll('textarea').forEach(autoResize);
+  TEAMS = await loadTeams();
+  selectedPersonId = (await safeGet(SELECTED_KEY)) || (TEAMS[0]?.members[0]?.id ?? null);
+
+  renderSidebar();
+  await loadPersonWeek(selectedPersonId, currentWeekOffset);
+  document.querySelectorAll('textarea').forEach(autoResize);
+}
+
+init();
 </script>
 </body>
 </html>

@@ -610,6 +610,10 @@
 </div>
 
 
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
 <script>
 // ══════════════════════════════════════
 //  Constants
@@ -656,22 +660,44 @@ let currentDayOffset = 0; // relative to today
 const collapsedTeams = new Set();
 
 // ══════════════════════════════════════
-//  Storage helpers (window.storage — persists across sessions)
+//  Storage helpers (Firebase Firestore)
 // ══════════════════════════════════════
+const _firebaseConfig = {
+  apiKey: "AIzaSyC4sYx0-60NVCK2MI9z8cKpKUry4R_bLgM",
+  authDomain: "work-planner-62897.firebaseapp.com",
+  projectId: "work-planner-62897",
+  storageBucket: "work-planner-62897.firebasestorage.app",
+  messagingSenderId: "199105250426",
+  appId: "1:199105250426:web:6cf9f54c659cf5950a67c3"
+};
+let _db = null;
+function getDb() {
+  if (_db) return _db;
+  if (!firebase.apps.length) firebase.initializeApp(_firebaseConfig);
+  _db = firebase.firestore();
+  return _db;
+}
+const FS_COL = 'dp_store';
+
 async function storeGet(key) {
-  try { const r = await window.storage.get(key); return r ? r.value : null; }
+  try { const snap = await getDb().collection(FS_COL).doc(key).get(); return snap.exists ? snap.data().v : null; }
   catch(e) { return null; }
 }
 async function storeSet(key, value) {
-  try { await window.storage.set(key, value); return true; }
+  try { await getDb().collection(FS_COL).doc(key).set({ v: value }); return true; }
   catch(e) { console.error(e); return false; }
 }
 async function storeDelete(key) {
-  try { await window.storage.delete(key); } catch(e) {}
+  try { await getDb().collection(FS_COL).doc(key).delete(); } catch(e) {}
 }
 async function storeList(prefix) {
-  try { const r = await window.storage.list(prefix); return (r && r.keys) ? r.keys : []; }
-  catch(e) { return []; }
+  try {
+    const snap = await getDb().collection(FS_COL)
+      .where(firebase.firestore.FieldPath.documentId(), '>=', prefix)
+      .where(firebase.firestore.FieldPath.documentId(), '<', prefix + '\uf8ff')
+      .get();
+    return snap.docs.map(d => d.id);
+  } catch(e) { return []; }
 }
 
 function uid(prefix) { return prefix + '_' + Math.random().toString(36).slice(2, 9); }
