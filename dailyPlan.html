@@ -209,6 +209,48 @@
   }
   .person-action:hover { color: var(--danger); }
 
+  /* 퇴사자 섹션 */
+  .retired-section { margin-top: 10px; border-top: 1px solid var(--border); padding-top: 8px; }
+  .retired-section-header {
+    display: flex; align-items: center; gap: 5px;
+    padding: 4px 6px; cursor: pointer; border-radius: 5px;
+  }
+  .retired-section-header:hover { background: rgba(0,0,0,0.06); }
+  .retired-chevron {
+    width: 13px; flex-shrink: 0; color: var(--text-muted); font-size: 9px;
+    display: flex; justify-content: center; transition: transform 0.15s;
+  }
+  .retired-section.collapsed .retired-chevron { transform: rotate(-90deg); }
+  .retired-section-label { font-size: 11px; font-weight: 600; color: var(--text-light); letter-spacing: 0.05em; }
+  .retired-section.collapsed .retired-member-list { display: none; }
+  .retired-member-list { list-style: none; }
+
+  .person-row.retired .person-dot { background: var(--text-light); }
+  .person-row.retired .person-name-input { color: var(--text-muted); text-decoration: line-through; }
+  .person-row.retired.active .person-name-input { color: #6b9db3; }
+  .person-row.retired.active { background: #f0f8fc; }
+
+  /* 컨텍스트 메뉴 */
+  .ctx-menu {
+    position: fixed; z-index: 9999;
+    background: #fff; border: 1px solid var(--border);
+    border-radius: 6px; box-shadow: 0 4px 16px rgba(0,0,0,.12);
+    padding: 4px; min-width: 140px; font-size: 13px;
+  }
+  .ctx-menu button {
+    display: block; width: 100%; text-align: left;
+    border: none; background: none; cursor: pointer;
+    padding: 7px 12px; border-radius: 4px;
+    color: var(--text); font-family: var(--font); font-size: 13px;
+  }
+  .ctx-menu button:hover { background: #f0efee; }
+  .ctx-menu button.danger { color: var(--danger); }
+  .ctx-menu button.danger:hover { background: #fff0f0; }
+  .ctx-menu button::before { content: ''; display: inline-block; width: 7px; height: 7px; border-radius: 50%; margin-right: 8px; background: #c1bdb7; vertical-align: middle; flex-shrink: 0; }
+  .ctx-menu button.danger::before { background: #eb5757; }
+  .ctx-menu button.restore::before { background: #0f7b6c; }
+  .ctx-menu .ctx-divider { border: none; border-top: 1px solid var(--border); margin: 3px 0; }
+
   .add-person-btn {
     display: block;
     width: 100%;
@@ -1160,7 +1202,11 @@ function renderSidebar() {
     return;
   }
 
+  const allRetired = TEAMS.flatMap(t => t.members.filter(m => m.retired).map(m => ({ team: t, person: m })));
+
   TEAMS.forEach(team => {
+    const activeMembers = team.members.filter(m => !m.retired);
+
     const group = document.createElement('div');
     group.className = 'team-group' + (collapsedTeams.has(team.id) ? ' collapsed' : '');
 
@@ -1186,7 +1232,6 @@ function renderSidebar() {
       if (teamEl && team.members.some(m => m.id === selectedPersonId)) teamEl.textContent = team.name;
     });
     nameInput.addEventListener('keydown', (e) => {
-      // e.isComposing / keyCode 229: 한글 등 IME 조합 중 Enter는 무시 (마지막 글자 중복 입력 방지)
       if (e.key === 'Enter' && !e.isComposing && e.keyCode !== 229) { e.preventDefault(); nameInput.blur(); }
     });
     removeBtn.addEventListener('click', (e) => { e.stopPropagation(); removeTeam(team.id); });
@@ -1195,43 +1240,8 @@ function renderSidebar() {
 
     const list = document.createElement('ul');
     list.className = 'member-list';
-    team.members.forEach(person => {
-      const li = document.createElement('li');
-      const pRow = document.createElement('div');
-      pRow.className = 'person-row' + (person.id === selectedPersonId ? ' active' : '');
-      pRow.dataset.personId = person.id;
-      pRow.innerHTML = `
-        <span class="person-dot"></span>
-        <input class="person-name-input" value="${escapeAttr(person.name)}" />
-        <span class="person-spacer" title="선택하고 일지 보기"></span>
-        <button class="person-action" title="구성원 삭제">✕</button>
-      `;
-      const pInput = pRow.querySelector('.person-name-input');
-      const pSpacer = pRow.querySelector('.person-spacer');
-      const pRemove = pRow.querySelector('.person-action');
-
-      pRow.addEventListener('click', () => selectPerson(person.id));
-      // 이름(텍스트) 클릭 → 이름 변경 모드로만 진입 (모바일 사이드바는 닫지 않음)
-      pInput.addEventListener('click', (e) => { e.stopPropagation(); selectPerson(person.id, false, true); });
-      // 이름 오른쪽 빈 공간 클릭 → 선택 + 모바일 사이드바 접고 일지 보기
-      pSpacer.addEventListener('click', (e) => { e.stopPropagation(); selectPerson(person.id); });
-      pInput.addEventListener('input', () => {
-        person.name = pInput.value;
-        persistTeams();
-        if (person.id === selectedPersonId) {
-          updateBreadcrumb();
-          const managerEl = document.getElementById('metaManager');
-          if (managerEl) managerEl.textContent = person.name;
-        }
-      });
-      pInput.addEventListener('keydown', (e) => {
-        // e.isComposing / keyCode 229: 한글 등 IME 조합 중 Enter는 무시 (마지막 글자 중복 입력 방지)
-        if (e.key === 'Enter' && !e.isComposing && e.keyCode !== 229) { e.preventDefault(); pInput.blur(); closeSidebarMobile(); }
-      });
-      pRemove.addEventListener('click', (e) => { e.stopPropagation(); removeMember(team.id, person.id); });
-
-      li.appendChild(pRow);
-      list.appendChild(li);
+    activeMembers.forEach(person => {
+      list.appendChild(buildPersonLi(team, person));
     });
     group.appendChild(list);
 
@@ -1243,6 +1253,157 @@ function renderSidebar() {
 
     tree.appendChild(group);
   });
+
+  if (allRetired.length > 0) {
+    const retiredSection = document.createElement('div');
+    retiredSection.className = 'retired-section' + (collapsedTeams.has('__retired__') ? ' collapsed' : '');
+
+    const header = document.createElement('div');
+    header.className = 'retired-section-header';
+    header.innerHTML = `<span class="retired-chevron">▾</span><span class="retired-section-label">퇴사자 (${allRetired.length})</span>`;
+    header.addEventListener('click', () => {
+      if (collapsedTeams.has('__retired__')) collapsedTeams.delete('__retired__');
+      else collapsedTeams.add('__retired__');
+      renderSidebar();
+    });
+    retiredSection.appendChild(header);
+
+    const rList = document.createElement('ul');
+    rList.className = 'retired-member-list';
+    allRetired.forEach(({ team, person }) => {
+      rList.appendChild(buildPersonLi(team, person));
+    });
+    retiredSection.appendChild(rList);
+    tree.appendChild(retiredSection);
+  }
+}
+
+function buildPersonLi(team, person) {
+  const li = document.createElement('li');
+  const pRow = document.createElement('div');
+  const isRetired = !!person.retired;
+  pRow.className = 'person-row' + (person.id === selectedPersonId ? ' active' : '') + (isRetired ? ' retired' : '');
+  pRow.dataset.personId = person.id;
+  pRow.innerHTML = `
+    <span class="person-dot"></span>
+    <input class="person-name-input" value="${escapeAttr(person.name)}" ${isRetired ? 'readonly' : ''} />
+    <span class="person-spacer" title="선택하고 일지 보기"></span>
+    <button class="person-action" title="옵션">···</button>
+  `;
+  const pInput = pRow.querySelector('.person-name-input');
+  const pSpacer = pRow.querySelector('.person-spacer');
+  const pActionBtn = pRow.querySelector('.person-action');
+
+  pRow.addEventListener('click', () => selectPerson(person.id));
+  pInput.addEventListener('click', (e) => { e.stopPropagation(); if (!isRetired) selectPerson(person.id, false, true); });
+  pSpacer.addEventListener('click', (e) => { e.stopPropagation(); selectPerson(person.id); });
+  if (!isRetired) {
+    pInput.addEventListener('input', () => {
+      person.name = pInput.value;
+      persistTeams();
+      if (person.id === selectedPersonId) {
+        updateBreadcrumb();
+        const managerEl = document.getElementById('metaManager');
+        if (managerEl) managerEl.textContent = person.name;
+      }
+    });
+    pInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && !e.isComposing && e.keyCode !== 229) { e.preventDefault(); pInput.blur(); closeSidebarMobile(); }
+    });
+  }
+  pActionBtn.addEventListener('click', (e) => { e.stopPropagation(); showPersonMenu(e, team.id, person); });
+
+  li.appendChild(pRow);
+  return li;
+}
+
+function showPersonMenu(e, teamId, person) {
+  document.querySelectorAll('.ctx-menu').forEach(m => m.remove());
+
+  const menu = document.createElement('div');
+  menu.className = 'ctx-menu';
+
+  if (!person.retired) {
+    const retireBtn = document.createElement('button');
+    retireBtn.className = 'retire'; retireBtn.textContent = '퇴사 처리';
+    retireBtn.addEventListener('click', () => { menu.remove(); retireMember(teamId, person.id); });
+    menu.appendChild(retireBtn);
+
+    const div1 = document.createElement('hr');
+    div1.className = 'ctx-divider';
+    menu.appendChild(div1);
+  } else {
+    const restoreBtn = document.createElement('button');
+    restoreBtn.className = 'restore'; restoreBtn.textContent = '복직 처리';
+    restoreBtn.addEventListener('click', () => { menu.remove(); restoreMember(teamId, person.id); });
+    menu.appendChild(restoreBtn);
+
+    const div1 = document.createElement('hr');
+    div1.className = 'ctx-divider';
+    menu.appendChild(div1);
+  }
+
+  const deleteBtn = document.createElement('button');
+  deleteBtn.textContent = '완전 삭제';
+  deleteBtn.className = 'danger';
+  deleteBtn.addEventListener('click', () => { menu.remove(); removeMember(teamId, person.id); });
+  menu.appendChild(deleteBtn);
+
+  document.body.appendChild(menu);
+  const rect = e.target.getBoundingClientRect();
+  const mw = menu.offsetWidth, mh = menu.offsetHeight;
+  let top = rect.bottom + 4, left = rect.left;
+  if (top + mh > window.innerHeight) top = rect.top - mh - 4;
+  if (left + mw > window.innerWidth) left = window.innerWidth - mw - 8;
+  menu.style.top = top + 'px';
+  menu.style.left = left + 'px';
+
+  const close = (ev) => { if (!menu.contains(ev.target)) { menu.remove(); document.removeEventListener('click', close, true); } };
+  setTimeout(() => document.addEventListener('click', close, true), 0);
+}
+
+function retireMember(teamId, personId) {
+  const team = TEAMS.find(t => t.id === teamId);
+  if (!team) return;
+  const person = team.members.find(m => m.id === personId);
+  if (!person) return;
+  person.retired = true;
+  persistTeams();
+
+  if (selectedPersonId === personId) {
+    const active = TEAMS.flatMap(t => t.members).find(m => !m.retired);
+    selectedPersonId = active?.id ?? null;
+    storeSet(SELECTED_KEY, selectedPersonId || '');
+    loadPersonDate();
+  }
+  renderSidebar();
+}
+
+function restoreMember(teamId, personId) {
+  const team = TEAMS.find(t => t.id === teamId);
+  if (!team) return;
+  const person = team.members.find(m => m.id === personId);
+  if (!person) return;
+  delete person.retired;
+  persistTeams();
+  renderSidebar();
+}
+
+async function removeMember(teamId, personId) {
+  const team = TEAMS.find(t => t.id === teamId);
+  if (!team) return;
+  if (!confirm('완전 삭제하면 저장된 일지도 모두 사라집니다. 계속할까요?')) return;
+
+  team.members = team.members.filter(m => m.id !== personId);
+  persistTeams();
+  await cleanupPersonEntries(personId);
+
+  if (selectedPersonId === personId) {
+    selectedPersonId = TEAMS.flatMap(t => t.members).find(m => !m.retired)?.id ?? null;
+    storeSet(SELECTED_KEY, selectedPersonId || '');
+    await loadPersonDate();
+  }
+  renderSidebar();
 }
 
 function toggleTeam(teamId) {
@@ -1285,29 +1446,11 @@ async function addMember(teamId) {
   const person = { id: uid('p'), name: '새 구성원' };
   team.members.push(person);
   persistTeams();
-  // skipMobileClose=true: 새 구성원 이름을 입력하는 동안 모바일 사이드바가 닫히지 않도록 유지
   await selectPerson(person.id, true, true);
   requestAnimationFrame(() => {
     const el = document.querySelector(`.person-row[data-person-id="${person.id}"] .person-name-input`);
     if (el) { el.focus(); el.select(); }
   });
-}
-
-async function removeMember(teamId, personId) {
-  const team = TEAMS.find(t => t.id === teamId);
-  if (!team) return;
-  if (!confirm('이 구성원을 삭제할까요? 저장된 일지도 함께 제거됩니다.')) return;
-
-  team.members = team.members.filter(m => m.id !== personId);
-  persistTeams();
-  await cleanupPersonEntries(personId);
-
-  if (selectedPersonId === personId) {
-    selectedPersonId = team.members[0]?.id ?? TEAMS.flatMap(t => t.members)[0]?.id ?? null;
-    storeSet(SELECTED_KEY, selectedPersonId || '');
-    await loadPersonDate();
-  }
-  renderSidebar();
 }
 
 async function selectPerson(personId, skipSave, skipMobileClose) {
