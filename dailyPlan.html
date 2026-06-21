@@ -861,7 +861,16 @@
     }
     .date-nav-left {
       width: 100%;
-      justify-content: space-between;
+      flex-direction: column;
+      align-items: flex-start;
+      flex-wrap: nowrap;
+      gap: 8px;
+    }
+    .date-nav-label {
+      width: 100%;
+    }
+    .search-trigger-btn {
+      align-self: flex-start;
     }
     .nav-group {
       display: grid;
