@@ -728,6 +728,15 @@
   /* mobile prof-mode-btn center */
   .prof-mode-btn { justify-content:center; }
 
+  /* ─── Empty state ───────────────────────────────────── */
+  .empty-state {
+    text-align: center;
+    padding: 80px 20px;
+    color: #9b9a97;
+  }
+  .empty-state .big-emoji { font-size: 48px; margin-bottom: 12px; }
+  .empty-state p { font-size: 15px; }
+
   /* ─── Print ──────────────────────────────────────────── */
   @media print {
     @page {
@@ -872,6 +881,15 @@
   <div class="main-wrap">
     <div class="page">
 
+      <!-- Empty state (shown when no person selected) -->
+      <div id="emptyState" class="empty-state">
+        <div class="big-emoji">📄</div>
+        <p>왼쪽에서 팀과 구성원을 선택하세요.</p>
+      </div>
+
+      <!-- Page content (hidden until person selected) -->
+      <div id="pageContent" style="display:none;">
+
       <!-- Week Navigator -->
       <div class="week-nav">
         <div class="week-label" id="weekLabel">2026년 06월 4주차</div>
@@ -953,6 +971,8 @@
         <button class="btn btn-secondary" onclick="printPlan()">🖨 인쇄</button>
         <button class="btn btn-primary" onclick="saveData()">💾 저장</button>
       </div>
+
+      </div><!-- /pageContent -->
 
     </div>
   </div>
@@ -1557,6 +1577,8 @@ async function loadPersonWeek(personId, offset) {
   const managerEl = document.getElementById('metaManager');
   const instructionsText = document.getElementById('instructionsText');
   const found = findPerson(personId);
+  const emptyState = document.getElementById('emptyState');
+  const pageContent = document.getElementById('pageContent');
 
   DAYS.forEach(d => { document.getElementById(`tasks-${d.code}`).innerHTML = ''; });
 
@@ -1564,8 +1586,13 @@ async function loadPersonWeek(personId, offset) {
     teamEl.textContent = '—';
     managerEl.textContent = '—';
     instructionsText.value = '';
+    if (emptyState) emptyState.style.display = '';
+    if (pageContent) pageContent.style.display = 'none';
     return;
   }
+
+  if (emptyState) emptyState.style.display = 'none';
+  if (pageContent) pageContent.style.display = '';
 
   let data = null;
   const raw = await safeGet(dataKey(personId, offset));
@@ -1784,10 +1811,12 @@ async function init() {
   renderWeek();
 
   TEAMS = await loadTeams();
-  selectedPersonId = (await safeGet(SELECTED_KEY)) || (TEAMS[0]?.members[0]?.id ?? null);
+  selectedPersonId = null;
 
   renderSidebar();
-  await loadPersonWeek(selectedPersonId, currentWeekOffset);
+  if (selectedPersonId) {
+    await loadPersonWeek(selectedPersonId, currentWeekOffset);
+  }
   document.querySelectorAll('textarea').forEach(autoResize);
 }
 

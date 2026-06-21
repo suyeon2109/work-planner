@@ -973,7 +973,7 @@
 
   /* ── Print ── */
   @media print {
-    .sidebar, .date-nav .nav-group, .btn-row, .search-trigger-btn, .search-modal, .search-modal-overlay {
+    .sidebar, .sidebar-toggle, .sidebar-overlay, .date-nav .nav-group, .btn-row, .search-trigger-btn, .search-modal, .search-modal-overlay {
       display: none !important;
     }
     body { background: #fff; }
@@ -1060,7 +1060,7 @@
   <div class="page">
 
     <!-- Date Navigator -->
-    <div class="date-nav">
+    <div class="date-nav" style="display:none;">
       <div class="date-nav-left">
         <div class="date-nav-label" id="dateNavLabel">—</div>
         <button class="search-trigger-btn" onclick="openSearchModal()" title="업무일지 내용 검색">🔍 내용 검색</button>
@@ -1081,7 +1081,7 @@
     </div>
 
     <!-- Actions -->
-    <div class="btn-row">
+    <div class="btn-row" style="display:none;">
       <button class="prof-mode-btn" id="profModeBtn" onclick="toggleProfMode()">🎓 교수님 모드</button>
       <button class="btn btn-secondary" onclick="clearCurrent()">🗑 초기화</button>
       <button class="btn btn-secondary" onclick="printPlan()">🖨 인쇄</button>
@@ -1575,14 +1575,20 @@ function updateBreadcrumb() {
 async function loadPersonDate() {
   updateBreadcrumb();
   const found = findPerson(selectedPersonId);
+  const dateNav = document.querySelector('.date-nav');
+  const btnRow = document.querySelector('.btn-row');
   if (!found) {
     document.getElementById('entryContent').innerHTML = `
       <div class="empty-state">
         <div class="big-emoji">📄</div>
         <p>왼쪽에서 팀과 구성원을 선택하세요.</p>
       </div>`;
+    if (dateNav) dateNav.style.display = 'none';
+    if (btnRow) btnRow.style.display = 'none';
     return;
   }
+  if (dateNav) dateNav.style.display = '';
+  if (btnRow) btnRow.style.display = '';
 
   const d = dateForOffset(currentDayOffset);
   const id = dateId(d);
@@ -2046,7 +2052,7 @@ function showToast(msg, isError = false) {
 // ══════════════════════════════════════
 async function init() {
   TEAMS = await loadTeams();
-  selectedPersonId = (await storeGet(SELECTED_KEY)) || (TEAMS[0]?.members[0]?.id ?? null);
+  selectedPersonId = null;
   await seedDemoIfNeeded();
 
   renderSidebar();
