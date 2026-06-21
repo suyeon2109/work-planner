@@ -948,7 +948,7 @@
       <!-- Actions -->
       <div class="btn-row">
         <button class="prof-mode-btn" id="wpProfModeBtn" onclick="wpToggleProfMode()">🎓 교수님 모드</button>
-        <button class="btn btn-secondary" onclick="clearAll()">🗑 초기화</button>
+        <button class="btn btn-secondary" onclick="wpClearAll()">🗑 초기화</button>
         <button class="btn btn-secondary" onclick="importLastWeek()">⬅ 지난주 내용 가져오기</button>
         <button class="btn btn-secondary" onclick="printPlan()">🖨 인쇄</button>
         <button class="btn btn-primary" onclick="saveData()">💾 저장</button>
@@ -1924,6 +1924,16 @@ function wpRenderSigDisplay() {
   el.innerHTML = stampHtml;
   if (badge) { badge.textContent = '✓ 확인됨'; badge.classList.add('show'); }
   if (section) section.classList.add('has-signature');
+}
+function wpClearAll() {
+  clearAll().then(() => {
+    wpCurrentSignature = null;
+    wpRenderSigDisplay();
+    ['instructions', ...DAYS.map(d => d.code)].forEach(key => {
+      const l = document.getElementById('wp-clist-' + key);
+      if (l) l.innerHTML = '';
+    });
+  });
 }
 
 init();
