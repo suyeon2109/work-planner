@@ -243,7 +243,8 @@
     margin-bottom: 10px;
     border: none;
     outline: none;
-    width: 100%;
+    width: auto;
+    min-width: 80px;
     background: transparent;
     color: #37352f;
     line-height: 1.3;
@@ -663,6 +664,70 @@
     .btn { font-size: 13px; padding: 8px 10px; justify-content: center; }
   }
 
+
+  /* ── Professor Mode ── */
+  .prof-mode-btn { background:#fff0f0;color:#c0392b;border:1.5px solid #eb5757;border-radius:4px;padding:7px 14px;font-size:13px;font-family:inherit;cursor:pointer;font-weight:600;display:flex;align-items:center;gap:6px;transition:background 0.15s; }
+  .prof-mode-btn.active { background:#c0392b;color:#fff;border-color:#a93226; }
+  .prof-mode-banner { display:none;background:#fff0f0;border:1.5px solid #eb5757;border-radius:6px;padding:9px 14px;color:#c0392b;font-size:13px;font-weight:600;margin-bottom:16px;align-items:center;gap:8px; }
+  .prof-mode-banner.show { display:flex; }
+  .comment-list { display:flex;flex-direction:column;gap:4px;margin:4px 12px 6px; }
+  .comment-item { display:flex;align-items:flex-start;gap:6px;padding:6px 10px;border-left:3px solid #eb5757;background:#fff8f8;border-radius:0 4px 4px 0; }
+  .comment-item-text { flex:1;color:#c0392b;font-size:13px;line-height:1.6;white-space:pre-wrap;font-weight:500; }
+  .comment-del-btn { opacity:0;border:none;background:none;cursor:pointer;color:#c0392b;font-size:14px;padding:0 3px;flex-shrink:0;transition:opacity 0.15s;line-height:1;align-self:flex-start; }
+  .comment-item:hover .comment-del-btn { opacity:1; }
+  .comment-edit-wrap { display:none;padding:4px 12px 8px; }
+  .prof-mode-active .comment-edit-wrap { display:block; }
+  .comment-textarea { width:100%;border:1px solid #eb5757;border-radius:4px;padding:6px 8px;font-size:13px;color:#c0392b;font-family:inherit;background:#fff8f8;resize:none;min-height:44px;outline:none;line-height:1.6; }
+  .comment-textarea::placeholder { color:#f0a0a0; }
+  .comment-btn-row { display:flex;gap:6px;margin-top:4px;justify-content:flex-end; }
+  .comment-save-btn { border:none;border-radius:4px;padding:3px 12px;font-size:12px;cursor:pointer;font-family:inherit;background:#eb5757;color:#fff;font-weight:600; }
+  .comment-clear-btn { border:none;border-radius:4px;padding:3px 10px;font-size:12px;cursor:pointer;font-family:inherit;background:#f0efee;color:#787774; }
+  /* .instructions-comment-display legacy removed */
+  .instructions-comment-wrap { display:none;margin-top:8px; }
+  .prof-mode-active .instructions-comment-wrap { display:block; }
+  .signature-section { margin-top:20px;border:1px solid #e3e2df;border-radius:8px;padding:14px 20px;display:none;align-items:center;gap:16px;flex-wrap:wrap; }
+  .prof-mode-active .signature-section { display:flex; }
+  .sig-btn,.sig-clear-btn { display:none; }
+  .prof-mode-active .sig-btn,.prof-mode-active .sig-clear-btn { display:inline-block; }
+  .signature-label { font-size:13px;font-weight:600;color:#37352f;white-space:nowrap; }
+  .signature-display { flex:1;display:flex;align-items:center;min-height:54px; }
+  .sig-stamp { display:inline-flex;flex-direction:column;align-items:center;border:2.5px solid #c0392b;border-radius:8px;padding:6px 16px;color:#c0392b;transform:rotate(-5deg);opacity:0.9; }
+  .sig-stamp .stamp-confirmed { font-size:11px;font-weight:700;letter-spacing:0.08em; }
+  .sig-stamp .stamp-name { font-size:15px;font-weight:700;margin-top:2px; }
+  .sig-stamp .stamp-date { font-size:10px;color:#c0392b;margin-top:1px; }
+  .sig-stamp img { max-width:120px;max-height:44px; }
+  .sig-pending { font-size:13px;color:#9b9a97; }
+  .sig-btn { background:#f7f7f5;border:1px solid #e3e2df;border-radius:6px;padding:7px 14px;font-size:13px;cursor:pointer;font-family:inherit;color:#37352f;white-space:nowrap; }
+  .sig-btn:hover { background:#ececec; }
+  .sig-clear-btn { background:none;border:1px solid #e3e2df;border-radius:6px;padding:7px 10px;font-size:12px;cursor:pointer;font-family:inherit;color:#9b9a97; }
+  .sig-clear-btn:hover { color:#eb5757;border-color:#eb5757; }
+  .sig-overlay { display:none;position:fixed;inset:0;background:rgba(15,15,15,.5);z-index:200; }
+  .sig-overlay.show { display:block; }
+  .sig-modal { display:none;flex-direction:column;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:92%;max-width:440px;background:#fff;border-radius:10px;box-shadow:0 12px 40px rgba(0,0,0,.25);z-index:201;overflow:hidden; }
+  .sig-modal.show { display:flex; }
+  .sig-modal-hd { display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid #e3e2df;font-weight:600;font-size:15px; }
+  .sig-modal-close { border:none;background:none;cursor:pointer;font-size:16px;color:#9b9a97;padding:2px 6px; }
+  .sig-modal-close:hover { color:#37352f; }
+  .sig-tabs { display:flex;border-bottom:1px solid #e3e2df; }
+  .sig-tab { flex:1;padding:10px;border:none;background:none;cursor:pointer;font-size:13px;font-family:inherit;color:#9b9a97;font-weight:500;border-bottom:2px solid transparent;transition:color 0.15s; }
+  .sig-tab.active { color:#2eaadc;border-bottom-color:#2eaadc;font-weight:600; }
+  .sig-modal-body { padding:16px; }
+  .sig-panel { display:none; }
+  .sig-panel.active { display:block; }
+  .sig-canvas-wrap { border:1px solid #e3e2df;border-radius:6px;overflow:hidden;cursor:crosshair;background:#fafafa; }
+  #wp-sigCanvas { display:block;width:100%;height:150px;touch-action:none; }
+  .sig-canvas-hint { font-size:11.5px;color:#9b9a97;margin-top:6px;text-align:center; }
+  .sig-name-inp { width:100%;border:1px solid #e3e2df;border-radius:6px;padding:10px 12px;font-size:16px;font-family:inherit;outline:none;color:#37352f;margin-top:8px; }
+  .sig-name-inp:focus { border-color:#2eaadc; }
+  .sig-modal-ft { display:flex;justify-content:space-between;align-items:center;gap:8px;padding:12px 16px;border-top:1px solid #e3e2df; }
+  /* signature badge next to title */
+  .sig-badge { display:none;background:#eb5757;color:#fff;font-size:11px;font-weight:700;padding:2px 10px;border-radius:12px;margin-left:12px;letter-spacing:0.03em;flex-shrink:0;align-self:center;white-space:nowrap; }
+  .sig-badge.show { display:inline-block; }
+  /* show bottom section when signed even outside prof mode */
+  .signature-section.has-signature { display:flex; }
+  /* mobile prof-mode-btn center */
+  .prof-mode-btn { justify-content:center; }
+
   /* ─── Print ──────────────────────────────────────────── */
   @media print {
     @page {
@@ -766,6 +831,33 @@
 <body>
 <div class="app-layout">
 
+<!-- ════════ 서명 모달 ════════ -->
+<div class="sig-overlay" id="wp-sigOverlay" onclick="wpCloseSigModal()"></div>
+<div class="sig-modal" id="wp-sigModal">
+  <div class="sig-modal-hd"><span>✍️ 교수님 확인 서명</span><button class="sig-modal-close" onclick="wpCloseSigModal()">✕</button></div>
+  <div class="sig-tabs">
+    <button class="sig-tab active" id="wp-tabDraw" onclick="wpSwitchTab('draw')">✏️ 직접 서명</button>
+    <button class="sig-tab" id="wp-tabName" onclick="wpSwitchTab('name')">🔤 이름으로 서명</button>
+  </div>
+  <div class="sig-modal-body">
+    <div class="sig-panel active" id="wp-panelDraw">
+      <div class="sig-canvas-wrap"><canvas id="wp-sigCanvas" width="800" height="300"></canvas></div>
+      <p class="sig-canvas-hint">마우스 또는 터치로 서명하세요</p>
+    </div>
+    <div class="sig-panel" id="wp-panelName">
+      <p style="font-size:13px;color:#787774;margin-bottom:4px;">성함을 입력하면 서명란에 표시됩니다.</p>
+      <input class="sig-name-inp" id="wp-sigNameInp" type="text" placeholder="예: 차인호" maxlength="20">
+    </div>
+  </div>
+  <div class="sig-modal-ft">
+    <button class="btn btn-secondary" onclick="wpClearSig()" style="font-size:13px;padding:7px 12px;">🗑 지우기</button>
+    <div style="display:flex;gap:8px;">
+      <button class="btn btn-secondary" onclick="wpCloseSigModal()" style="font-size:13px;padding:7px 12px;">취소</button>
+      <button class="btn btn-primary" onclick="wpConfirmSig()" style="font-size:13px;padding:7px 14px;">✓ 확인</button>
+    </div>
+  </div>
+</div>
+
   <button class="sidebar-toggle" onclick="toggleSidebar()">☰ 팀 목록</button>
   <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
 
@@ -792,7 +884,10 @@
       </div>
 
       <!-- Title -->
-      <input class="page-title" id="pageTitle" value="주간 계획" placeholder="제목 없음" />
+      <div style="display:flex;align-items:center;overflow:visible;margin-bottom:10px;">
+        <input class="page-title" id="pageTitle" value="주간 계획" placeholder="제목 없음" oninput="autoSizeInput(this)" style="margin-bottom:0;" />
+        <span id="wp-headerSig" class="sig-badge"></span>
+      </div>
 
       <!-- Meta -->
       <div class="page-meta">
@@ -828,14 +923,31 @@
         <tbody id="dailyBody"></tbody>
       </table>
 
+      <div class="prof-mode-banner" id="wpProfModeBanner">🎓 교수님 모드 ON — 각 항목 아래 빨간 코멘트를 입력하고 저장하세요.</div>
+
       <!-- Instructions -->
       <div class="instructions-box">
         <div class="section-label">📌 교수님 지시사항</div>
         <textarea class="instructions-textarea" id="instructionsText" placeholder="지시사항을 입력하세요..." oninput="autoResize(this)"></textarea>
+        <div class="comment-list" id="wp-clist-instructions"></div>
+        <div class="instructions-comment-wrap">
+          <textarea class="comment-textarea" id="wp-cta-instructions" placeholder="교수님 코멘트 입력..." rows="2" oninput="autoResize(this)"></textarea>
+          <div class="comment-btn-row">
+            <button class="comment-save-btn" onclick="wpSaveComment('instructions')">+ 추가</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="signature-section">
+        <span class="signature-label">교수님 확인</span>
+        <div class="signature-display" id="wp-sigDisplay"><span class="sig-pending">서명 없음</span></div>
+        <button class="sig-btn" onclick="wpOpenSigModal()">✍️ 서명 / 확인</button>
+        <button class="sig-clear-btn" onclick="wpClearSigData()" title="서명 삭제">✕</button>
       </div>
 
       <!-- Actions -->
       <div class="btn-row">
+        <button class="prof-mode-btn" id="wpProfModeBtn" onclick="wpToggleProfMode()">🎓 교수님 모드</button>
         <button class="btn btn-secondary" onclick="clearAll()">🗑 초기화</button>
         <button class="btn btn-secondary" onclick="importLastWeek()">⬅ 지난주 내용 가져오기</button>
         <button class="btn btn-secondary" onclick="printPlan()">🖨 인쇄</button>
@@ -893,12 +1005,12 @@ const collapsedTeams = new Set();
 
 // ─── Firebase ────────────────────────────────────────────────────────────────
 const _firebaseConfig = {
-  apiKey: "AIzaSyCKP3J0bM0eT0WIzX-migd5yllrc407kzc",
-  authDomain: "work-planner-personal.firebaseapp.com",
-  projectId: "work-planner-personal",
-  storageBucket: "work-planner-personal.firebasestorage.app",
-  messagingSenderId: "731464065419",
-  appId: "1:731464065419:web:e43197adfb2611e1edcf8e"
+  apiKey: "AIzaSyC4sYx0-60NVCK2MI9z8cKpKUry4R_bLgM",
+  authDomain: "work-planner-62897.firebaseapp.com",
+  projectId: "work-planner-62897",
+  storageBucket: "work-planner-62897.firebasestorage.app",
+  messagingSenderId: "199105250426",
+  appId: "1:199105250426:web:6cf9f54c659cf5950a67c3"
 };
 let _db = null;
 function getDb() {
@@ -1038,6 +1150,13 @@ function renderDailyTable() {
       <td class="tasks-cell">
         <ul class="task-list" id="tasks-${day.code}"></ul>
         <button class="add-task-btn" onclick="addTask('${day.code}')">+ 업무 추가</button>
+        <div class="comment-list" id="wp-clist-${day.code}"></div>
+        <div class="comment-edit-wrap">
+          <textarea class="comment-textarea" id="wp-cta-${day.code}" placeholder="교수님 코멘트 입력..." rows="2"></textarea>
+          <div class="comment-btn-row">
+            <button class="comment-save-btn" onclick="wpSaveComment('${day.code}')">+ 추가</button>
+          </div>
+        </div>
       </td>
     `;
     tbody.appendChild(tr);
@@ -1140,6 +1259,7 @@ function renderSidebar() {
   const tree = document.getElementById('sidebarTree');
   tree.innerHTML = '';
 
+  // 모든 퇴사자 수집 (팀 무관)
   const allRetired = TEAMS.flatMap(t => t.members.filter(m => m.retired).map(m => ({ team: t, person: m })));
 
   TEAMS.forEach(team => {
@@ -1190,6 +1310,7 @@ function renderSidebar() {
     tree.appendChild(group);
   });
 
+  // 퇴사자 섹션
   if (allRetired.length > 0) {
     const retiredSection = document.createElement('div');
     retiredSection.className = 'retired-section' + (collapsedTeams.has('__retired__') ? ' collapsed' : '');
@@ -1249,49 +1370,52 @@ function buildPersonLi(team, person) {
   return li;
 }
 
-function showPersonMenu(e, teamId, person) {
-  document.querySelectorAll('.ctx-menu').forEach(m => m.remove());
+function toggleTeam(teamId) {
+  if (collapsedTeams.has(teamId)) collapsedTeams.delete(teamId);
+  else collapsedTeams.add(teamId);
+  renderSidebar();
+}
 
-  const menu = document.createElement('div');
-  menu.className = 'ctx-menu';
+function addTeam() {
+  const team = { id: uid('t'), name: '새 팀', members: [] };
+  TEAMS.push(team);
+  persistTeams();
+  renderSidebar();
+  requestAnimationFrame(() => {
+    const el = document.querySelector(`.team-row[data-team-id="${team.id}"] .team-name-input`);
+    if (el) { el.focus(); el.select(); }
+  });
+}
 
-  if (!person.retired) {
-    const retireBtn = document.createElement('button');
-    retireBtn.className = 'retire'; retireBtn.textContent = '퇴사 처리';
-    retireBtn.addEventListener('click', () => { menu.remove(); retireMember(teamId, person.id); });
-    menu.appendChild(retireBtn);
+function removeTeam(teamId) {
+  const team = TEAMS.find(t => t.id === teamId);
+  if (!team) return;
+  if (!confirm(`'${team.name}' 팀을 삭제할까요? 구성원과 저장된 계획도 함께 제거됩니다.`)) return;
 
-    const div1 = document.createElement('hr');
-    div1.className = 'ctx-divider';
-    menu.appendChild(div1);
-  } else {
-    const restoreBtn = document.createElement('button');
-    restoreBtn.className = 'restore'; restoreBtn.textContent = '복직 처리';
-    restoreBtn.addEventListener('click', () => { menu.remove(); restoreMember(teamId, person.id); });
-    menu.appendChild(restoreBtn);
+  team.members.forEach(m => safeRemove(dataKey(m.id, currentWeekOffset)));
+  TEAMS = TEAMS.filter(t => t.id !== teamId);
+  persistTeams();
 
-    const div1 = document.createElement('hr');
-    div1.className = 'ctx-divider';
-    menu.appendChild(div1);
+  if (team.members.some(m => m.id === selectedPersonId)) {
+    selectedPersonId = TEAMS[0]?.members[0]?.id ?? null;
+    safeSet(SELECTED_KEY, selectedPersonId || '');
+    loadPersonWeek(selectedPersonId, currentWeekOffset);
   }
+  renderSidebar();
+}
 
-  const deleteBtn = document.createElement('button');
-  deleteBtn.textContent = '완전 삭제';
-  deleteBtn.className = 'danger';
-  deleteBtn.addEventListener('click', () => { menu.remove(); removeMember(teamId, person.id); });
-  menu.appendChild(deleteBtn);
-
-  document.body.appendChild(menu);
-  const rect = e.target.getBoundingClientRect();
-  const mw = menu.offsetWidth, mh = menu.offsetHeight;
-  let top = rect.bottom + 4, left = rect.left;
-  if (top + mh > window.innerHeight) top = rect.top - mh - 4;
-  if (left + mw > window.innerWidth) left = window.innerWidth - mw - 8;
-  menu.style.top = top + 'px';
-  menu.style.left = left + 'px';
-
-  const close = (ev) => { if (!menu.contains(ev.target)) { menu.remove(); document.removeEventListener('click', close, true); } };
-  setTimeout(() => document.addEventListener('click', close, true), 0);
+async function addMember(teamId) {
+  const team = TEAMS.find(t => t.id === teamId);
+  if (!team) return;
+  const person = { id: uid('p'), name: '새 구성원' };
+  team.members.push(person);
+  persistTeams();
+  // skipMobileClose=true: 새 구성원 이름을 입력하는 동안 모바일 사이드바가 닫히지 않도록 유지
+  await selectPerson(person.id, true, true);
+  requestAnimationFrame(() => {
+    const el = document.querySelector(`.person-row[data-person-id="${person.id}"] .person-name-input`);
+    if (el) { el.focus(); el.select(); }
+  });
 }
 
 function retireMember(teamId, personId) {
@@ -1338,51 +1462,73 @@ async function removeMember(teamId, personId) {
   renderSidebar();
 }
 
-function toggleTeam(teamId) {
-  if (collapsedTeams.has(teamId)) collapsedTeams.delete(teamId);
-  else collapsedTeams.add(teamId);
-  renderSidebar();
+function showPersonMenu(e, teamId, person) {
+  document.querySelectorAll('.ctx-menu').forEach(m => m.remove());
+
+  const menu = document.createElement('div');
+  menu.className = 'ctx-menu';
+
+  if (!person.retired) {
+    const retireBtn = document.createElement('button');
+    retireBtn.className = 'retire'; retireBtn.textContent = '퇴사 처리';
+    retireBtn.addEventListener('click', () => { menu.remove(); retireMember(teamId, person.id); });
+    menu.appendChild(retireBtn);
+
+    const divider = document.createElement('div');
+    divider.className = 'ctx-divider';
+    menu.appendChild(divider);
+  } else {
+    const reinstateBtn = document.createElement('button');
+    reinstateBtn.className = 'restore'; reinstateBtn.textContent = '복직 처리';
+    reinstateBtn.addEventListener('click', () => { menu.remove(); reinstateMember(teamId, person.id); });
+    menu.appendChild(reinstateBtn);
+
+    const divider = document.createElement('div');
+    divider.className = 'ctx-divider';
+    menu.appendChild(divider);
+  }
+
+  const deleteBtn = document.createElement('button');
+  deleteBtn.textContent = '완전 삭제';
+  deleteBtn.className = 'danger';
+  deleteBtn.addEventListener('click', () => { menu.remove(); removeMember(teamId, person.id); });
+  menu.appendChild(deleteBtn);
+
+  // 위치 계산
+  const rect = e.target.getBoundingClientRect();
+  menu.style.top = `${rect.bottom + 4}px`;
+  menu.style.left = `${Math.min(rect.left, window.innerWidth - 160)}px`;
+  document.body.appendChild(menu);
+
+  const close = (ev) => { if (!menu.contains(ev.target)) { menu.remove(); document.removeEventListener('click', close, true); } };
+  setTimeout(() => document.addEventListener('click', close, true), 0);
 }
 
-function addTeam() {
-  const team = { id: uid('t'), name: '새 팀', members: [] };
-  TEAMS.push(team);
-  persistTeams();
-  renderSidebar();
-  requestAnimationFrame(() => {
-    const el = document.querySelector(`.team-row[data-team-id="${team.id}"] .team-name-input`);
-    if (el) { el.focus(); el.select(); }
-  });
-}
-
-function removeTeam(teamId) {
+function retireMember(teamId, personId) {
   const team = TEAMS.find(t => t.id === teamId);
   if (!team) return;
-  if (!confirm(`'${team.name}' 팀을 삭제할까요? 구성원과 저장된 계획도 함께 제거됩니다.`)) return;
-
-  team.members.forEach(m => safeRemove(dataKey(m.id, currentWeekOffset)));
-  TEAMS = TEAMS.filter(t => t.id !== teamId);
+  const person = team.members.find(m => m.id === personId);
+  if (!person) return;
+  person.retired = true;
   persistTeams();
 
-  if (team.members.some(m => m.id === selectedPersonId)) {
-    selectedPersonId = TEAMS[0]?.members[0]?.id ?? null;
+  if (selectedPersonId === personId) {
+    const active = TEAMS.flatMap(t => t.members).find(m => !m.retired);
+    selectedPersonId = active?.id ?? null;
     safeSet(SELECTED_KEY, selectedPersonId || '');
     loadPersonWeek(selectedPersonId, currentWeekOffset);
   }
   renderSidebar();
 }
 
-async function addMember(teamId) {
+function reinstateMember(teamId, personId) {
   const team = TEAMS.find(t => t.id === teamId);
   if (!team) return;
-  const person = { id: uid('p'), name: '새 구성원' };
-  team.members.push(person);
+  const person = team.members.find(m => m.id === personId);
+  if (!person) return;
+  delete person.retired;
   persistTeams();
-  await selectPerson(person.id, true, true);
-  requestAnimationFrame(() => {
-    const el = document.querySelector(`.person-row[data-person-id="${person.id}"] .person-name-input`);
-    if (el) { el.focus(); el.select(); }
-  });
+  renderSidebar();
 }
 
 async function selectPerson(personId, skipSave, skipMobileClose) {
@@ -1436,6 +1582,20 @@ async function loadPersonWeek(personId, offset) {
 
   instructionsText.value = (data && data.instructions) || '';
   autoResize(instructionsText);
+
+  const pc = (data && data.profComments) || {};
+  const commentKeys = ['instructions', ...DAYS.map(d => d.code)];
+  commentKeys.forEach(key => {
+    const disp = document.getElementById('wp-cdisplay-' + key);
+    const ta = document.getElementById('wp-cta-' + key);
+    const text = pc[key] || '';
+    if (disp) { disp.textContent = text; disp.style.display = text ? '' : 'none'; }
+    if (ta) { ta.value = text; autoResize(ta); }
+  });
+  wpCurrentSignature = (data && data.signature) || null;
+  wpRenderSigDisplay();
+  wpApplyProfMode();
+  autoSizeInput(document.getElementById('pageTitle'));
 }
 
 // 지난주(현재 보고 있는 주의 바로 전 주) 업무 내용을 그대로 가져와 현재 주에 채워넣기
@@ -1473,6 +1633,8 @@ async function saveCurrentState(silent) {
     member: found ? `${found.team.name} ${found.person.name}` : '',
     tasks: {},
     instructions: document.getElementById('instructionsText').value,
+    profComments: wpGetCurrentComments(),
+    signature: wpCurrentSignature,
   };
   DAYS.forEach(d => {
     data.tasks[d.code] = [...document.querySelectorAll(`#tasks-${d.code} .task-text`)].map(t => t.value).filter(Boolean);
@@ -1627,6 +1789,141 @@ async function init() {
   renderSidebar();
   await loadPersonWeek(selectedPersonId, currentWeekOffset);
   document.querySelectorAll('textarea').forEach(autoResize);
+}
+
+function autoSizeInput(el) {
+  if (!el) return;
+  const ruler = document.createElement('span');
+  const cs = getComputedStyle(el);
+  ruler.style.cssText = 'visibility:hidden;position:absolute;white-space:pre;font-size:' + cs.fontSize + ';font-weight:' + cs.fontWeight + ';font-family:' + cs.fontFamily + ';letter-spacing:' + cs.letterSpacing;
+  ruler.textContent = el.value || el.placeholder || '';
+  document.body.appendChild(ruler);
+  el.style.width = Math.max(80, ruler.offsetWidth + 16) + 'px';
+  document.body.removeChild(ruler);
+}
+
+// ══ 교수님 모드 · 코멘트 · 서명 (주간) ══
+let wpProfessorMode = false;
+let wpCurrentSignature = null;
+function wpToggleProfMode() {
+  wpProfessorMode = !wpProfessorMode;
+  const btn = document.getElementById('wpProfModeBtn');
+  if (btn) { btn.classList.toggle('active', wpProfessorMode); btn.textContent = wpProfessorMode ? '🎓 교수님 모드 ON' : '🎓 교수님 모드'; }
+  wpApplyProfMode();
+  showToast(wpProfessorMode ? '교수님 모드 ON' : '교수님 모드 OFF');
+}
+function wpApplyProfMode() {
+  document.body.classList.toggle('prof-mode-active', wpProfessorMode);
+  const banner = document.getElementById('wpProfModeBanner');
+  if (banner) banner.classList.toggle('show', wpProfessorMode);
+}
+function wpSaveComment(key) {
+  const ta = document.getElementById('wp-cta-' + key);
+  if (!ta) return;
+  const text = ta.value.trim();
+  if (!text) return;
+  wpAddCommentToList(key, text);
+  ta.value = ''; ta.style.height = '44px';
+  saveCurrentState(false);
+}
+function wpAddCommentToList(key, text) {
+  const list = document.getElementById('wp-clist-' + key);
+  if (!list) return;
+  const item = document.createElement('div');
+  item.className = 'comment-item';
+  const span = document.createElement('span');
+  span.className = 'comment-item-text';
+  span.textContent = text;
+  const btn = document.createElement('button');
+  btn.className = 'comment-del-btn';
+  btn.textContent = '✕';
+  btn.title = '삭제';
+  btn.onclick = () => {
+    if (!confirm('이 코멘트를 삭제할까요?')) return;
+    item.remove();
+    saveCurrentState(false);
+  };
+  item.appendChild(span);
+  item.appendChild(btn);
+  list.appendChild(item);
+}
+function wpGetCurrentComments() {
+  const r = {};
+  const keys = ['instructions', ...DAYS.map(d => d.code)];
+  keys.forEach(key => {
+    const list = document.getElementById('wp-clist-' + key);
+    r[key] = list ? Array.from(list.querySelectorAll('.comment-item-text')).map(el => el.textContent) : [];
+  });
+  return r;
+}
+let wpSigCtx = null, wpSigDrawing = false, wpSigHasContent = false, wpSigTab = 'draw';
+function wpOpenSigModal() {
+  document.getElementById('wp-sigOverlay').classList.add('show');
+  document.getElementById('wp-sigModal').classList.add('show');
+  wpInitCanvas();
+  if (wpCurrentSignature && wpCurrentSignature.type === 'name') { document.getElementById('wp-sigNameInp').value = wpCurrentSignature.data || ''; wpSwitchTab('name'); }
+  else wpSwitchTab('draw');
+}
+function wpCloseSigModal() { document.getElementById('wp-sigOverlay').classList.remove('show'); document.getElementById('wp-sigModal').classList.remove('show'); }
+function wpSwitchTab(tab) {
+  wpSigTab = tab;
+  ['Draw','Name'].forEach(t => {
+    document.getElementById('wp-tab'+t).classList.toggle('active', tab === t.toLowerCase());
+    document.getElementById('wp-panel'+t).classList.toggle('active', tab === t.toLowerCase());
+  });
+}
+function wpInitCanvas() {
+  const canvas = document.getElementById('wp-sigCanvas');
+  if (!canvas) return;
+  wpSigCtx = canvas.getContext('2d');
+  wpSigCtx.clearRect(0, 0, canvas.width, canvas.height);
+  wpSigHasContent = false;
+  wpSigCtx.strokeStyle = '#c0392b'; wpSigCtx.lineWidth = 3; wpSigCtx.lineCap = 'round'; wpSigCtx.lineJoin = 'round';
+  function getPos(e) { const rect = canvas.getBoundingClientRect(); const sx = canvas.width/rect.width, sy = canvas.height/rect.height; const cx = e.touches ? e.touches[0].clientX : e.clientX; const cy = e.touches ? e.touches[0].clientY : e.clientY; return {x:(cx-rect.left)*sx, y:(cy-rect.top)*sy}; }
+  canvas.onmousedown = canvas.ontouchstart = (e) => { e.preventDefault(); wpSigDrawing=true; wpSigHasContent=true; const p=getPos(e); wpSigCtx.beginPath(); wpSigCtx.moveTo(p.x,p.y); };
+  canvas.onmousemove = canvas.ontouchmove = (e) => { e.preventDefault(); if(!wpSigDrawing)return; const p=getPos(e); wpSigCtx.lineTo(p.x,p.y); wpSigCtx.stroke(); };
+  canvas.onmouseup = canvas.onmouseleave = canvas.ontouchend = () => { wpSigDrawing=false; };
+}
+function wpClearSig() {
+  if (wpSigTab==='draw') { const c=document.getElementById('wp-sigCanvas'); if(c&&wpSigCtx){wpSigCtx.clearRect(0,0,c.width,c.height);wpSigHasContent=false;} }
+  else { const i=document.getElementById('wp-sigNameInp'); if(i) i.value=''; }
+}
+function wpConfirmSig() {
+  const today = new Date();
+  const d = today.getFullYear()+'.'+String(today.getMonth()+1).padStart(2,'0')+'.'+String(today.getDate()).padStart(2,'0');
+  if (wpSigTab==='draw') {
+    if (!wpSigHasContent) { showToast('서명을 그려주세요.',true); return; }
+    wpCurrentSignature = {type:'draw', data:document.getElementById('wp-sigCanvas').toDataURL('image/png'), date:d};
+  } else {
+    const name = document.getElementById('wp-sigNameInp').value.trim();
+    if (!name) { showToast('성함을 입력해주세요.',true); return; }
+    wpCurrentSignature = {type:'name', data:name, date:d};
+  }
+  wpRenderSigDisplay(); wpCloseSigModal(); saveCurrentState(false); showToast('확인 서명이 저장되었습니다 ✓');
+}
+function wpClearSigData() {
+  if (!wpCurrentSignature) return;
+  if (!confirm('서명을 삭제할까요?')) return;
+  wpCurrentSignature = null; wpRenderSigDisplay(); saveCurrentState(false);
+}
+function wpRenderSigDisplay() {
+  const el = document.getElementById('wp-sigDisplay');
+  const badge = document.getElementById('wp-headerSig');
+  const section = document.querySelector('.signature-section');
+  if (!el) return;
+  if (!wpCurrentSignature) {
+    el.innerHTML = '<span class="sig-pending">서명 없음</span>';
+    if (badge) badge.classList.remove('show');
+    if (section) section.classList.remove('has-signature');
+    return;
+  }
+  const sig = wpCurrentSignature;
+  const stampHtml = sig.type === 'draw'
+    ? `<div class="sig-stamp"><span class="stamp-confirmed">확 인</span><img src="${sig.data}" alt="서명"><span class="stamp-date">${sig.date}</span></div>`
+    : `<div class="sig-stamp"><span class="stamp-confirmed">확 인</span><span class="stamp-name">${sig.data}</span><span class="stamp-date">${sig.date}</span></div>`;
+  el.innerHTML = stampHtml;
+  if (badge) { badge.textContent = '✓ 확인됨'; badge.classList.add('show'); }
+  if (section) section.classList.add('has-signature');
 }
 
 init();

@@ -397,7 +397,8 @@
     outline: none;
     background: transparent;
     font-family: var(--font);
-    width: 100%;
+    width: auto;
+    min-width: 80px;
     padding: 2px 0;
   }
 
@@ -784,6 +785,68 @@
   /* Scrollbar */
   ::-webkit-scrollbar { width: 6px; }
   ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  /* ── Professor Mode ── */
+  .prof-mode-btn { background:#fff0f0;color:#c0392b;border:1.5px solid #eb5757;border-radius:4px;padding:7px 14px;font-size:13px;font-family:var(--font);cursor:pointer;font-weight:600;display:flex;align-items:center;gap:6px;transition:background 0.15s; }
+  .prof-mode-btn.active { background:#c0392b;color:#fff;border-color:#a93226; }
+  .prof-mode-banner { display:none;background:#fff0f0;border:1.5px solid #eb5757;border-radius:6px;padding:9px 14px;color:#c0392b;font-size:13px;font-weight:600;margin-bottom:16px;align-items:center;gap:8px; }
+  .prof-mode-banner.show { display:flex; }
+  .comment-list { display:flex;flex-direction:column;gap:4px;margin-top:6px; }
+  .comment-item { display:flex;align-items:flex-start;gap:6px;padding:6px 10px;border-left:3px solid #eb5757;background:#fff8f8;border-radius:0 4px 4px 0; }
+  .comment-item-text { flex:1;color:#c0392b;font-size:13px;line-height:1.6;white-space:pre-wrap;font-weight:500; }
+  .comment-del-btn { opacity:0;border:none;background:none;cursor:pointer;color:#c0392b;font-size:14px;padding:0 3px;flex-shrink:0;transition:opacity 0.15s;line-height:1;align-self:flex-start; }
+  .comment-item:hover .comment-del-btn { opacity:1; }
+  .comment-edit-wrap { display:none;margin-top:6px; }
+  .prof-mode-active .comment-edit-wrap { display:block; }
+  .comment-textarea { width:100%;border:1px solid #eb5757;border-radius:4px;padding:6px 8px;font-size:13px;color:#c0392b;font-family:var(--font);background:#fff8f8;resize:none;min-height:44px;outline:none;line-height:1.6; }
+  .comment-textarea::placeholder { color:#f0a0a0; }
+  .comment-btn-row { display:flex;gap:6px;margin-top:4px;justify-content:flex-end; }
+  .comment-save-btn { border:none;border-radius:4px;padding:3px 12px;font-size:12px;cursor:pointer;font-family:var(--font);background:#eb5757;color:#fff;font-weight:600; }
+  .comment-clear-btn { border:none;border-radius:4px;padding:3px 10px;font-size:12px;cursor:pointer;font-family:var(--font);background:#f0efee;color:#787774; }
+  .signature-section { margin-top:20px;border:1px solid var(--border);border-radius:8px;padding:14px 20px;display:none;align-items:center;gap:16px;flex-wrap:wrap; }
+  .prof-mode-active .signature-section { display:flex; }
+  .sig-btn,.sig-clear-btn { display:none; }
+  .prof-mode-active .sig-btn,.prof-mode-active .sig-clear-btn { display:inline-block; }
+  .signature-label { font-size:13px;font-weight:600;color:var(--text);white-space:nowrap; }
+  .signature-display { flex:1;display:flex;align-items:center;min-height:54px; }
+  .sig-stamp { display:inline-flex;flex-direction:column;align-items:center;border:2.5px solid #c0392b;border-radius:8px;padding:6px 16px;color:#c0392b;transform:rotate(-5deg);opacity:0.9; }
+  .sig-stamp .stamp-confirmed { font-size:11px;font-weight:700;letter-spacing:0.08em; }
+  .sig-stamp .stamp-name { font-size:15px;font-weight:700;margin-top:2px; }
+  .sig-stamp .stamp-date { font-size:10px;color:#c0392b;margin-top:1px; }
+  .sig-stamp img { max-width:120px;max-height:44px; }
+  .sig-pending { font-size:13px;color:var(--text-muted); }
+  .sig-btn { background:#f7f7f5;border:1px solid var(--border);border-radius:6px;padding:7px 14px;font-size:13px;cursor:pointer;font-family:var(--font);color:var(--text);white-space:nowrap; }
+  .sig-btn:hover { background:#ececec; }
+  .sig-clear-btn { background:none;border:1px solid var(--border);border-radius:6px;padding:7px 10px;font-size:12px;cursor:pointer;font-family:var(--font);color:var(--text-muted); }
+  .sig-clear-btn:hover { color:var(--danger);border-color:var(--danger); }
+  .sig-overlay { display:none;position:fixed;inset:0;background:rgba(15,15,15,.5);z-index:200; }
+  .sig-overlay.show { display:block; }
+  .sig-modal { display:none;flex-direction:column;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:92%;max-width:440px;background:#fff;border-radius:10px;box-shadow:0 12px 40px rgba(0,0,0,.25);z-index:201;overflow:hidden; }
+  .sig-modal.show { display:flex; }
+  .sig-modal-hd { display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--border);font-weight:600;font-size:15px; }
+  .sig-modal-close { border:none;background:none;cursor:pointer;font-size:16px;color:var(--text-muted);padding:2px 6px; }
+  .sig-modal-close:hover { color:var(--text); }
+  .sig-tabs { display:flex;border-bottom:1px solid var(--border); }
+  .sig-tab { flex:1;padding:10px;border:none;background:none;cursor:pointer;font-size:13px;font-family:var(--font);color:var(--text-muted);font-weight:500;border-bottom:2px solid transparent;transition:color 0.15s; }
+  .sig-tab.active { color:var(--accent);border-bottom-color:var(--accent);font-weight:600; }
+  .sig-modal-body { padding:16px; }
+  .sig-panel { display:none; }
+  .sig-panel.active { display:block; }
+  .sig-canvas-wrap { border:1px solid var(--border);border-radius:6px;overflow:hidden;cursor:crosshair;background:#fafafa; }
+  #dp-sigCanvas { display:block;width:100%;height:150px;touch-action:none; }
+  .sig-canvas-hint { font-size:11.5px;color:var(--text-muted);margin-top:6px;text-align:center; }
+  .sig-name-inp { width:100%;border:1px solid var(--border);border-radius:6px;padding:10px 12px;font-size:16px;font-family:var(--font);outline:none;color:#37352f;margin-top:8px; }
+  .sig-name-inp:focus { border-color:var(--accent); }
+  .sig-modal-ft { display:flex;justify-content:space-between;align-items:center;gap:8px;padding:12px 16px;border-top:1px solid var(--border); }
+  /* date-picker overflow fix */
+  .date-picker { flex-shrink:1; min-width:0; }
+  /* signature badge next to title */
+  .sig-badge { display:none;background:#eb5757;color:#fff;font-size:11px;font-weight:700;padding:2px 10px;border-radius:12px;margin-left:12px;letter-spacing:0.03em;flex-shrink:0;align-self:center;white-space:nowrap; }
+  .sig-badge.show { display:inline-block; }
+  /* show bottom section when signed even outside prof mode */
+  .signature-section.has-signature { display:flex; }
+  /* mobile prof-mode-btn center */
+  .prof-mode-btn { justify-content:center; }
+
 
   /* ── Mobile ── */
   .sidebar-toggle, .sidebar-overlay { display: none; }
@@ -939,6 +1002,33 @@
 <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
 
 <!-- ════════════ 업무일지 내용 검색 모달 ════════════ -->
+<!-- ════════ 서명 모달 ════════ -->
+<div class="sig-overlay" id="dp-sigOverlay" onclick="dpCloseSigModal()"></div>
+<div class="sig-modal" id="dp-sigModal">
+  <div class="sig-modal-hd"><span>✍️ 교수님 확인 서명</span><button class="sig-modal-close" onclick="dpCloseSigModal()">✕</button></div>
+  <div class="sig-tabs">
+    <button class="sig-tab active" id="dp-tabDraw" onclick="dpSwitchTab('draw')">✏️ 직접 서명</button>
+    <button class="sig-tab" id="dp-tabName" onclick="dpSwitchTab('name')">🔤 이름으로 서명</button>
+  </div>
+  <div class="sig-modal-body">
+    <div class="sig-panel active" id="dp-panelDraw">
+      <div class="sig-canvas-wrap"><canvas id="dp-sigCanvas" width="800" height="300"></canvas></div>
+      <p class="sig-canvas-hint">마우스 또는 터치로 서명하세요</p>
+    </div>
+    <div class="sig-panel" id="dp-panelName">
+      <p style="font-size:13px;color:#787774;margin-bottom:4px;">성함을 입력하면 서명란에 표시됩니다.</p>
+      <input class="sig-name-inp" id="dp-sigNameInp" type="text" placeholder="예: 차인호" maxlength="20">
+    </div>
+  </div>
+  <div class="sig-modal-ft">
+    <button class="btn btn-secondary" onclick="dpClearSig()" style="font-size:13px;padding:7px 12px;">🗑 지우기</button>
+    <div style="display:flex;gap:8px;">
+      <button class="btn btn-secondary" onclick="dpCloseSigModal()" style="font-size:13px;padding:7px 12px;">취소</button>
+      <button class="btn btn-primary" onclick="dpConfirmSig()" style="font-size:13px;padding:7px 14px;">✓ 확인</button>
+    </div>
+  </div>
+</div>
+
 <div class="search-modal-overlay" id="searchModalOverlay" onclick="closeSearchModal()"></div>
 <div class="search-modal" id="searchModal">
   <div class="search-modal-header">
@@ -992,6 +1082,7 @@
 
     <!-- Actions -->
     <div class="btn-row">
+      <button class="prof-mode-btn" id="profModeBtn" onclick="toggleProfMode()">🎓 교수님 모드</button>
       <button class="btn btn-secondary" onclick="clearCurrent()">🗑 초기화</button>
       <button class="btn btn-secondary" onclick="printPlan()">🖨 인쇄</button>
       <button class="btn btn-primary" onclick="saveEntry()">💾 저장</button>
@@ -1510,7 +1601,8 @@ function renderEntryPage(found, dateObj, data) {
   document.getElementById('entryContent').innerHTML = `
     <div class="page-title-row">
       <span class="page-emoji">📋</span>
-      <input class="page-title" id="f_title" value="업무 / 연구 일지" placeholder="제목">
+      <input class="page-title" id="f_title" value="업무 / 연구 일지" placeholder="제목" oninput="autoSizeInput(this)">
+      <span id="dp-headerSig" class="sig-badge"></span>
     </div>
 
     <div class="page-meta">
@@ -1566,31 +1658,61 @@ function renderEntryPage(found, dateObj, data) {
       <!-- 교수님 지시사항 -->
       <div class="table-row">
         <div class="table-cell"><span class="cell-label">교수님<br>지시사항</span></div>
-        <div class="table-cell"><textarea class="cell-input" id="f_directive" rows="3" placeholder="지시사항을 입력하세요...">${esc(d.directive)}</textarea></div>
+        <div class="table-cell" style="flex-direction:column;align-items:stretch;"><textarea class="cell-input" id="f_directive" rows="3" placeholder="지시사항을 입력하세요...">${esc(d.directive)}</textarea>
+          <div class="comment-list" id="dp-clist-directive"></div>
+          <div class="comment-edit-wrap">
+            <textarea class="comment-textarea" id="dp-cta-directive" placeholder="교수님 코멘트 입력..." rows="2"></textarea>
+            <div class="comment-btn-row">
+              <button class="comment-save-btn" onclick="dpSaveComment('directive')">+ 추가</button>
+            </div>
+          </div></div>
         <div class="table-cell"><textarea class="cell-input cell-input-small" id="f_directive_note" rows="3" placeholder="비고...">${esc(d.directive_note)}</textarea></div>
       </div>
 
       <!-- 금일 진행 업무 -->
       <div class="table-row">
         <div class="table-cell"><span class="cell-label">금일<br>진행 업무</span></div>
-        <div class="table-cell"><textarea class="cell-input" id="f_tasks" rows="8" placeholder="오늘 진행한 업무를 입력하세요...">${esc(d.tasks)}</textarea></div>
+        <div class="table-cell" style="flex-direction:column;align-items:stretch;"><textarea class="cell-input" id="f_tasks" rows="8" placeholder="오늘 진행한 업무를 입력하세요...">${esc(d.tasks)}</textarea>
+          <div class="comment-list" id="dp-clist-tasks"></div>
+          <div class="comment-edit-wrap">
+            <textarea class="comment-textarea" id="dp-cta-tasks" placeholder="교수님 코멘트 입력..." rows="2"></textarea>
+            <div class="comment-btn-row">
+              <button class="comment-save-btn" onclick="dpSaveComment('tasks')">+ 추가</button>
+            </div>
+          </div></div>
         <div class="table-cell"><textarea class="cell-input cell-input-small" id="f_tasks_note" rows="8" placeholder="비고...">${esc(d.tasks_note)}</textarea></div>
       </div>
 
       <!-- 익일 업무 -->
       <div class="table-row">
         <div class="table-cell"><span class="cell-label">익일 업무</span></div>
-        <div class="table-cell"><textarea class="cell-input" id="f_tomorrow" rows="3" placeholder="내일 예정된 업무...">${esc(d.tomorrow)}</textarea></div>
+        <div class="table-cell" style="flex-direction:column;align-items:stretch;"><textarea class="cell-input" id="f_tomorrow" rows="3" placeholder="내일 예정된 업무...">${esc(d.tomorrow)}</textarea>
+          <div class="comment-list" id="dp-clist-tomorrow"></div>
+          <div class="comment-edit-wrap">
+            <textarea class="comment-textarea" id="dp-cta-tomorrow" placeholder="교수님 코멘트 입력..." rows="2"></textarea>
+            <div class="comment-btn-row">
+              <button class="comment-save-btn" onclick="dpSaveComment('tomorrow')">+ 추가</button>
+            </div>
+          </div></div>
         <div class="table-cell"><textarea class="cell-input cell-input-small" id="f_tomorrow_note" rows="3" placeholder="비고...">${esc(d.tomorrow_note)}</textarea></div>
       </div>
 
       <!-- 미진행 업무 -->
       <div class="table-row">
         <div class="table-cell"><span class="cell-label">미진행<br>업무</span></div>
-        <div class="table-cell"><textarea class="cell-input" id="f_pending" rows="2" placeholder="미처 진행하지 못한 업무...">${esc(d.pending)}</textarea></div>
+        <div class="table-cell" style="flex-direction:column;align-items:stretch;"><textarea class="cell-input" id="f_pending" rows="2" placeholder="미처 진행하지 못한 업무...">${esc(d.pending)}</textarea>
+          <div class="comment-list" id="dp-clist-pending"></div>
+          <div class="comment-edit-wrap">
+            <textarea class="comment-textarea" id="dp-cta-pending" placeholder="교수님 코멘트 입력..." rows="2"></textarea>
+            <div class="comment-btn-row">
+              <button class="comment-save-btn" onclick="dpSaveComment('pending')">+ 추가</button>
+            </div>
+          </div></div>
         <div class="table-cell"><textarea class="cell-input cell-input-small" id="f_pending_note" rows="2" placeholder="비고...">${esc(d.pending_note)}</textarea></div>
       </div>
     </div>
+
+    <div class="prof-mode-banner" id="profModeBanner">🎓 교수님 모드 ON — 각 항목 아래 빨간 코멘트를 입력하고 저장하세요.</div>
 
     <!-- 공지 -->
     <div class="notice-bar">
@@ -1598,7 +1720,14 @@ function renderEntryPage(found, dateObj, data) {
       📌 <strong>필수 입력사항</strong> : 회의내용 · 제품 입출고 내역 · 메일발송 · 고객 클레임
     </div>
 
-    <hr class="divider">
+        <div class="signature-section">
+      <span class="signature-label">교수님 확인</span>
+      <div class="signature-display" id="dp-sigDisplay"><span class="sig-pending">서명 없음</span></div>
+      <button class="sig-btn" onclick="dpOpenSigModal()">✍️ 서명 / 확인</button>
+      <button class="sig-clear-btn" onclick="dpClearSigData()" title="서명 삭제">✕</button>
+    </div>
+
+<hr class="divider">
     <div style="font-size:12px;color:var(--text-muted);text-align:right">차인호 공간조명연구소</div>
   `;
 
@@ -1610,6 +1739,20 @@ function renderEntryPage(found, dateObj, data) {
     });
     ta.style.height = ta.scrollHeight + 'px';
   });
+
+  const titleEl = document.getElementById('f_title');
+  autoSizeInput(titleEl);
+  dpCurrentSignature = (data && data.signature) || null;
+  dpRenderSigDisplay();
+  const pc = (data && data.profComments) || {};
+  ['directive','tasks','tomorrow','pending'].forEach(cellId => {
+    const disp = document.getElementById('dp-cdisplay-' + cellId);
+    const ta = document.getElementById('dp-cta-' + cellId);
+    const text = pc[cellId] || '';
+    if (disp) { disp.textContent = text; disp.style.display = text ? '' : 'none'; }
+    if (ta) { ta.value = text; ta.addEventListener('input', () => { ta.style.height='auto'; ta.style.height=ta.scrollHeight+'px'; }); ta.style.height = ta.scrollHeight + 'px'; }
+  });
+  dpApplyProfMode();
 }
 
 // ══════════════════════════════════════
@@ -1631,6 +1774,8 @@ async function saveCurrentState(silent) {
     tasks: g('f_tasks'), tasks_note: g('f_tasks_note'),
     tomorrow: g('f_tomorrow'), tomorrow_note: g('f_tomorrow_note'),
     pending: g('f_pending'), pending_note: g('f_pending_note'),
+    profComments: dpGetCurrentComments(),
+    signature: dpCurrentSignature,
   };
 
   const d = dateForOffset(currentDayOffset);
@@ -1922,6 +2067,141 @@ async function init() {
   } else {
     updateBreadcrumb();
   }
+}
+
+function autoSizeInput(el) {
+  if (!el) return;
+  const ruler = document.createElement('span');
+  const cs = getComputedStyle(el);
+  ruler.style.cssText = 'visibility:hidden;position:absolute;white-space:pre;font-size:' + cs.fontSize + ';font-weight:' + cs.fontWeight + ';font-family:' + cs.fontFamily + ';letter-spacing:' + cs.letterSpacing;
+  ruler.textContent = el.value || el.placeholder || '';
+  document.body.appendChild(ruler);
+  el.style.width = Math.max(80, ruler.offsetWidth + 16) + 'px';
+  document.body.removeChild(ruler);
+}
+
+// ══ 교수님 모드 · 코멘트 · 서명 ══
+let professorMode = false;
+let dpCurrentSignature = null;
+
+function toggleProfMode() {
+  professorMode = !professorMode;
+  const btn = document.getElementById('profModeBtn');
+  if (btn) { btn.classList.toggle('active', professorMode); btn.textContent = professorMode ? '🎓 교수님 모드 ON' : '🎓 교수님 모드'; }
+  dpApplyProfMode();
+  showToast(professorMode ? '교수님 모드 ON' : '교수님 모드 OFF');
+}
+function dpApplyProfMode() {
+  document.body.classList.toggle('prof-mode-active', professorMode);
+  const banner = document.querySelector('.prof-mode-banner');
+  if (banner) banner.classList.toggle('show', professorMode);
+}
+function dpSaveComment(cellId) {
+  const ta = document.getElementById('dp-cta-' + cellId);
+  if (!ta) return;
+  const text = ta.value.trim();
+  if (!text) return;
+  dpAddCommentToList(cellId, text);
+  ta.value = ''; ta.style.height = '44px';
+  saveCurrentState(false);
+}
+function dpAddCommentToList(cellId, text) {
+  const list = document.getElementById('dp-clist-' + cellId);
+  if (!list) return;
+  const item = document.createElement('div');
+  item.className = 'comment-item';
+  const span = document.createElement('span');
+  span.className = 'comment-item-text';
+  span.textContent = text;
+  const btn = document.createElement('button');
+  btn.className = 'comment-del-btn';
+  btn.textContent = '✕';
+  btn.title = '삭제';
+  btn.onclick = () => {
+    if (!confirm('이 코멘트를 삭제할까요?')) return;
+    item.remove();
+    saveCurrentState(false);
+  };
+  item.appendChild(span);
+  item.appendChild(btn);
+  list.appendChild(item);
+}
+function dpGetCurrentComments() {
+  const r = {};
+  ['directive','tasks','tomorrow','pending'].forEach(id => {
+    const list = document.getElementById('dp-clist-' + id);
+    r[id] = list ? Array.from(list.querySelectorAll('.comment-item-text')).map(el => el.textContent) : [];
+  });
+  return r;
+}
+let dpSigCtx = null, dpSigDrawing = false, dpSigHasContent = false, dpSigTab = 'draw';
+function dpOpenSigModal() {
+  document.getElementById('dp-sigOverlay').classList.add('show');
+  document.getElementById('dp-sigModal').classList.add('show');
+  dpInitCanvas();
+  if (dpCurrentSignature && dpCurrentSignature.type === 'name') { document.getElementById('dp-sigNameInp').value = dpCurrentSignature.data || ''; dpSwitchTab('name'); }
+  else dpSwitchTab('draw');
+}
+function dpCloseSigModal() { document.getElementById('dp-sigOverlay').classList.remove('show'); document.getElementById('dp-sigModal').classList.remove('show'); }
+function dpSwitchTab(tab) {
+  dpSigTab = tab;
+  ['Draw','Name'].forEach(t => {
+    document.getElementById('dp-tab'+t).classList.toggle('active', tab === t.toLowerCase());
+    document.getElementById('dp-panel'+t).classList.toggle('active', tab === t.toLowerCase());
+  });
+}
+function dpInitCanvas() {
+  const canvas = document.getElementById('dp-sigCanvas');
+  if (!canvas) return;
+  dpSigCtx = canvas.getContext('2d');
+  dpSigCtx.clearRect(0, 0, canvas.width, canvas.height);
+  dpSigHasContent = false;
+  dpSigCtx.strokeStyle = '#c0392b'; dpSigCtx.lineWidth = 3; dpSigCtx.lineCap = 'round'; dpSigCtx.lineJoin = 'round';
+  function getPos(e) { const rect = canvas.getBoundingClientRect(); const sx = canvas.width/rect.width, sy = canvas.height/rect.height; const cx = e.touches ? e.touches[0].clientX : e.clientX; const cy = e.touches ? e.touches[0].clientY : e.clientY; return {x:(cx-rect.left)*sx, y:(cy-rect.top)*sy}; }
+  canvas.onmousedown = canvas.ontouchstart = (e) => { e.preventDefault(); dpSigDrawing=true; dpSigHasContent=true; const p=getPos(e); dpSigCtx.beginPath(); dpSigCtx.moveTo(p.x,p.y); };
+  canvas.onmousemove = canvas.ontouchmove = (e) => { e.preventDefault(); if(!dpSigDrawing)return; const p=getPos(e); dpSigCtx.lineTo(p.x,p.y); dpSigCtx.stroke(); };
+  canvas.onmouseup = canvas.onmouseleave = canvas.ontouchend = () => { dpSigDrawing=false; };
+}
+function dpClearSig() {
+  if (dpSigTab==='draw') { const c=document.getElementById('dp-sigCanvas'); if(c&&dpSigCtx){dpSigCtx.clearRect(0,0,c.width,c.height);dpSigHasContent=false;} }
+  else { const i=document.getElementById('dp-sigNameInp'); if(i) i.value=''; }
+}
+function dpConfirmSig() {
+  const today = new Date();
+  const d = today.getFullYear()+'.'+String(today.getMonth()+1).padStart(2,'0')+'.'+String(today.getDate()).padStart(2,'0');
+  if (dpSigTab==='draw') {
+    if (!dpSigHasContent) { showToast('서명을 그려주세요.',true); return; }
+    dpCurrentSignature = {type:'draw', data:document.getElementById('dp-sigCanvas').toDataURL('image/png'), date:d};
+  } else {
+    const name = document.getElementById('dp-sigNameInp').value.trim();
+    if (!name) { showToast('성함을 입력해주세요.',true); return; }
+    dpCurrentSignature = {type:'name', data:name, date:d};
+  }
+  dpRenderSigDisplay(); dpCloseSigModal(); saveCurrentState(false); showToast('확인 서명이 저장되었습니다 ✓');
+}
+function dpClearSigData() {
+  if (!dpCurrentSignature) return;
+  if (!confirm('서명을 삭제할까요?')) return;
+  dpCurrentSignature = null; dpRenderSigDisplay(); saveCurrentState(false);
+}
+function dpRenderSigDisplay() {
+  const el = document.getElementById('dp-sigDisplay');
+  const badge = document.getElementById('dp-headerSig');
+  const section = document.querySelector('.signature-section');
+  if (!el) return;
+  if (!dpCurrentSignature) {
+    el.innerHTML = '<span class="sig-pending">서명 없음</span>';
+    if (badge) badge.classList.remove('show');
+    if (section) section.classList.remove('has-signature');
+    return;
+  }
+  const sig = dpCurrentSignature;
+  const stampHtml = sig.type === 'draw'
+    ? `<div class="sig-stamp"><span class="stamp-confirmed">확 인</span><img src="${sig.data}" alt="서명"><span class="stamp-date">${sig.date}</span></div>`
+    : `<div class="sig-stamp"><span class="stamp-confirmed">확 인</span><span class="stamp-name">${sig.data}</span><span class="stamp-date">${sig.date}</span></div>`;
+  el.innerHTML = stampHtml;
+  if (badge) { badge.textContent = '✓ 확인됨'; badge.classList.add('show'); }
+  if (section) section.classList.add('has-signature');
 }
 
 init();
