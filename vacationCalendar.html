@@ -169,10 +169,43 @@
   .cal-title-row { display: flex; align-items: center; gap: 8px; }
   .cal-title-emoji { font-size: 20px; }
   .cal-title { font-size: 18px; font-weight: 700; color: var(--text); }
-  .cal-month-nav { display: flex; align-items: center; gap: 6px; }
+  .cal-month-nav { display: flex; align-items: center; gap: 6px; position: relative; }
   .cal-month-label {
     font-size: 15px; font-weight: 700; color: var(--text);
     min-width: 110px; text-align: center;
+    cursor: pointer; border-radius: 5px; padding: 3px 6px;
+    transition: background 0.12s;
+  }
+  .cal-month-label:hover { background: var(--row-hover); }
+
+  /* ── Month/Year Picker ── */
+  .month-picker {
+    display: none;
+    position: absolute; top: 100%; left: 50%; transform: translateX(-50%);
+    margin-top: 6px; z-index: 1000;
+    background: #fff; border: 1px solid var(--border); border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(0,0,0,.12);
+    padding: 10px; width: 200px;
+  }
+  .month-picker.show { display: block; }
+  .month-picker-year {
+    display: flex; align-items: center; justify-content: center; gap: 12px;
+    margin-bottom: 8px; font-weight: 700; font-size: 13.5px; color: var(--text);
+  }
+  .month-picker-year button {
+    border: none; background: none; cursor: pointer; color: var(--text-muted);
+    font-size: 12px; padding: 3px 7px; border-radius: 4px; transition: background 0.12s, color 0.12s;
+  }
+  .month-picker-year button:hover { background: var(--row-hover); color: var(--text); }
+  .month-picker-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; }
+  .month-picker-grid button {
+    border: 1px solid var(--border); background: none; cursor: pointer;
+    padding: 6px 0; border-radius: 5px; font-size: 12.5px; color: var(--text);
+    font-family: var(--font); transition: background 0.12s, color 0.12s;
+  }
+  .month-picker-grid button:hover { background: var(--row-hover); }
+  .month-picker-grid button.active {
+    background: var(--accent); color: #fff; border-color: var(--accent); font-weight: 700;
   }
   .nav-btn {
     background: none; border: 1px solid var(--border); border-radius: 5px;
@@ -587,10 +620,19 @@
     </div>
     <div class="cal-month-nav">
       <button class="nav-btn" onclick="changeMonth(-1)">← 이전</button>
-      <span class="cal-month-label" id="monthLabel">—</span>
+      <span class="cal-month-label" id="monthLabel" onclick="toggleMonthPicker(event)">—</span>
       <button class="nav-btn" onclick="changeMonth(1)">다음 →</button>
       <button class="nav-btn today-btn" onclick="goToToday()">오늘</button>
       <span class="holiday-source-badge" id="holidaySourceBadge" title="공휴일 데이터 출처">📅 공휴일 로딩 중…</span>
+
+      <div class="month-picker" id="monthPicker" onclick="event.stopPropagation()">
+        <div class="month-picker-year">
+          <button onclick="pickerChangeYear(-1)">◀</button>
+          <span id="pickerYearLabel">—</span>
+          <button onclick="pickerChangeYear(1)">▶</button>
+        </div>
+        <div class="month-picker-grid" id="pickerMonthGrid"></div>
+      </div>
     </div>
   </div>
 
@@ -1337,6 +1379,43 @@ function goToToday(){
   currentYear=now.getFullYear(); currentMonth=now.getMonth();
   renderCalendar();
 }
+
+// ── Month/Year Picker ──
+let pickerYear = currentYear;
+
+function toggleMonthPicker(e){
+  if(e) e.stopPropagation();
+  const picker=document.getElementById('monthPicker');
+  if(picker.classList.contains('show')){ closeMonthPicker(); return; }
+  pickerYear = currentYear;
+  renderMonthPicker();
+  picker.classList.add('show');
+}
+function closeMonthPicker(){
+  const picker=document.getElementById('monthPicker');
+  if(picker) picker.classList.remove('show');
+}
+function pickerChangeYear(dir){
+  pickerYear += dir;
+  renderMonthPicker();
+}
+function renderMonthPicker(){
+  document.getElementById('pickerYearLabel').textContent = pickerYear + '년';
+  const grid=document.getElementById('pickerMonthGrid');
+  grid.innerHTML='';
+  MONTH_KO.forEach((label, idx)=>{
+    const btn=document.createElement('button');
+    btn.textContent=label;
+    if(pickerYear===currentYear && idx===currentMonth) btn.classList.add('active');
+    btn.onclick=(e)=>{ e.stopPropagation(); goToYearMonth(pickerYear, idx); };
+    grid.appendChild(btn);
+  });
+}
+function goToYearMonth(y, m){
+  currentYear=y; currentMonth=m;
+  renderCalendar();
+  closeMonthPicker();
+}
 function updateMonthLabel(){
   document.getElementById('monthLabel').textContent=`${currentYear}년 ${MONTH_KO[currentMonth]}`;
 }
@@ -1860,6 +1939,11 @@ async function init(){
        !popup.contains(e.target) && !e.target.classList.contains('overflow-badge')){
       closeOverflowPopup();
     }
+    const monthPicker = document.getElementById('monthPicker');
+    if(monthPicker && monthPicker.classList.contains('show') &&
+       !monthPicker.contains(e.target) && e.target.id !== 'monthLabel'){
+      closeMonthPicker();
+    }
   });
 
   // Close modals on ESC
@@ -1868,6 +1952,7 @@ async function init(){
       closeAddModal();
       closeDetailModal();
       closeOverflowPopup();
+      closeMonthPicker();
       document.querySelectorAll('.ctx-menu').forEach(m=>m.remove());
     }
   });
