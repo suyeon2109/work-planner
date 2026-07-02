@@ -463,7 +463,7 @@
 
   .sns-tag.youtube { background: #fff0f0; color: #c0392b; }
   .sns-tag.instagram { background: #fff4f9; color: #c2185b; }
-  .sns-tag.blog { background: #f0f4ff; color: #3a57e8; }
+  .sns-tag.homepage { background: #f0f4ff; color: #3a57e8; }
 
   .sns-tag input {
     background: transparent;
@@ -1122,7 +1122,7 @@ const DEMO_DATA = {
   manager: '임수연PD',
   yt: '20,526', yt_sub: '215',
   ig: '5,519',  ig_sub: '829',
-  blog: '',     blog_sub: '',
+  homepage: '',     homepage_sub: '',
   directive: '차주 카드뉴스 : 한국 수자원공사 K-Water 수련원\n명함 디자인\n네이버 플레이스 등록',
   directive_note: '',
   tasks: '【업무회의】\n1. 전원속의 내집 카드뉴스로(화요일 발행)\n2. 전문성을 매출로 연결하기 → 카드뉴스 해시태그에 두꺼비프로젝트, 헌집을새집으로 두개 추가하기\n3. 셀인카페 활동을 우선순위로\n\n- YT-S4-001 롱폼 편집 → 진행률 : 10%\n- 회사 도메인 이메일 생성(네이버 웍스) 및 호스팅 변경 완료\n- 영상 055-5 유튜브, 인스타그램 업로드\n- 홈페이지 전원속의 내집 업로드\n- 홈페이지 안심번호 수정, 로고 수정\n- 블로그 로고 수정',
@@ -1639,15 +1639,20 @@ function renderEntryPage(found, dateObj, data) {
       </div>
       <div class="sns-tag instagram">
         📷 Instagram &nbsp;
-        <input id="f_ig" value="${esc(d.ig)}" placeholder="0">
+        <input id="f_ig" value="${esc(d.ig)}" placeholder="0" title="팔로워">
         <span class="sns-slash" aria-hidden="true"></span>
-        <input id="f_ig_sub" value="${esc(d.ig_sub)}" placeholder="0">
+        <input id="f_ig_sub" value="${esc(d.ig_sub)}" placeholder="0" title="최근 시청자수">
       </div>
-      <div class="sns-tag blog">
-        ✏️ Blog &nbsp;
-        <input id="f_blog" value="${esc(d.blog)}" placeholder="0">
+    </div>
+
+    <!-- 홈페이지 현황 -->
+    <div class="section-label">홈페이지 현황 (방문자 / 페이지뷰)</div>
+    <div class="sns-bar">
+      <div class="sns-tag homepage">
+        ✏️ Homepage &nbsp;
+        <input id="f_homepage" value="${esc(d.homepage)}" placeholder="0" title="방문자">
         <span class="sns-slash" aria-hidden="true"></span>
-        <input id="f_blog_sub" value="${esc(d.blog_sub)}" placeholder="0">
+        <input id="f_homepage_sub" value="${esc(d.homepage_sub)}" placeholder="0" title="페이지뷰">
       </div>
     </div>
 
@@ -1775,7 +1780,7 @@ async function saveCurrentState(silent) {
     manager: found ? found.person.name : '',
     yt: g('f_yt'), yt_sub: g('f_yt_sub'),
     ig: g('f_ig'), ig_sub: g('f_ig_sub'),
-    blog: g('f_blog'), blog_sub: g('f_blog_sub'),
+    homepage: g('f_homepage'), homepage_sub: g('f_homepage_sub'),
     directive: g('f_directive'), directive_note: g('f_directive_note'),
     tasks: g('f_tasks'), tasks_note: g('f_tasks_note'),
     tomorrow: g('f_tomorrow'), tomorrow_note: g('f_tomorrow_note'),
@@ -1829,7 +1834,7 @@ async function printPlan() {
     // 알려진 버그가 있어, value/attribute를 바꾸는 방식은 근본적으로 불안정합니다.
     // → 캡처 직전에 input을 통째로 일반 텍스트(span)로 잠깐 바꿔치기해서 찍고,
     //   캡처가 끝나면 다시 원래 input으로 되돌립니다.
-    const snsIds = ['f_yt', 'f_yt_sub', 'f_ig', 'f_ig_sub', 'f_blog', 'f_blog_sub'];
+    const snsIds = ['f_yt', 'f_yt_sub', 'f_ig', 'f_ig_sub', 'f_homepage', 'f_homepage_sub'];
     const snsRestore = [];
     snsIds.forEach(id => {
       const el = document.getElementById(id);
