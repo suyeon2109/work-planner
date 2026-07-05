@@ -576,10 +576,87 @@
 
   .cell-input::placeholder { color: var(--text-light); }
 
+  .cell-input[contenteditable] {
+    white-space: pre-wrap;
+    overflow-wrap: break-word;
+    cursor: text;
+  }
+  .cell-input[contenteditable]:empty:before {
+    content: attr(data-placeholder);
+    color: var(--text-light);
+    pointer-events: none;
+  }
+  .cell-input[contenteditable]:focus {
+    background: rgba(47,128,237,0.04);
+    border-radius: 3px;
+  }
+
   .cell-input-small {
     font-size: 12.5px;
     color: var(--text-muted);
   }
+
+  /* ── 서식 툴바 (글자색 / 형광펜) ── */
+  .format-toolbar {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    background: var(--sidebar-bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 8px 12px;
+    margin-bottom: 10px;
+    font-size: 11px;
+    color: var(--text-muted);
+  }
+  .format-toolbar-group { display: flex; align-items: center; gap: 5px; }
+  .format-toolbar-label { font-weight: 600; letter-spacing: 0.02em; margin-right: 2px; }
+  .swatch-btn {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 1px solid rgba(0,0,0,0.12);
+    cursor: pointer;
+    padding: 0;
+    flex-shrink: 0;
+    transition: transform 0.1s;
+  }
+  .swatch-btn:hover { transform: scale(1.15); }
+  .swatch-btn.is-clear { background: #fff; position: relative; }
+  .swatch-btn.is-clear:before {
+    content: '';
+    position: absolute;
+    left: 2px; right: 2px; top: 50%;
+    height: 1px;
+    background: var(--danger);
+    transform: rotate(45deg);
+  }
+  .swatch-btn.is-all {
+    border-radius: 4px;
+    width: auto;
+    padding: 0 6px;
+    height: 20px;
+    line-height: 20px;
+    border: 1px solid var(--border);
+  }
+  .swatch-btn.active-filter {
+    box-shadow: 0 0 0 2px var(--accent);
+  }
+  .format-toolbar-divider { width: 1px; height: 18px; background: var(--border); }
+  .format-clear-btn {
+    border: none;
+    background: none;
+    cursor: pointer;
+    color: var(--text-muted);
+    font-size: 11px;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-family: var(--font);
+  }
+  .format-clear-btn:hover { background: rgba(0,0,0,0.06); color: var(--text); }
+  .pdf-export .format-toolbar { display: none !important; }
+  @media print { .format-toolbar { display: none !important; } }
 
   /* ── Notice bar ── */
   .notice-bar {
@@ -1036,11 +1113,12 @@
     <button class="search-modal-close" onclick="closeSearchModal()">✕</button>
   </div>
   <div class="search-modal-body">
-    <input type="text" id="searchInput" class="search-input" placeholder="검색할 내용을 입력하세요" autocomplete="off">
+    <input type="text" id="searchInput" class="search-input" placeholder="검색할 내용을 입력하세요 (색상만으로도 검색 가능)" autocomplete="off">
     <button class="btn btn-primary search-run-btn" onclick="runSearch()">검색</button>
   </div>
+  <div class="format-toolbar" id="searchColorFilters" style="margin:12px 16px 12px; border-radius:0; border:none; border-bottom:1px solid var(--border); padding-bottom:14px;"></div>
   <div class="search-results" id="searchResults">
-    <div class="search-empty">검색어를 입력하세요.</div>
+    <div class="search-empty">검색어를 입력하거나 색상 필터를 선택하세요.</div>
   </div>
 </div>
 
@@ -1189,6 +1267,20 @@ async function storeList(prefix) {
 function uid(prefix) { return prefix + '_' + Math.random().toString(36).slice(2, 9); }
 function escapeAttr(str) { return String(str ?? '').replace(/&/g, '&amp;').replace(/"/g, '&quot;'); }
 function esc(s='') { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+// 기존에는 일반 텍스트(줄바꿈 \n)로 저장되어 있었고, 글자색/형광펜 적용 이후에는 HTML로 저장됨.
+// 둘 다 안전하게 화면에 표시하기 위한 헬퍼.
+function toDisplayHtml(raw) {
+  const s = String(raw ?? '');
+  if (!s) return '';
+  if (/<[a-z][\s\S]*>/i.test(s)) return s; // 이미 HTML(색상/형광펜 서식 포함)로 저장된 값
+  return esc(s).replace(/\n/g, '<br>');
+}
+function stripHtml(html) {
+  const tmp = document.createElement('div');
+  tmp.innerHTML = String(html ?? '');
+  return tmp.textContent || tmp.innerText || '';
+}
 
 function findPerson(personId) {
   for (const team of TEAMS) {
@@ -1658,6 +1750,20 @@ function renderEntryPage(found, dateObj, data) {
 
     <!-- 본문 테이블 -->
     <div class="section-label">일지</div>
+    <div class="format-toolbar" id="dpFormatToolbar">
+      <div class="format-toolbar-group">
+        <span class="format-toolbar-label">글자색</span>
+        ${DP_TEXT_COLORS.map(c => `<button type="button" class="swatch-btn" style="background:${c.value}" title="${c.label}" onmousedown="event.preventDefault()" onclick="dpApplyColor('${c.value}')"></button>`).join('')}
+      </div>
+      <div class="format-toolbar-divider"></div>
+      <div class="format-toolbar-group">
+        <span class="format-toolbar-label">형광펜</span>
+        ${DP_HILITE_COLORS.map(c => `<button type="button" class="swatch-btn" style="background:${c.value}" title="${c.label}" onmousedown="event.preventDefault()" onclick="dpApplyHighlight('${c.value}')"></button>`).join('')}
+        <button type="button" class="swatch-btn is-clear" title="형광펜 지우기" onmousedown="event.preventDefault()" onclick="dpApplyHighlight('transparent')"></button>
+      </div>
+      <div class="format-toolbar-divider"></div>
+      <button type="button" class="format-clear-btn" onmousedown="event.preventDefault()" onclick="dpClearFormat()">서식 지우기</button>
+    </div>
     <div class="journal-table">
       <!-- 헤더 -->
       <div class="table-row header-row">
@@ -1669,7 +1775,7 @@ function renderEntryPage(found, dateObj, data) {
       <!-- 교수님 지시사항 -->
       <div class="table-row">
         <div class="table-cell"><span class="cell-label">교수님<br>지시사항</span></div>
-        <div class="table-cell" style="flex-direction:column;align-items:stretch;"><textarea class="cell-input" id="f_directive" rows="3" placeholder="지시사항을 입력하세요...">${esc(d.directive)}</textarea>
+        <div class="table-cell" style="flex-direction:column;align-items:stretch;"><div class="cell-input" id="f_directive" contenteditable="true" data-placeholder="지시사항을 입력하세요..." style="min-height:64px">${toDisplayHtml(d.directive)}</div>
           <div class="comment-list" id="dp-clist-directive"></div>
           <div class="comment-edit-wrap">
             <textarea class="comment-textarea" id="dp-cta-directive" placeholder="교수님 코멘트 입력..." rows="2"></textarea>
@@ -1677,13 +1783,13 @@ function renderEntryPage(found, dateObj, data) {
               <button class="comment-save-btn" onclick="dpSaveComment('directive')">+ 추가</button>
             </div>
           </div></div>
-        <div class="table-cell"><textarea class="cell-input cell-input-small" id="f_directive_note" rows="3" placeholder="비고...">${esc(d.directive_note)}</textarea></div>
+        <div class="table-cell"><div class="cell-input cell-input-small" id="f_directive_note" contenteditable="true" data-placeholder="비고..." style="min-height:64px">${toDisplayHtml(d.directive_note)}</div></div>
       </div>
 
       <!-- 금일 진행 업무 -->
       <div class="table-row">
         <div class="table-cell"><span class="cell-label">금일<br>진행 업무</span></div>
-        <div class="table-cell" style="flex-direction:column;align-items:stretch;"><textarea class="cell-input" id="f_tasks" rows="8" placeholder="오늘 진행한 업무를 입력하세요...">${esc(d.tasks)}</textarea>
+        <div class="table-cell" style="flex-direction:column;align-items:stretch;"><div class="cell-input" id="f_tasks" contenteditable="true" data-placeholder="오늘 진행한 업무를 입력하세요..." style="min-height:168px">${toDisplayHtml(d.tasks)}</div>
           <div class="comment-list" id="dp-clist-tasks"></div>
           <div class="comment-edit-wrap">
             <textarea class="comment-textarea" id="dp-cta-tasks" placeholder="교수님 코멘트 입력..." rows="2"></textarea>
@@ -1691,13 +1797,13 @@ function renderEntryPage(found, dateObj, data) {
               <button class="comment-save-btn" onclick="dpSaveComment('tasks')">+ 추가</button>
             </div>
           </div></div>
-        <div class="table-cell"><textarea class="cell-input cell-input-small" id="f_tasks_note" rows="8" placeholder="비고...">${esc(d.tasks_note)}</textarea></div>
+        <div class="table-cell"><div class="cell-input cell-input-small" id="f_tasks_note" contenteditable="true" data-placeholder="비고..." style="min-height:168px">${toDisplayHtml(d.tasks_note)}</div></div>
       </div>
 
       <!-- 익일 업무 -->
       <div class="table-row">
         <div class="table-cell"><span class="cell-label">익일 업무</span></div>
-        <div class="table-cell" style="flex-direction:column;align-items:stretch;"><textarea class="cell-input" id="f_tomorrow" rows="3" placeholder="내일 예정된 업무...">${esc(d.tomorrow)}</textarea>
+        <div class="table-cell" style="flex-direction:column;align-items:stretch;"><div class="cell-input" id="f_tomorrow" contenteditable="true" data-placeholder="내일 예정된 업무..." style="min-height:64px">${toDisplayHtml(d.tomorrow)}</div>
           <div class="comment-list" id="dp-clist-tomorrow"></div>
           <div class="comment-edit-wrap">
             <textarea class="comment-textarea" id="dp-cta-tomorrow" placeholder="교수님 코멘트 입력..." rows="2"></textarea>
@@ -1705,13 +1811,13 @@ function renderEntryPage(found, dateObj, data) {
               <button class="comment-save-btn" onclick="dpSaveComment('tomorrow')">+ 추가</button>
             </div>
           </div></div>
-        <div class="table-cell"><textarea class="cell-input cell-input-small" id="f_tomorrow_note" rows="3" placeholder="비고...">${esc(d.tomorrow_note)}</textarea></div>
+        <div class="table-cell"><div class="cell-input cell-input-small" id="f_tomorrow_note" contenteditable="true" data-placeholder="비고..." style="min-height:64px">${toDisplayHtml(d.tomorrow_note)}</div></div>
       </div>
 
       <!-- 미진행 업무 -->
       <div class="table-row">
         <div class="table-cell"><span class="cell-label">미진행<br>업무</span></div>
-        <div class="table-cell" style="flex-direction:column;align-items:stretch;"><textarea class="cell-input" id="f_pending" rows="2" placeholder="미처 진행하지 못한 업무...">${esc(d.pending)}</textarea>
+        <div class="table-cell" style="flex-direction:column;align-items:stretch;"><div class="cell-input" id="f_pending" contenteditable="true" data-placeholder="미처 진행하지 못한 업무..." style="min-height:43px">${toDisplayHtml(d.pending)}</div>
           <div class="comment-list" id="dp-clist-pending"></div>
           <div class="comment-edit-wrap">
             <textarea class="comment-textarea" id="dp-cta-pending" placeholder="교수님 코멘트 입력..." rows="2"></textarea>
@@ -1719,7 +1825,7 @@ function renderEntryPage(found, dateObj, data) {
               <button class="comment-save-btn" onclick="dpSaveComment('pending')">+ 추가</button>
             </div>
           </div></div>
-        <div class="table-cell"><textarea class="cell-input cell-input-small" id="f_pending_note" rows="2" placeholder="비고...">${esc(d.pending_note)}</textarea></div>
+        <div class="table-cell"><div class="cell-input cell-input-small" id="f_pending_note" contenteditable="true" data-placeholder="비고..." style="min-height:43px">${toDisplayHtml(d.pending_note)}</div></div>
       </div>
     </div>
 
@@ -1742,13 +1848,28 @@ function renderEntryPage(found, dateObj, data) {
     <div style="font-size:12px;color:var(--text-muted);text-align:right">차인호 공간조명연구소</div>
   `;
 
-  // auto-resize textareas
-  document.querySelectorAll('.cell-input').forEach(ta => {
+  // auto-resize textareas (comment textareas만 대상; 본문은 contenteditable div라 자동으로 늘어남)
+  document.querySelectorAll('.cell-input:not([contenteditable])').forEach(ta => {
     ta.addEventListener('input', () => {
       ta.style.height = 'auto';
       ta.style.height = ta.scrollHeight + 'px';
     });
     ta.style.height = ta.scrollHeight + 'px';
+  });
+
+  // 붙여넣기 시 외부 서식이 섞여 들어오지 않도록 일반 텍스트로만 삽입
+  document.querySelectorAll('.cell-input[contenteditable]').forEach(el => {
+    el.addEventListener('paste', (e) => {
+      e.preventDefault();
+      const text = (e.clipboardData || window.clipboardData).getData('text/plain');
+      document.execCommand('insertText', false, text);
+    });
+    el.addEventListener('blur', () => saveCurrentState(true));
+    // 글자를 모두 지워도 <br> 등 빈 태그가 남아 :empty 판정이 안 되면서
+    // placeholder(안내 문구)가 다시 나타나지 않는 문제를 방지
+    el.addEventListener('input', () => {
+      if (el.textContent.trim() === '') el.innerHTML = '';
+    });
   });
 
   const titleEl = document.getElementById('f_title');
@@ -1776,15 +1897,22 @@ async function saveCurrentState(silent) {
 
   const found = findPerson(selectedPersonId);
   const g = id => document.getElementById(id)?.value || '';
+  const gHtml = id => {
+    const el = document.getElementById(id);
+    if (!el) return '';
+    const html = el.innerHTML;
+    if (!html || html === '<br>' || html.trim() === '') return '';
+    return html;
+  };
   const data = {
     manager: found ? found.person.name : '',
     yt: g('f_yt'), yt_sub: g('f_yt_sub'),
     ig: g('f_ig'), ig_sub: g('f_ig_sub'),
     homepage: g('f_homepage'), homepage_sub: g('f_homepage_sub'),
-    directive: g('f_directive'), directive_note: g('f_directive_note'),
-    tasks: g('f_tasks'), tasks_note: g('f_tasks_note'),
-    tomorrow: g('f_tomorrow'), tomorrow_note: g('f_tomorrow_note'),
-    pending: g('f_pending'), pending_note: g('f_pending_note'),
+    directive: gHtml('f_directive'), directive_note: gHtml('f_directive_note'),
+    tasks: gHtml('f_tasks'), tasks_note: gHtml('f_tasks_note'),
+    tomorrow: gHtml('f_tomorrow'), tomorrow_note: gHtml('f_tomorrow_note'),
+    pending: gHtml('f_pending'), pending_note: gHtml('f_pending_note'),
     profComments: dpGetCurrentComments(),
     signature: dpCurrentSignature,
   };
@@ -1937,13 +2065,48 @@ async function printPlan() {
 // ══════════════════════════════════════
 function escRegex(s) { return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
 
+// ── 색상 필터 (글자색/형광펜만 따로 검색) ──
+let dpFilterText = 'all';       // 'all' | 특정 hex
+let dpFilterHighlight = 'all';  // 'all' | 특정 hex
+
+function dpBuildColorFilterUI() {
+  const box = document.getElementById('searchColorFilters');
+  if (!box || box.dataset.built) return;
+  box.dataset.built = '1';
+  const textChips = [{ label: '전체', value: 'all' }, ...DP_TEXT_COLORS]
+    .map(c => `<button type="button" class="swatch-btn${c.value === 'all' ? ' is-all' : ''}" data-kind="text" data-value="${c.value}" style="${c.value === 'all' ? 'background:#fff;font-size:9px;color:var(--text-muted);' : `background:${c.value}`}" title="${c.label}" onclick="dpSetColorFilter('text','${c.value}')">${c.value === 'all' ? '전체' : ''}</button>`)
+    .join('');
+  const hiliteChips = [{ label: '전체', value: 'all' }, ...DP_HILITE_COLORS]
+    .map(c => `<button type="button" class="swatch-btn${c.value === 'all' ? ' is-all' : ''}" data-kind="highlight" data-value="${c.value}" style="${c.value === 'all' ? 'background:#fff;font-size:9px;color:var(--text-muted);' : `background:${c.value}`}" title="${c.label}" onclick="dpSetColorFilter('highlight','${c.value}')">${c.value === 'all' ? '전체' : ''}</button>`)
+    .join('');
+  box.innerHTML = `
+    <div class="format-toolbar-group"><span class="format-toolbar-label">글자색</span>${textChips}</div>
+    <div class="format-toolbar-divider"></div>
+    <div class="format-toolbar-group"><span class="format-toolbar-label">형광펜</span>${hiliteChips}</div>
+  `;
+  dpRefreshColorFilterUI();
+}
+function dpSetColorFilter(kind, value) {
+  if (kind === 'text') dpFilterText = value; else dpFilterHighlight = value;
+  dpRefreshColorFilterUI();
+  runSearch();
+}
+function dpRefreshColorFilterUI() {
+  const box = document.getElementById('searchColorFilters');
+  if (!box) return;
+  box.querySelectorAll('[data-kind="text"]').forEach(btn => btn.classList.toggle('active-filter', btn.dataset.value === dpFilterText));
+  box.querySelectorAll('[data-kind="highlight"]').forEach(btn => btn.classList.toggle('active-filter', btn.dataset.value === dpFilterHighlight));
+}
+
 function openSearchModal() {
   if (!selectedPersonId) { showToast('먼저 구성원을 선택하세요.', true); return; }
   document.getElementById('searchModalOverlay').classList.add('show');
   document.getElementById('searchModal').classList.add('show');
+  dpBuildColorFilterUI();
   const input = document.getElementById('searchInput');
   input.value = '';
-  document.getElementById('searchResults').innerHTML = '<div class="search-empty">검색어를 입력하세요.</div>';
+  dpFilterText = 'all'; dpFilterHighlight = 'all'; dpRefreshColorFilterUI();
+  document.getElementById('searchResults').innerHTML = '<div class="search-empty">검색어를 입력하거나 색상 필터를 선택하세요.</div>';
   setTimeout(() => input.focus(), 50);
 }
 function closeSearchModal() {
@@ -1968,7 +2131,8 @@ function dateIdToDateObj(id) {
 async function runSearch() {
   const resultsEl = document.getElementById('searchResults');
   const q = document.getElementById('searchInput').value.trim();
-  if (!q) { resultsEl.innerHTML = '<div class="search-empty">검색어를 입력하세요.</div>'; return; }
+  const hasColorFilter = dpFilterText !== 'all' || dpFilterHighlight !== 'all';
+  if (!q && !hasColorFilter) { resultsEl.innerHTML = '<div class="search-empty">검색어를 입력하거나 색상 필터를 선택하세요.</div>'; return; }
   if (!selectedPersonId) return;
 
   resultsEl.innerHTML = '<div class="search-empty">검색 중...</div>';
@@ -1982,14 +2146,31 @@ async function runSearch() {
     let data; try { data = JSON.parse(raw); } catch(e) { continue; }
 
     for (const [field, fieldLabel] of SEARCH_FIELDS) {
-      const val = data[field] || '';
-      const idx = val.toLowerCase().indexOf(qLower);
-      if (idx === -1) continue;
-      const start = Math.max(0, idx - 18);
-      const end = Math.min(val.length, idx + q.length + 18);
-      const snippet = (start > 0 ? '…' : '') + val.slice(start, end) + (end < val.length ? '…' : '');
-      const dId = key.slice(`dp_entry_${selectedPersonId}_`.length);
-      matches.push({ dateId: dId, fieldLabel, snippet });
+      const rawField = data[field] || '';
+
+      // 색상 필터가 걸려 있으면, 이 필드에 해당 글자색/형광펜이 실제로 쓰였는지 확인
+      if (hasColorFilter) {
+        const colors = dpDetectColorsInHtml(rawField);
+        if (dpFilterText !== 'all' && !colors.text.has(dpFilterText)) continue;
+        if (dpFilterHighlight !== 'all' && !colors.highlight.has(dpFilterHighlight)) continue;
+      }
+
+      const val = stripHtml(rawField);
+
+      if (q) {
+        const idx = val.toLowerCase().indexOf(qLower);
+        if (idx === -1) continue;
+        const start = Math.max(0, idx - 18);
+        const end = Math.min(val.length, idx + q.length + 18);
+        const snippet = (start > 0 ? '…' : '') + val.slice(start, end) + (end < val.length ? '…' : '');
+        const dId = key.slice(`dp_entry_${selectedPersonId}_`.length);
+        matches.push({ dateId: dId, fieldLabel, snippet });
+      } else {
+        // 키워드 없이 색상 필터만 걸었을 때는 필드 내용 앞부분을 보여줌
+        const snippet = val.slice(0, 40) + (val.length > 40 ? '…' : '');
+        const dId = key.slice(`dp_entry_${selectedPersonId}_`.length);
+        matches.push({ dateId: dId, fieldLabel, snippet });
+      }
       break; // 항목당 한 번만, 같은 날짜에서 여러 필드가 일치해도 한 결과로
     }
   }
@@ -2001,11 +2182,11 @@ async function runSearch() {
     return;
   }
 
-  const re = new RegExp(escRegex(esc(q)), 'gi');
+  const re = q ? new RegExp(escRegex(esc(q)), 'gi') : null;
   resultsEl.innerHTML = matches.map(m => {
     const dObj = dateIdToDateObj(m.dateId);
     const dispDate = dateDisplay(dObj);
-    const highlighted = esc(m.snippet).replace(re, s => `<mark>${s}</mark>`);
+    const highlighted = re ? esc(m.snippet).replace(re, s => `<mark>${s}</mark>`) : esc(m.snippet);
     return `<div class="search-result-item" onclick="goToSearchResult('${m.dateId}')">
       <div class="search-result-date">${dispDate} · ${esc(m.fieldLabel)}</div>
       <div class="search-result-snippet">${highlighted}</div>
@@ -2035,6 +2216,149 @@ function closeSidebarMobile() {
     document.getElementById('sidebar').classList.remove('open');
     document.getElementById('sidebarOverlay').classList.remove('show');
   }
+}
+
+// ══ 글자색 · 형광펜 서식 ══
+const DP_TEXT_COLORS = [
+  { label: '검정', value: '#37352f' },
+  { label: '빨강', value: '#eb5757' },
+  { label: '파랑', value: '#2f80ed' },
+];
+const DP_HILITE_COLORS = [
+  { label: '노랑', value: '#fff3a3' },
+  { label: '빨강', value: '#ffd0d0' },
+  { label: '파랑', value: '#cde3fb' },
+];
+
+// 브라우저는 inline style의 색을 rgb(r, g, b) 형식으로 정규화해서 저장하므로,
+// 우리가 쓴 hex 값과 실제 저장된 값을 비교하려면 같은 방식으로 정규화해서 맞춰봐야 함.
+function dpHexToRgb(hex) {
+  const d = document.createElement('span');
+  d.style.color = hex;
+  return d.style.color;
+}
+const DP_TEXT_RGB_TO_META = {};
+DP_TEXT_COLORS.forEach(c => { DP_TEXT_RGB_TO_META[dpHexToRgb(c.value)] = c; });
+const DP_HILITE_RGB_TO_META = {};
+DP_HILITE_COLORS.forEach(c => { DP_HILITE_RGB_TO_META[dpHexToRgb(c.value)] = c; });
+
+// 저장된 필드의 HTML을 스캔해서, 우리가 알고 있는 팔레트 중 어떤 글자색/형광펜이
+// 쓰였는지 찾아냄 (검색/필터에서 사용)
+function dpDetectColorsInHtml(html) {
+  const out = { text: new Set(), highlight: new Set() };
+  if (!html) return out;
+  const tmp = document.createElement('div');
+  tmp.innerHTML = html;
+  tmp.querySelectorAll('[style]').forEach(node => {
+    const c = node.style.color;
+    const b = node.style.backgroundColor;
+    if (c && DP_TEXT_RGB_TO_META[c]) out.text.add(DP_TEXT_RGB_TO_META[c].value);
+    if (b && b !== 'transparent' && DP_HILITE_RGB_TO_META[b]) out.highlight.add(DP_HILITE_RGB_TO_META[b].value);
+  });
+  return out;
+}
+
+function dpEnsureEditableFocus() {
+  const ae = document.activeElement;
+  if (!(ae && ae.classList && ae.classList.contains('cell-input') && ae.isContentEditable)) {
+    showToast('먼저 색을 적용할 칸을 클릭(또는 드래그로 선택)한 후 눌러주세요.', true);
+    return null;
+  }
+  return ae;
+}
+// 현재 선택 범위 정보를 가져옴 (선택이 없으면 null)
+function dpGetSelRange() {
+  const sel = window.getSelection();
+  if (!sel || sel.rangeCount === 0) return null;
+  return { sel, range: sel.getRangeAt(0) };
+}
+// 커서가 이전 서식(색/형광펜) span의 맨 끝(또는 맨 앞)에 있을 때, 그 span '안쪽'에
+// 그대로 마커를 넣으면 부모 span 속으로 중첩되어 background:transparent가
+// 부모의 형광펜 색을 그대로 비쳐 보이게 만드는 문제가 있음(자식의 투명 배경은
+// 부모 배경을 가리지 못함). → 커서가 서식 span의 경계에 있는 동안은 계속
+// 바깥쪽으로 타고 올라가, 그 서식 span의 형제(옆) 위치로 삽입 지점을 옮긴다.
+function dpEscapeStyledBoundary(root, range) {
+  let container = range.startContainer;
+  let offset = range.startOffset;
+  while (container && container !== root) {
+    const len = container.nodeType === 3 ? container.length : container.childNodes.length;
+    const parent = container.parentNode;
+    if (!parent) break;
+    if (offset === len) {
+      const idx = Array.prototype.indexOf.call(parent.childNodes, container);
+      container = parent; offset = idx + 1;
+    } else if (offset === 0) {
+      const idx = Array.prototype.indexOf.call(parent.childNodes, container);
+      container = parent; offset = idx;
+    } else {
+      break; // 서식의 중간 지점이면 더 이상 밖으로 빠져나가지 않음(흔치 않은 경우)
+    }
+  }
+  const r = document.createRange();
+  r.setStart(container, offset);
+  r.collapse(true);
+  return r;
+}
+// 폭 0(zero-width) 글자를 원하는 서식으로 직접 심어두고 그 뒤에 커서를 놓아,
+// 이어서 입력하는 글자가 확실히 그 서식을 물려받도록 함.
+// (커서만 있는 상태에서는 execCommand의 "이후 타이핑 서식"이 브라우저마다
+//  불안정하게 동작하는 경우가 있어, 직접 DOM에 심는 방식을 사용)
+function dpInsertTypingMarker(el, range, styleProps) {
+  const escapedRange = dpEscapeStyledBoundary(el, range);
+  const span = document.createElement('span');
+  Object.assign(span.style, styleProps);
+  span.appendChild(document.createTextNode('\u200B'));
+  escapedRange.insertNode(span);
+  const sel = window.getSelection();
+  const newRange = document.createRange();
+  newRange.setStart(span.firstChild, 1);
+  newRange.collapse(true);
+  sel.removeAllRanges();
+  sel.addRange(newRange);
+}
+function dpApplyColor(color) {
+  const el = dpEnsureEditableFocus();
+  if (!el) return;
+  const info = dpGetSelRange();
+  try { document.execCommand('styleWithCSS', false, true); } catch (e) {}
+  if (info && info.range.collapsed) {
+    dpInsertTypingMarker(el, info.range, { color });
+  } else {
+    document.execCommand('foreColor', false, color);
+  }
+  saveCurrentState(true);
+}
+function dpApplyHighlight(color) {
+  const el = dpEnsureEditableFocus();
+  if (!el) return;
+  const info = dpGetSelRange();
+  try { document.execCommand('styleWithCSS', false, true); } catch (e) {}
+  if (info && info.range.collapsed) {
+    dpInsertTypingMarker(el, info.range, { backgroundColor: color });
+  } else {
+    const cmd = document.queryCommandSupported && document.queryCommandSupported('hiliteColor') ? 'hiliteColor' : 'backColor';
+    document.execCommand(cmd, false, color);
+  }
+  saveCurrentState(true);
+}
+function dpClearFormat() {
+  const el = dpEnsureEditableFocus();
+  if (!el) return;
+  const info = dpGetSelRange();
+  try { document.execCommand('styleWithCSS', false, true); } catch (e) {}
+  document.execCommand('removeFormat');
+  // removeFormat은 '선택된' 글자에만 적용됨. 커서만 있는 상태라면
+  // removeFormat 이후에도 그 자리의 서식이 남아있을 수 있으므로,
+  // 기본 글자색(검정) + 형광펜 없음(투명)을 확실히 다시 심어준다.
+  const sel2 = window.getSelection();
+  if (info && info.range.collapsed && sel2 && sel2.rangeCount) {
+    dpInsertTypingMarker(el, sel2.getRangeAt(0), { color: '#37352f', backgroundColor: 'transparent' });
+  } else {
+    document.execCommand('foreColor', false, '#37352f');
+    const hiliteCmd = document.queryCommandSupported && document.queryCommandSupported('hiliteColor') ? 'hiliteColor' : 'backColor';
+    document.execCommand(hiliteCmd, false, 'transparent');
+  }
+  saveCurrentState(true);
 }
 
 function showToast(msg, isError = false) {
