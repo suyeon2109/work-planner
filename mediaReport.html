@@ -82,10 +82,17 @@ input[type="file"]{display:none;}
 .content-type-columns > .tab-panel{min-width:0; width:100%;}
 .content-type-row{display:flex; gap:14px; align-items:stretch;}
 .content-type-row > .post-card{flex:2 1 0; min-width:0; padding:10px 12px;}
+.post-card{padding:10px 12px;}
 .content-type-row > .chart-box{flex:1 1 0; min-width:0; margin-bottom:0;}
-.hp-main-row{display:grid; grid-template-columns:1.1fr 1fr; gap:16px; align-items:stretch; margin-top:10px;}
+.hp-main-row{
+  display:grid; gap:16px; align-items:stretch; margin-top:10px;
+  grid-template-columns:1.1fr 1fr;
+  grid-template-areas: "table chart" "insights chart";
+}
 .hp-main-row > *{min-width:0;}
-.hp-chart-card{margin-top:0 !important; box-shadow:none; display:flex; flex-direction:column; height:100%;}
+.hp-table-wrap{grid-area:table;}
+.hp-chart-card{grid-area:chart; margin-top:0 !important; box-shadow:none; display:flex; flex-direction:column; height:100%; max-width:480px; margin-left:auto; margin-right:auto;}
+.hp-main-row > .insight-list{grid-area:insights; margin-top:0;}
 .col-section{min-width:0;}
 .section-head.collapsible{cursor:pointer; user-select:none;}
 .section-toggle-btn{
@@ -146,7 +153,7 @@ table.post-table th{
 table.post-table td{padding:3px 4px; border-bottom:1px solid #f0f0f3; vertical-align:middle;}
 table.post-table tr.post-row.empty{opacity:.5;}
 table.post-table tr.post-row:hover{background:var(--surface-2);}
-.post-idx-cell{font-family:var(--font-num); font-size:10.5px; color:var(--text-light); width:34px; white-space:nowrap;}
+.post-idx-cell{font-family:var(--font-num); font-size:10.5px; color:var(--text-light); width:68px; white-space:nowrap;}
 .post-idx-cell .idx-num{display:inline-block; min-width:12px; text-align:right; margin-right:3px; vertical-align:middle;}
 .reorder-btns{display:inline-flex; flex-direction:column; vertical-align:middle; line-height:0;}
 .reorder-btn{
@@ -155,59 +162,60 @@ table.post-table tr.post-row:hover{background:var(--surface-2);}
 }
 .reorder-btn:hover:not(:disabled){color:var(--text); background:var(--surface-2);}
 .reorder-btn:disabled{opacity:.2; cursor:default;}
+.row-reset-btn, .row-delete-btn{
+  border:none; background:transparent; color:var(--text-light); font-size:12px; line-height:1;
+  padding:2px 3px; margin-left:2px; cursor:pointer; border-radius:4px; vertical-align:middle;
+}
+.row-reset-btn:hover{color:var(--danger); background:#fdf2f2;}
+.row-delete-btn:hover{color:#fff; background:var(--danger);}
 .post-table input[type="text"]{width:100%; min-width:50px; border:1px solid transparent; background:transparent; border-radius:6px; padding:4px 4px; font-size:11.5px; font-weight:400;}
 .post-table input[type="date"]{width:94px; border:1px solid transparent; background:transparent; border-radius:6px; padding:4px 1px; font-size:10px; color:var(--text-muted);}
 .post-table input[type="number"]{width:56px; border:1px solid transparent; background:transparent; border-radius:6px; padding:4px 3px; font-size:11.5px; font-family:var(--font-num); text-align:right;}
 .post-table input[type="number"]::-webkit-inner-spin-button, .post-table input[type="number"]::-webkit-outer-spin-button{-webkit-appearance:none; margin:0;}
 .post-table input[type="number"]{-moz-appearance:textfield;}
-.post-table input.num-fill{width:100%; min-width:0; box-sizing:border-box; text-align:right; border:1px solid transparent; background:transparent; border-radius:6px; padding:4px 6px; font-size:11.5px; font-family:var(--font-num);}
+.post-table input.num-fill{width:100%; min-width:0; box-sizing:border-box; text-align:left; border:1px solid transparent; background:transparent; border-radius:6px; padding:4px 6px; font-size:11.5px; font-family:var(--font-num);}
+.post-table select.num-fill{width:100%; min-width:0; box-sizing:border-box; text-align:left; border:1px solid transparent; background:transparent; border-radius:6px; padding:4px 6px; font-size:11.5px; font-family:var(--font);}
+.post-table select.num-fill:hover, .post-table select.num-fill:focus{border-color:var(--border); background:var(--surface-2); outline:none;}
+.mention-toggle{border:1px solid var(--border); background:var(--surface-2); color:var(--text-muted); font-size:10.5px; padding:4px 9px; border-radius:20px; white-space:nowrap; font-weight:400;}
+.mention-toggle:hover{background:#eee;}
+.mention-toggle.on{background:#e7f5f2; border-color:#bfe6de; color:var(--success);}
 table.post-table th.th-yt-longform{text-align:left; width:130px;}
 .post-table input.num-fill.num-left{text-align:left; width:100px; max-width:100px;}
 .post-table input:hover, .post-table input:focus{border-color:var(--border); background:var(--surface-2); outline:none;}
-table.post-table th.th-ratio{text-align:right;}
-.ratio-cell{display:flex; align-items:center; justify-content:flex-end; gap:6px;}
-.ratio-cell input{width:40px; min-width:0; flex-shrink:0;}
+table.post-table th.th-ratio{text-align:left;}
+.ratio-cell{display:flex; align-items:center; justify-content:flex-start; gap:6px;}
+.ratio-cell input{width:40px; min-width:0; flex-shrink:0; text-align:left;}
+
+/* 화면에서도 컬럼 폭을 고정해 게시일~조회수 사이가 불필요하게 벌어지지 않도록 함 */
+.post-table{table-layout:fixed;}
+.post-table th:first-child, .post-table td:first-child{width:68px;}
+#grid-longform th:nth-child(2), #grid-longform td:nth-child(2){width:40%;}
+#grid-longform th:nth-child(3), #grid-longform td:nth-child(3){width:14%;}
+#grid-longform th:nth-child(4), #grid-longform td:nth-child(4){width:46%;}
+
+#grid-shorts th:nth-child(2), #grid-shorts td:nth-child(2){width:40%;}
+#grid-shorts th:nth-child(3), #grid-shorts td:nth-child(3){width:14%;}
+#grid-shorts th:nth-child(4), #grid-shorts td:nth-child(4){width:15%;}
+#grid-shorts th:nth-child(5), #grid-shorts td:nth-child(5){width:15%;}
+#grid-shorts th:nth-child(6), #grid-shorts td:nth-child(6){width:16%;}
+
+#grid-cardnews th:nth-child(2), #grid-cardnews td:nth-child(2){width:40%;}
+#grid-cardnews th:nth-child(3), #grid-cardnews td:nth-child(3){width:14%;}
+#grid-cardnews th:nth-child(4), #grid-cardnews td:nth-child(4){width:23%;}
+#grid-cardnews th:nth-child(5), #grid-cardnews td:nth-child(5){width:23%;}
+
+#grid-cafe th:nth-child(2), #grid-cafe td:nth-child(2){width:40%;}
+#grid-cafe th:nth-child(3), #grid-cafe td:nth-child(3){width:14%;}
+#grid-cafe th:nth-child(4), #grid-cafe td:nth-child(4){width:23%;}
+#grid-cafe th:nth-child(5), #grid-cafe td:nth-child(5){width:23%;}
 .mini-bar{width:28px; height:6px; border-radius:4px; background:#ececef; overflow:hidden; display:flex; flex-shrink:0;}
 .mini-bar-f{height:100%; background:linear-gradient(90deg,var(--ig4),var(--ig5));}
 .mini-bar-nf{height:100%; background:linear-gradient(90deg,#6a5cf5,#4630c9);}
-.detail-toggle{
-  border:1px solid var(--border); background:var(--surface-2); color:var(--text-muted); width:22px; height:22px;
-  border-radius:6px; font-size:11px; display:inline-flex; align-items:center; justify-content:center; flex-shrink:0;
-}
-.detail-toggle:hover{background:#eee;}
-.detail-toggle.open{background:var(--text); color:#fff; border-color:var(--text);}
-tr.detail-row td{padding:0 6px 10px; border-bottom:1px solid #f0f0f3;}
-tr.detail-row.hidden{display:none;}
-
-/* IG dark insight card (상세보기) */
-.ig-metric-card{background:#121214;border-radius:9px;padding:12px 14px;color:#fff;max-width:360px;}
-.ig-metric-head{display:flex;align-items:center;gap:5px;font-size:12px;font-weight:400;color:#e8e8ea;margin-bottom:8px;}
-.ig-metric-head .info-dot{width:13px;height:13px;border-radius:50%;border:1.4px solid #6b6b70;color:#8a8a90;font-size:9px;display:inline-flex;align-items:center;justify-content:center;}
-.ig-metric-total{display:flex;justify-content:space-between;font-size:12px;color:#c7c7cb;margin-bottom:9px;}
-.ig-metric-total b{font-family:var(--font-num);color:#fff;font-size:13px;font-weight:400;}
-.ig-edit-divider{border-top:1px dashed #3a3a3e; margin:9px 0;}
-.ig-edit-row{display:flex; align-items:center; justify-content:space-between; margin-bottom:7px; font-size:11px; color:#c7c7cb;}
-.ig-edit-row:last-of-type{margin-bottom:9px;}
-.ig-dark-input{
-  width:70px; background:#2a2a30; border:1.5px solid #58585f; color:#fff; border-radius:6px;
-  padding:4px 7px; font-family:var(--font-num); font-size:12px; text-align:right;
-  box-shadow:inset 0 1px 2px rgba(0,0,0,.3);
-}
-.ig-dark-input::placeholder{color:#8a8a92;}
-.ig-dark-input:hover{border-color:#78787f;}
-.ig-dark-input:focus{outline:none; border-color:#8a7cf7; background:#323238;}
-.ig-bar-row{display:flex;align-items:center;gap:8px;font-size:11px;color:#c7c7cb;margin-bottom:6px;}
-.ig-bar-row:last-child{margin-bottom:0;}
-.ig-bar-label{width:92px;flex-shrink:0;}
-.ig-bar-track{flex:1;height:5px;border-radius:4px;background:#2a2a2e;overflow:hidden;}
-.ig-bar-fill{height:100%;border-radius:4px;}
-.ig-bar-fill.follower{background:linear-gradient(90deg,var(--ig4),var(--ig5));}
-.ig-bar-fill.nonfollower{background:linear-gradient(90deg,#6a5cf5,#4630c9);}
-.ig-bar-pct{width:42px;text-align:right;font-family:var(--font-num);color:#fff;font-weight:400;flex-shrink:0;}
 .chart-box{padding:10px 12px;margin-bottom:0;}
 .chart-canvas-wrap{position:relative; width:100%; height:150px; overflow:visible;}
+.shorts-chart-wrap{height:280px;}
 .chart-canvas-wrap canvas{width:100% !important; height:100% !important; display:block;}
-.hp-chart-wrap{flex:1 1 auto; min-height:180px; height:auto;}
+.hp-chart-wrap{flex:1 1 auto; min-height:340px; height:auto;}
 .chart-title{font-size:11px;font-weight:400;color:var(--text-muted);margin-bottom:6px;flex-shrink:0;}
 .print-mini-chart{display:none;}
 
@@ -234,7 +242,13 @@ table.hp-table td{padding:8px 10px; text-align:right; border-bottom:1px solid #f
 table.hp-table td:first-child{font-family:var(--font); font-weight:400;}
 table.hp-table tr:last-child td{border-bottom:none;}
 table.hp-table tfoot td{font-weight:400; border-top:1.5px solid var(--text); background:var(--surface-2);}
-.hp-stat-row{display:flex;gap:8px;margin:10px 0 4px;flex-wrap:wrap;}
+.hp-stat-row{display:grid; grid-template-columns:1.1fr 1fr; gap:16px; margin:10px 0 4px;}
+#hpStatRow{grid-template-columns:repeat(5,1fr);}
+#hpStatRow .hp-stat-group{display:contents;}
+#hpStatRow .hp-stat{min-width:0;}
+#hpStatRow .hp-stat label{font-size:8px;}
+#hpStatRow .hp-stat b{font-size:13px;}
+.hp-stat-group{display:flex; gap:8px; flex-wrap:wrap; min-width:0;}
 .hp-stat{flex:1;min-width:90px;background:var(--surface-2);border:1px solid var(--border);border-radius:8px;padding:8px 10px;}
 .hp-stat label{font-size:9.5px;color:var(--text-light);font-weight:400;text-transform:uppercase;letter-spacing:.02em;}
 .hp-stat b{display:block;font-family:var(--font-num);font-size:16px;margin-top:2px;white-space:nowrap;font-weight:400;}
@@ -243,10 +257,10 @@ table.hp-table tfoot td{font-weight:400; border-top:1.5px solid var(--text); bac
 .insight-list{list-style:none;margin-top:8px;}
 .insight-list li{
   font-size:11.5px; padding:6px 10px; border-radius:7px; background:var(--surface-2);
-  margin-bottom:5px; display:flex; gap:7px; align-items:flex-start;
+  margin-bottom:5px; display:flex; gap:7px; align-items:center;
 }
 .insight-list li .tag{
-  flex-shrink:0; font-size:9.5px; font-weight:400; padding:2px 6px; border-radius:5px; color:#fff;
+  flex-shrink:0; font-size:8.5px; line-height:1.3; font-weight:400; padding:2px 6px; border-radius:5px; color:#fff;
 }
 
 /* ===== Summary section ===== */
@@ -255,9 +269,28 @@ table.hp-table tfoot td{font-weight:400; border-top:1.5px solid var(--text); bac
 .summary-card label{font-size:10px;color:var(--text-muted);display:block;margin-bottom:3px;}
 .summary-card b{font-family:var(--font-num);font-size:19px;font-weight:400;}
 .summary-card .sub{font-size:10.5px;color:var(--text-light);margin-top:2px;}
-.summary-card .sub mark.hl{
+.sub mark.hl{
   background:transparent;
   background-image:linear-gradient(120deg, #fff299 0%, #ffe066 100%);
+  background-repeat:no-repeat;
+  background-size:100% 45%;
+  background-position:0 88%;
+  color:var(--text);
+  font-weight:400;
+  padding:0 1px;
+}
+/* 표 안에서 최고 조회수 숫자 밑에 숫자 길이만큼만 형광펜 표시 */
+.post-table td.view-max-cell{position:relative;}
+.view-max-mark{
+  position:absolute; left:11px; bottom:5px; height:6px; border-radius:2px;
+  background-image:linear-gradient(120deg, #d4ff8a 0%, #9fe855 100%);
+  pointer-events:none; z-index:0;
+}
+.post-table td.view-max-cell input{position:relative; z-index:1; background:transparent;}
+/* 홈페이지 현황 표: 페이지뷰·방문자 최고값 형광펜 (조회수 최고값과 동일한 연두색) */
+table.hp-table mark.hp-max-hl{
+  background:transparent;
+  background-image:linear-gradient(120deg, #d4ff8a 0%, #9fe855 100%);
   background-repeat:no-repeat;
   background-size:100% 45%;
   background-position:0 88%;
@@ -285,7 +318,13 @@ table.hp-table tfoot td{font-weight:400; border-top:1.5px solid var(--text); bac
   body{background:#fff; padding:0; font-size:9.4px;}
   .wrap{max-width:100%; padding:0; margin:0;}
   .card{box-shadow:none; border:1px solid #ddd;}
-  .section{margin-bottom:13px;}
+  .section{margin-bottom:9px;}
+
+  /* 표/카드/차트가 페이지 경계에서 중간에 잘리지 않도록 함(어색한 줄바꿈 방지) */
+  .tab-panel, .card, .chart-box, .channel-card, .post-table thead,
+  .post-table tbody tr, .hp-table thead, .hp-table tbody tr{
+    break-inside:avoid; page-break-inside:avoid;
+  }
 
   /* 상단 바: 로고/제목과 리포트 기간만 인쇄에 남기고, 조작용 버튼류는 숨김 */
   .topbar{
@@ -302,12 +341,14 @@ table.hp-table tfoot td{font-weight:400; border-top:1.5px solid var(--text); bac
   .period-print-label{display:inline !important; font-size:9.5px; color:var(--text-muted); white-space:nowrap;}
 
   /* 종합 요약: 5칸 항상 한 줄, 세로 크기 2배로 확대 */
-  .summary-section{margin-bottom:14px;}
+  .summary-section{margin-bottom:9px; padding-top:12px;}
+  .section-sns{padding-top:4px;}
+  #tab-longform{padding-top:4px;}
   .summary-grid{display:grid !important; grid-template-columns:repeat(5, 1fr) !important; gap:8px !important;}
-  .summary-card{padding:12px 10px;}
-  .summary-card b{font-size:18px;}
-  .summary-card label{font-size:8.5px; margin-bottom:6px;}
-  .summary-card .sub{font-size:9px; line-height:1.5; margin-top:5px;}
+  .summary-card{padding:9px 10px;}
+  .summary-card b{font-size:17px;}
+  .summary-card label{font-size:8.5px; margin-bottom:5px;}
+  .summary-card .sub{font-size:9px; line-height:1.4; margin-top:4px;}
 
   .section-head{margin-bottom:7px; gap:6px;}
   .section-head h2{font-size:11.5px;}
@@ -317,34 +358,31 @@ table.hp-table tfoot td{font-weight:400; border-top:1.5px solid var(--text); bac
   .hp-table-wrap, .insight-list{max-height:none !important; overflow:visible !important;}
 
   /* SNS 현황: Youtube/Instagram 항상 한 줄 */
-  .channel-row{display:grid !important; grid-template-columns:1fr 1fr !important; gap:8px; margin-bottom:10px;}
-  .channel-card{padding:8px 10px;}
-  .channel-card-head{margin-bottom:4px;}
-  .channel-stat-main input.big-num{font-size:15px;}
+  .channel-row{display:grid !important; grid-template-columns:1fr 1fr !important; gap:8px; margin-bottom:7px;}
+  .channel-card{padding:6px 10px;}
+  .channel-card-head{margin-bottom:3px;}
+  .channel-stat-main input.big-num{font-size:14px;}
 
-  .content-type-columns{gap:11px;}
-  .content-type-row{flex-direction:column !important;}
-  .content-type-row > .post-card{flex:1 1 auto !important; min-width:0; width:100%;}
-  .content-type-row > .chart-box{flex:1 1 auto !important; min-width:0; width:100%; height:150px;}
-  .content-type-row > .chart-box .print-mini-chart{height:130px !important;}
-  .tab-panel{margin-bottom:7px !important; padding-top:0; border-top:none;}
-  .content-subtitle{font-size:9.5px; margin-bottom:4px;}
+  .content-type-columns{gap:7px;}
+  .tab-panel{margin-bottom:5px !important; padding-top:0; border-top:none;}
+  .content-subtitle{font-size:9.5px; margin-bottom:3px;}
   .content-subtitle .cnt-badge{display:none;}
 
-  /* 카드뉴스부터 2페이지로: 롱폼·쇼츠는 1페이지, 카드뉴스+홈페이지 현황은 2페이지에 함께 배치 */
-  #tab-cardnews{page-break-before:always; break-before:page;}
+  /* 카페 활동부터 2페이지로: 롱폼·쇼츠·카드뉴스는 1페이지, 카페 활동+홈페이지 현황은 2페이지에 함께 배치 */
+  #tab-cafe{page-break-before:always; break-before:page;}
 
-  /* 홈페이지 현황: 카드뉴스 바로 아래(2페이지)로 자연스럽게 이어지도록 여백만 확보 */
+  /* 홈페이지 현황: 카페 활동 바로 아래(2페이지)로 자연스럽게 이어지도록 여백만 확보 */
   .section-hp{margin-top:6mm; margin-bottom:0;}
 
   /* 게시물 표: 고정 레이아웃 + 컬럼별 폭 지정으로 가로 넘침 방지 */
-  .post-row.empty, tr.detail-row{display:none !important;}
+  .post-row.empty{display:none !important;}
   .post-table-wrap{overflow:visible;}
   .post-table{min-width:0 !important; width:100%; table-layout:fixed;}
   .post-table th, .post-table td{padding:2.5px 2px; vertical-align:middle; overflow:hidden;}
   .post-table th{font-size:7.6px;}
   .post-table td:first-child, .post-table th:first-child{width:12px;}
   .post-table input{padding:1.5px 2px !important; font-size:8.2px !important;}
+  .post-table select{padding:1.5px 2px !important; font-size:8.2px !important; -webkit-appearance:none !important; -moz-appearance:none !important; appearance:none !important; background-image:none !important;}
   .post-table input[type="date"]{width:100%; min-width:0; padding:1px 0 !important; font-size:7.6px !important; text-align:left;}
   .post-table input[type="date"]::-webkit-calendar-picker-indicator{display:none !important;}
   .post-table input[type="text"]{overflow:hidden; text-overflow:ellipsis;}
@@ -352,56 +390,68 @@ table.hp-table tfoot td{font-weight:400; border-top:1.5px solid var(--text); bac
   .ratio-cell{flex-wrap:nowrap; white-space:nowrap; gap:3px !important;}
   .ratio-cell input{width:29px !important; min-width:0 !important; font-size:8.2px !important; flex-shrink:0; padding:1px !important;}
   .mini-bar{width:13px !important; height:5px; flex-shrink:0;}
+  .mention-toggle{font-size:7.6px !important; padding:1.5px 5px !important;}
+  .view-max-mark{left:5px !important; bottom:2.5px !important; height:4px !important;}
   .full-label{display:none;}
   .print-label{display:inline;}
 
-  /* 롱폼·쇼츠(1페이지): 표·그래프 글씨 크기 확대 — 카드뉴스(2페이지)는 기존 크기 유지 */
-  #tab-longform .content-subtitle, #tab-shorts .content-subtitle{font-size:11px;}
-  #tab-longform .post-table th, #tab-shorts .post-table th{font-size:9.2px;}
-  #tab-longform .post-idx-cell, #tab-shorts .post-idx-cell{font-size:9.2px;}
-  #tab-longform .post-table input, #tab-shorts .post-table input{font-size:9.8px !important;}
-  #tab-longform .post-table input[type="date"], #tab-shorts .post-table input[type="date"]{font-size:9px !important;}
-  #tab-shorts .ratio-cell input{width:33px !important; font-size:9.8px !important;}
-  #tab-longform .chart-title, #tab-shorts .chart-title{font-size:9px;}
+  /* 롱폼·쇼츠·카드뉴스(1페이지): 표 글씨 크기 확대 — 카페 활동(2페이지)는 기존 크기 유지 */
+  #tab-longform .content-subtitle, #tab-shorts .content-subtitle, #tab-cardnews .content-subtitle{font-size:11px;}
+  #tab-longform .post-table th, #tab-shorts .post-table th, #tab-cardnews .post-table th{font-size:9.2px;}
+  #tab-longform .post-idx-cell, #tab-shorts .post-idx-cell, #tab-cardnews .post-idx-cell{font-size:9.2px;}
+  #tab-longform .post-table input, #tab-shorts .post-table input, #tab-cardnews .post-table input{font-size:9.8px !important;}
+  #tab-longform .post-table input[type="date"], #tab-shorts .post-table input[type="date"], #tab-cardnews .post-table input[type="date"]{font-size:9px !important;}
+  #tab-shorts .ratio-cell input, #tab-cardnews .ratio-cell input{width:33px !important; font-size:9.8px !important;}
 
   /* 컬럼별 고정폭: 제목도 명시적으로 지정해서 표종류별로 균형 있게 분배되도록 함 */
   #grid-longform th:nth-child(2), #grid-longform td:nth-child(2){width:140px;}
   #grid-longform th:nth-child(3), #grid-longform td:nth-child(3){width:62px;}
   #grid-longform th:nth-child(4), #grid-longform td:nth-child(4){width:95px;}
 
-  #grid-shorts th:nth-child(2), #grid-shorts td:nth-child(2){width:100px;}
-  #grid-shorts th:nth-child(3), #grid-shorts td:nth-child(3){width:58px;}
-  #grid-shorts th:nth-child(4), #grid-shorts td:nth-child(4){width:54px;}
-  #grid-shorts th:nth-child(5), #grid-shorts td:nth-child(5){width:54px;}
-  #grid-shorts th:nth-child(6), #grid-shorts td:nth-child(6){width:54px;}
-  #grid-shorts th:nth-child(7), #grid-shorts td:nth-child(7){width:48px;}
-  #grid-shorts th:nth-child(8), #grid-shorts td:nth-child(8){width:54px;}
-  #grid-shorts th:nth-child(9), #grid-shorts td:nth-child(9){width:14px;}
+  #grid-shorts th:nth-child(2), #grid-shorts td:nth-child(2){width:150px;}
+  #grid-shorts th:nth-child(3), #grid-shorts td:nth-child(3){width:70px;}
+  #grid-shorts th:nth-child(4), #grid-shorts td:nth-child(4){width:70px;}
+  #grid-shorts th:nth-child(5), #grid-shorts td:nth-child(5){width:70px;}
+  #grid-shorts th:nth-child(6), #grid-shorts td:nth-child(6){width:60px;}
 
-  #grid-cardnews th:nth-child(2), #grid-cardnews td:nth-child(2){width:131px;}
-  #grid-cardnews th:nth-child(3), #grid-cardnews td:nth-child(3){width:58px;}
-  #grid-cardnews th:nth-child(4), #grid-cardnews td:nth-child(4){width:54px;}
-  #grid-cardnews th:nth-child(5), #grid-cardnews td:nth-child(5){width:54px;}
-  #grid-cardnews th:nth-child(6), #grid-cardnews td:nth-child(6){width:48px;}
-  #grid-cardnews th:nth-child(7), #grid-cardnews td:nth-child(7){width:54px;}
-  #grid-cardnews th:nth-child(8), #grid-cardnews td:nth-child(8){width:14px;}
+  #grid-cardnews th:nth-child(2), #grid-cardnews td:nth-child(2){width:180px;}
+  #grid-cardnews th:nth-child(3), #grid-cardnews td:nth-child(3){width:75px;}
+  #grid-cardnews th:nth-child(4), #grid-cardnews td:nth-child(4){width:75px;}
+  #grid-cardnews th:nth-child(5), #grid-cardnews td:nth-child(5){width:65px;}
 
-  .chart-box{padding:5px 8px; display:flex; flex-direction:column;}
-  .chart-title{font-size:7.2px; margin-bottom:3px; flex:0 0 auto;}
+  #grid-cafe th:nth-child(2), #grid-cafe td:nth-child(2){width:190px;}
+  #grid-cafe th:nth-child(3), #grid-cafe td:nth-child(3){width:65px;}
+  #grid-cafe th:nth-child(4), #grid-cafe td:nth-child(4){width:60px;}
+  #grid-cafe th:nth-child(5), #grid-cafe td:nth-child(5){width:65px;}
+
+  /* 인쇄 시에는 모든 차트에서 Chart.js 캔버스 대신 정적 SVG를 사용 (캔버스는 인쇄 타이밍 문제가 있음) */
   .chart-canvas-wrap{display:none !important;}
   .print-mini-chart{display:block !important; flex:1 1 auto; min-height:0;}
+  .hp-chart-card{max-width:none !important; margin-left:0 !important; margin-right:0 !important;}
 
-  .hp-main-row{grid-template-columns:1fr !important; gap:12px; margin-top:8px;}
-  .hp-chart-wrap{height:108px !important;}
-  #tab-cardnews .chart-box{height:152px !important;}
-  #tab-cardnews .print-mini-chart{height:132px !important;}
-  .hp-stat-row{margin:3px 0 !important;}
-  .hp-stat{padding:4px 7px !important;}
-  .hp-stat label{font-size:7.2px;}
-  .hp-stat b{font-size:11.5px;}
-  .hp-stat .sub{font-size:6.6px !important; line-height:1.3 !important; margin-top:2px !important; white-space:nowrap !important;}
+  /* 쇼츠 유튜브 vs 인스타그램 조회수 비교 그래프 (인쇄용) */
+  #tab-shorts .chart-box{padding:5px 8px; display:flex; flex-direction:column; margin-top:5px; height:170px;}
+  #tab-shorts .chart-title{font-size:9px; margin-bottom:3px; flex:0 0 auto;}
+  .post-card{padding:6px 8px !important;}
+
+  .hp-main-row{
+    grid-template-columns:1fr !important;
+    grid-template-areas:"table" "chart" "insights" !important;
+    gap:12px; margin-top:8px;
+  }
+  /* 합계 페이지뷰 ~ 가입/새글/댓글까지 5개 지표를 한 줄로 표시 */
+  .hp-stat-row{display:flex !important; flex-wrap:nowrap !important; gap:5px !important; margin:3px 0 !important;}
+  .hp-stat-group{display:contents;}
+  .hp-chart-wrap{height:150px !important;}
+  .hp-mention-card{padding:6px 8px !important;}
+  .hp-stat{padding:3px 5px !important; flex:1 1 0; min-width:0;}
+  .hp-stat label{font-size:6.6px; white-space:nowrap;}
+  .hp-stat b{font-size:10px; white-space:nowrap;}
+  #hpStatRow .hp-stat label{font-size:5.4px;}
+  #hpStatRow .hp-stat b{font-size:7.6px;}
+  .hp-stat .sub{font-size:6px !important; line-height:1.25 !important; margin-top:1px !important; white-space:nowrap !important; overflow:hidden; text-overflow:ellipsis;}
   table.hp-table th, table.hp-table td{padding:1.5px 4px !important; font-size:8.2px;}
-  .insight-list{margin-top:3px;}
+  .insight-list{margin-top:0;}
   .insight-list li{padding:1px 4px; font-size:6.8px; line-height:1.25; margin-bottom:0.5px;}
   .legend-row{margin-top:4px; font-size:8px;}
 }
@@ -409,7 +459,9 @@ table.hp-table tfoot td{font-weight:400; border-top:1.5px solid var(--text); bac
   .content-type-row{flex-direction:column;}
 }
 @media (max-width:640px){
-  .hp-main-row{grid-template-columns:1fr;}
+  .hp-main-row{grid-template-columns:1fr; grid-template-areas:"table" "chart" "insights";}
+  .hp-stat-row{grid-template-columns:1fr;}
+  #hpStatRow{grid-template-columns:1fr;}
 }
 @media (max-width:720px){
   .channel-row{grid-template-columns:1fr;}
@@ -475,13 +527,13 @@ table.hp-table tfoot td{font-weight:400; border-top:1.5px solid var(--text); bac
   </div>
 
   <!-- ============ SNS 현황 ============ -->
-  <div class="section">
+  <div class="section section-sns">
     <div class="section-head collapsible" onclick="toggleSection('sns')">
       <span class="eyebrow">01</span>
       <h2>SNS 현황</h2>
       <span class="section-toggle-btn" id="toggle-sns">−</span>
     </div>
-    <p class="section-desc">유튜브·인스타그램 팔로워 및 최근 콘텐츠 성과 (롱폼 2주 1편·쇼츠 주 4편·카드뉴스 주 1편)</p>
+    <p class="section-desc">유튜브·인스타그램 팔로워 및 최근 콘텐츠 성과 (롱폼 2주 1편·쇼츠 주 4편·카드뉴스 주 1편·카페 활동 수시)</p>
     <div class="section-body" id="body-sns">
       <div class="channel-row">
         <div class="card channel-card yt">
@@ -526,24 +578,23 @@ table.hp-table tfoot td{font-weight:400; border-top:1.5px solid var(--text); bac
       <div class="content-type-columns">
         <div id="tab-longform" class="tab-panel">
           <h3 class="content-subtitle">롱폼 <span class="cnt-badge">2주 1편 · Youtube</span></h3>
-          <div class="content-type-row">
-            <div class="card post-card"><div class="post-grid" id="grid-longform"></div></div>
-            <div class="card chart-box"><div class="chart-title">롱폼 최근 5편 조회수</div><div class="chart-canvas-wrap"><canvas id="chart-longform"></canvas></div><div class="print-mini-chart" id="printchart-longform"></div></div>
-          </div>
+          <div class="card post-card"><div class="post-grid" id="grid-longform"></div></div>
         </div>
         <div id="tab-shorts" class="tab-panel">
           <h3 class="content-subtitle">쇼츠 <span class="cnt-badge">주 4편 · Youtube+Instagram</span></h3>
-          <div class="content-type-row">
-            <div class="card post-card"><div class="post-grid" id="grid-shorts"></div></div>
-            <div class="card chart-box"><div class="chart-title">쇼츠 최근 5편 조회수</div><div class="chart-canvas-wrap"><canvas id="chart-shorts"></canvas></div><div class="print-mini-chart" id="printchart-shorts"></div></div>
+          <div class="card post-card"><div class="post-grid" id="grid-shorts"></div></div>
+          <div class="card chart-box" style="margin-top:10px;">
+            <div class="chart-title">쇼츠 조회수 비교 (Youtube vs Instagram)</div>
+            <div class="chart-canvas-wrap shorts-chart-wrap"><canvas id="chart-shorts"></canvas></div><div class="print-mini-chart" id="printchart-shorts"></div>
           </div>
         </div>
         <div id="tab-cardnews" class="tab-panel">
           <h3 class="content-subtitle">카드뉴스 <span class="cnt-badge">주 1편 · Instagram 전용</span></h3>
-          <div class="content-type-row">
-            <div class="card post-card"><div class="post-grid" id="grid-cardnews"></div></div>
-            <div class="card chart-box"><div class="chart-title">카드뉴스 최근 5편 조회수</div><div class="chart-canvas-wrap"><canvas id="chart-cardnews"></canvas></div><div class="print-mini-chart" id="printchart-cardnews"></div></div>
-          </div>
+          <div class="card post-card"><div class="post-grid" id="grid-cardnews"></div></div>
+        </div>
+        <div id="tab-cafe" class="tab-panel">
+          <h3 class="content-subtitle">카페 활동 <span class="cnt-badge">셀인카페 · 지성아빠 등 네이버 카페</span></h3>
+          <div class="card post-card"><div class="post-grid" id="grid-cafe"></div></div>
         </div>
       </div>
     </div>
@@ -569,8 +620,8 @@ table.hp-table tfoot td{font-weight:400; border-top:1.5px solid var(--text); bac
             <div class="chart-canvas-wrap hp-chart-wrap"><canvas id="chart-homepage"></canvas></div><div class="print-mini-chart" id="printchart-homepage"></div>
             <div class="legend-row" id="hpLegend"></div>
           </div>
+          <ul class="insight-list" id="hpInsights"></ul>
         </div>
-        <ul class="insight-list" id="hpInsights"></ul>
       </div>
     </div>
   </div>
@@ -646,19 +697,22 @@ function scheduleAutoSave(){
 =================================================================== */
 const DAY_KO = ['일','월','화','수','목','금','토'];
 const CONTENT_TYPES = [
-  {key:'longform', label:'롱폼', hasYoutube:true,  hasInstagram:false},
-  {key:'shorts',   label:'쇼츠', hasYoutube:true,  hasInstagram:true},
-  {key:'cardnews', label:'카드뉴스', hasYoutube:false, hasInstagram:true},
+  {key:'longform', label:'롱폼', hasYoutube:true,  hasInstagram:false, hasCafe:false},
+  {key:'shorts',   label:'쇼츠', hasYoutube:true,  hasInstagram:true,  hasCafe:false},
+  {key:'cardnews', label:'카드뉴스', hasYoutube:false, hasInstagram:true, hasCafe:false},
+  {key:'cafe',     label:'카페 활동', hasYoutube:false, hasInstagram:false, hasCafe:true},
 ];
 const CARDNEWS_COLOR = '#1a9d6f';
-const TYPE_COLOR = {longform:'#ff0000', shorts:'#f2994a', cardnews:CARDNEWS_COLOR};
-const TYPE_SHORT  = {longform:'롱', shorts:'쇼', cardnews:'카'};
+const CAFE_COLOR = '#6a5cf5';
+const TYPE_COLOR = {longform:'#ff0000', shorts:'#f2994a', cardnews:CARDNEWS_COLOR, cafe:CAFE_COLOR};
+const TYPE_SHORT  = {longform:'롱', shorts:'쇼', cardnews:'카', cafe:'페'};
+const CAFE_NAMES = ['셀인카페', '지성아빠'];
 
 let state = null;
 let historyReports = [];
-let contentCharts = {};
 let sparkCharts = {};
 let hpChart = null;
+let shortsChart = null;
 
 function formatDateLocal(d){
   const y = d.getFullYear();
@@ -673,7 +727,8 @@ function todayStr(offset){
 function emptyPost(ct){
   const o = {title:'', date:''};
   if(ct.hasYoutube) o.ytViews = '';
-  if(ct.hasInstagram){ o.igViews=''; o.igFollowerPct=''; o.igReactions=''; o.igReactionFollowerPct=''; }
+  if(ct.hasInstagram){ o.igViews=''; o.igFollowerPct=''; }
+  if(ct.hasCafe){ o.cafeName=''; o.mentioned=false; }
   return o;
 }
 function initState(){
@@ -685,6 +740,7 @@ function initState(){
       longform: Array.from({length:5}, ()=>emptyPost(CONTENT_TYPES[0])),
       shorts:   Array.from({length:5}, ()=>emptyPost(CONTENT_TYPES[1])),
       cardnews: Array.from({length:5}, ()=>emptyPost(CONTENT_TYPES[2])),
+      cafe:     Array.from({length:4}, ()=>emptyPost(CONTENT_TYPES[3])),
     },
     homepage:{rows:[]}
   };
@@ -753,6 +809,119 @@ const contentMarkerPlugin = {
 };
 Chart.register(contentMarkerPlugin);
 
+/* 막대 위에 값(조회수)을 작게 표시하는 커스텀 Chart.js 플러그인 */
+const barValueLabelPlugin = {
+  id: 'barValueLabelPlugin',
+  afterDatasetsDraw(chart){
+    if(!chart.options.plugins || !chart.options.plugins.valueLabels || !chart.options.plugins.valueLabels.enabled) return;
+    const {ctx} = chart;
+    chart.data.datasets.forEach((dataset, dsIndex) => {
+      const meta = chart.getDatasetMeta(dsIndex);
+      if(meta.hidden) return;
+      const offset = dataset.valueLabelOffset != null ? dataset.valueLabelOffset : -8;
+      const color = dataset.valueLabelColor || '#888';
+      meta.data.forEach((bar, index) => {
+        const value = dataset.data[index];
+        if(!value) return;
+        const text = Number(value).toLocaleString();
+        ctx.save();
+        ctx.font = '9px -apple-system, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'bottom';
+        ctx.lineWidth = 3;
+        ctx.strokeStyle = 'rgba(255,255,255,.9)';
+        ctx.strokeText(text, bar.x, bar.y + offset);
+        ctx.fillStyle = color;
+        ctx.fillText(text, bar.x, bar.y + offset);
+        ctx.restore();
+      });
+    });
+  }
+};
+Chart.register(barValueLabelPlugin);
+
+/* ===================================================================
+   쇼츠 조회수 비교 그래프 (Youtube vs Instagram)
+=================================================================== */
+function refreshShortsChart(){
+  const ctx = document.getElementById('chart-shorts');
+  if(!ctx) return;
+  const posts = state.posts.shorts;
+  const labels = posts.map((p,i) => `#${i+1}`);
+  const ytData = posts.map(p => Number(p.ytViews) || 0);
+  const igData = posts.map(p => Number(p.igViews) || 0);
+  const data = {
+    labels,
+    datasets: [
+      {label:'YouTube', data: ytData, backgroundColor:'#ff0000', borderRadius:4, maxBarThickness:36, categoryPercentage:0.7, barPercentage:0.85},
+      {label:'Instagram', data: igData, backgroundColor:'#ffb300', borderRadius:4, maxBarThickness:36, categoryPercentage:0.7, barPercentage:0.85},
+    ]
+  };
+  const maxVal = Math.max(0, ...ytData, ...igData);
+  const options = {
+    responsive:true, maintainAspectRatio:false,
+    layout:{padding:{top:14}},
+    plugins:{
+      valueLabels:{enabled:true},
+      legend:{position:'left', align:'start', labels:{boxWidth:10, font:{size:11}}},
+      tooltip:{callbacks:{title:(items)=>{
+        const p = posts[items[0].dataIndex];
+        return (p && p.title) ? p.title : items[0].label;
+      }}}
+    },
+    scales:{
+      y:{ beginAtZero:true, suggestedMax: maxVal > 0 ? undefined : 100,
+          ticks:{ precision:0, callback:(v)=> Number(v).toLocaleString() },
+          grid:{color:'#f2f2f5'} },
+      x:{grid:{display:false}}
+    }
+  };
+  if(shortsChart){ shortsChart.data = data; shortsChart.options = options; shortsChart.resize(); shortsChart.update('none'); }
+  else shortsChart = new Chart(ctx, {type:'bar', data, options});
+
+  // 인쇄용 정적 SVG (Chart.js 캔버스는 인쇄 시 재계산 타이밍 문제가 반복돼서 여기서도 동일하게 회피)
+  const printEl = document.getElementById('printchart-shorts');
+  if(printEl) printEl.innerHTML = buildShortsChartSVG(posts, ytData, igData);
+}
+
+function buildShortsChartSVG(posts, ytData, igData){
+  const maxV = Math.max(1, ...ytData, ...igData);
+  const W = 600, H = 220, padTop = 20, padBottom = 18, padLeft = 78;
+  const plotH = H - padTop - padBottom;
+  const plotW = W - padLeft;
+  const n = posts.length || 1;
+  const groupW = plotW / n;
+  const gap = 6;
+  const barW = Math.max(2, (groupW * 0.30 - gap) / 2);
+  const totalBarsW = barW * 2 + gap;
+  const groupStart = (groupW - totalBarsW) / 2;
+  let bars = '';
+  for(let i=0;i<n;i++){
+    let x = padLeft + i*groupW + groupStart;
+    const vY = ytData[i];
+    const hY = (vY/maxV) * plotH;
+    const yY = padTop+plotH-hY;
+    bars += `<rect x="${x.toFixed(1)}" y="${yY.toFixed(1)}" width="${barW.toFixed(1)}" height="${hY.toFixed(1)}" fill="#ff0000" rx="1"/>`;
+    if(vY > 0) bars += `<text x="${(x+barW/2).toFixed(1)}" y="${(yY-3).toFixed(1)}" font-size="9.5" text-anchor="middle" fill="#333">${vY.toLocaleString()}</text>`;
+    x += barW + gap;
+    const vI = igData[i];
+    const hI = (vI/maxV) * plotH;
+    const yI = padTop+plotH-hI;
+    bars += `<rect x="${x.toFixed(1)}" y="${yI.toFixed(1)}" width="${barW.toFixed(1)}" height="${hI.toFixed(1)}" fill="#ffb300" rx="1"/>`;
+    if(vI > 0) bars += `<text x="${(x+barW/2).toFixed(1)}" y="${(yI-3).toFixed(1)}" font-size="9.5" text-anchor="middle" fill="#333">${vI.toLocaleString()}</text>`;
+    const labelX = padLeft + i*groupW + groupW/2;
+    bars += `<text x="${labelX.toFixed(1)}" y="${H-3}" font-size="10" text-anchor="middle" fill="#3d3d52">#${i+1}</text>`;
+  }
+  // 범례: 왼쪽에 한 줄씩(세로로) 배치
+  const legend = `<rect x="2" y="${(H/2-16).toFixed(1)}" width="7" height="7" fill="#ff0000"/><text x="12" y="${(H/2-10).toFixed(1)}" font-size="10" fill="#333">YouTube</text>
+    <rect x="2" y="${(H/2+4).toFixed(1)}" width="7" height="7" fill="#ffb300"/><text x="12" y="${(H/2+10).toFixed(1)}" font-size="10" fill="#333">Instagram</text>`;
+  return `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;display:block;">
+    <line x1="${padLeft}" y1="${padTop+plotH}" x2="${W}" y2="${padTop+plotH}" stroke="#ccc" stroke-width="1"/>
+    ${bars}
+    ${legend}
+  </svg>`;
+}
+
 /* ===================================================================
    전체 렌더링
 =================================================================== */
@@ -780,7 +949,7 @@ function renderAll(){
   updateDeltaBadge('yt'); updateDeltaBadge('ig');
   refreshFollowerSpark('yt'); refreshFollowerSpark('ig');
   CONTENT_TYPES.forEach(ct => renderPostGrid(ct.key));
-  CONTENT_TYPES.forEach(ct => refreshContentChart(ct.key));
+  refreshShortsChart();
   renderHomepage();
   refreshSummary();
 }
@@ -806,24 +975,55 @@ function addDaysToDateStr(dateStr, days){
   return formatDateLocal(d);
 }
 
+/* 다른 주차로 이동할 때: 그 기간으로 저장된 이력이 있으면 불러오고,
+   없으면 입력값을 비운 빈 화면으로 전환한다 (날짜만 옮기고 이전 주 내용이
+   그대로 남아있던 문제를 해결). */
+function resetContentForPeriod(start, end){
+  state.period = {start, end};
+  state.yt = {followers:'', prev:''};
+  state.ig = {followers:'', prev:''};
+  state.posts = {
+    longform: Array.from({length:5}, ()=>emptyPost(CONTENT_TYPES[0])),
+    shorts:   Array.from({length:5}, ()=>emptyPost(CONTENT_TYPES[1])),
+    cardnews: Array.from({length:5}, ()=>emptyPost(CONTENT_TYPES[2])),
+    cafe:     Array.from({length:4}, ()=>emptyPost(CONTENT_TYPES[3])),
+  };
+  state.homepage = {rows:[]};
+}
+
+function loadOrResetPeriod(newStart, newEnd){
+  const match = historyReports.find(h => h.period && h.period.start === newStart && h.period.end === newEnd);
+  document.getElementById('periodStart').value = newStart;
+  document.getElementById('periodEnd').value = newEnd;
+  if(match){
+    applyStateFromData(match);
+  } else {
+    resetContentForPeriod(newStart, newEnd);
+  }
+  document.getElementById('pasteZone').innerText = state.homepage.rows.length
+    ? state.homepage.rows.length + '개 행이 입력되었습니다 (다시 붙여넣으면 갱신됩니다)'
+    : '';
+  updatePeriodPrintLabel();
+  renderAll();
+  scheduleAutoSave();
+  return !!match;
+}
+
 function shiftWeek(direction){
   const curStart = document.getElementById('periodStart').value || state.period.start || todayStr(-6);
   const curEnd   = document.getElementById('periodEnd').value   || state.period.end   || todayStr(0);
   const newStart = addDaysToDateStr(curStart, 7 * direction);
   const newEnd   = addDaysToDateStr(curEnd, 7 * direction);
-  document.getElementById('periodStart').value = newStart;
-  document.getElementById('periodEnd').value = newEnd;
-  onPeriodChange();
-  showToast((direction > 0 ? '다음' : '이전') + ' 주로 이동했습니다 · ' + newStart + ' ~ ' + newEnd);
+  const loaded = loadOrResetPeriod(newStart, newEnd);
+  const dirLabel = (direction > 0 ? '다음' : '이전') + ' 주로 이동했습니다 · ' + newStart + ' ~ ' + newEnd;
+  showToast(loaded ? dirLabel + ' (저장된 데이터를 불러왔습니다)' : dirLabel + ' (새 입력)');
 }
 
 function goToday(){
   const newStart = todayStr(-6);
   const newEnd = todayStr(0);
-  document.getElementById('periodStart').value = newStart;
-  document.getElementById('periodEnd').value = newEnd;
-  onPeriodChange();
-  showToast('오늘 포함 최근 7일로 이동했습니다');
+  const loaded = loadOrResetPeriod(newStart, newEnd);
+  showToast(loaded ? '오늘 포함 최근 7일로 이동했습니다 (저장된 데이터를 불러왔습니다)' : '오늘 포함 최근 7일로 이동했습니다 (새 입력)');
 }
 
 /* ===================================================================
@@ -885,63 +1085,61 @@ function toggleSection(key){
 function renderPostGrid(type){
   const ct = CONTENT_TYPES.find(c => c.key === type);
   const grid = document.getElementById('grid-'+type);
-  const colCount = 3 + (ct.hasYoutube ? 1 : 0) + (ct.hasInstagram ? 5 : 0);
   const rowsHtml = state.posts[type].map((p, idx) => {
-    const hasData = p.title || p.igViews || p.ytViews;
+    const hasData = p.title || p.igViews || p.ytViews || p.cafeName || p.mentioned;
     return `
     <tr class="post-row ${hasData ? '' : 'empty'}" id="post-${type}-${idx}">
       <td class="post-idx-cell">
         <span class="idx-num">${idx+1}</span><span class="reorder-btns no-print">
           <button type="button" class="reorder-btn" onclick="movePost('${type}',${idx},-1)" ${idx===0 ? 'disabled' : ''} title="위로 이동">▲</button>
           <button type="button" class="reorder-btn" onclick="movePost('${type}',${idx},1)" ${idx===state.posts[type].length-1 ? 'disabled' : ''} title="아래로 이동">▼</button>
-        </span>
+        </span><button type="button" class="row-reset-btn no-print" onclick="resetPost('${type}',${idx})" title="이 줄만 초기화">↺</button><button type="button" class="row-delete-btn no-print" onclick="deletePost('${type}',${idx})" title="이 줄 삭제">✕</button>
       </td>
       <td><input type="text" value="${escAttr(p.title)}" placeholder="${ct.label} 제목"
             oninput="updatePostField('${type}',${idx},'title',this.value)"></td>
       <td><input type="date" value="${escAttr(p.date)}"
             oninput="updatePostField('${type}',${idx},'date',this.value)"
-            onchange="refreshHomepageChart(state.homepage.rows); refreshHomepageInsights(state.homepage.rows);"></td>
-      ${ct.hasYoutube ? `<td><input type="text" inputmode="numeric" class="num-fill${type==='longform' ? ' num-left' : ''}" value="${escAttr(fmtNum(p.ytViews))}" placeholder="0"
-            oninput="formatNumberField(this); updatePostField('${type}',${idx},'ytViews',stripCommas(this.value)); refreshContentChart('${type}'); refreshSummary();"></td>` : ''}
+            onchange="refreshHomepageChart(state.homepage.rows); refreshHomepageInsights(state.homepage.rows); renderMentionEffect();"></td>
+      ${ct.hasCafe ? `<td><select class="num-fill" style="text-align:left;" onchange="updatePostField('${type}',${idx},'cafeName',this.value); refreshHomepageInsights(state.homepage.rows); renderMentionEffect();">
+            <option value="" ${!p.cafeName ? 'selected' : ''}>카페 선택</option>
+            ${CAFE_NAMES.map(n => `<option value="${escAttr(n)}" ${p.cafeName===n ? 'selected' : ''}>${escAttr(n)}</option>`).join('')}
+          </select></td>` : ''}
+      ${ct.hasYoutube ? `<td id="ytcell-${type}-${idx}"><span class="view-max-mark" id="ytmark-${type}-${idx}" style="display:none;"></span><input type="text" inputmode="numeric" class="num-fill${type==='longform' ? ' num-left' : ''}" value="${escAttr(fmtNum(p.ytViews))}" placeholder="0"
+            oninput="formatNumberField(this); updatePostField('${type}',${idx},'ytViews',stripCommas(this.value)); refreshSummary(); refreshShortsChart(); refreshViewHighlights('${type}');"></td>` : ''}
       ${ct.hasInstagram ? `
-      <td><input type="text" inputmode="numeric" class="num-fill" value="${escAttr(fmtNum(p.igViews))}" placeholder="0"
-            oninput="formatNumberField(this); updatePostField('${type}',${idx},'igViews',stripCommas(this.value)); refreshContentChart('${type}'); refreshSummary(); refreshPostVisual('${type}',${idx});"></td>
+      <td id="igcell-${type}-${idx}"><span class="view-max-mark" id="igmark-${type}-${idx}" style="display:none;"></span><input type="text" inputmode="numeric" class="num-fill" value="${escAttr(fmtNum(p.igViews))}" placeholder="0"
+            oninput="formatNumberField(this); updatePostField('${type}',${idx},'igViews',stripCommas(this.value)); refreshSummary(); refreshShortsChart(); refreshViewHighlights('${type}');"></td>
       <td><div class="ratio-cell">
             <input type="number" min="0" max="100" value="${escAttr(p.igFollowerPct)}" placeholder="0"
-              oninput="updatePostField('${type}',${idx},'igFollowerPct',this.value); refreshRatioBar('bar-${type}-${idx}-f', this.value); refreshPostVisual('${type}',${idx});">
+              oninput="updatePostField('${type}',${idx},'igFollowerPct',this.value); refreshRatioBar('bar-${type}-${idx}-f', this.value);">
             <div class="mini-bar" id="bar-${type}-${idx}-f"></div>
-          </div></td>
-      <td><input type="text" inputmode="numeric" class="num-fill" value="${escAttr(fmtNum(p.igReactions))}" placeholder="0"
-            oninput="formatNumberField(this); updatePostField('${type}',${idx},'igReactions',stripCommas(this.value)); refreshPostVisual('${type}',${idx});"></td>
-      <td><div class="ratio-cell">
-            <input type="number" min="0" max="100" value="${escAttr(p.igReactionFollowerPct)}" placeholder="0"
-              oninput="updatePostField('${type}',${idx},'igReactionFollowerPct',this.value); refreshRatioBar('bar-${type}-${idx}-r', this.value); refreshPostVisual('${type}',${idx});">
-            <div class="mini-bar" id="bar-${type}-${idx}-r"></div>
-          </div></td>
-      <td><button class="detail-toggle" id="toggle-${type}-${idx}" onclick="toggleDetail('${type}',${idx})" title="인사이트 카드 보기">ⓘ</button></td>` : ''}
-    </tr>
-    ${ct.hasInstagram ? `<tr class="detail-row hidden" id="detailrow-${type}-${idx}">
-      <td colspan="${colCount}"><div id="igcard-${type}-${idx}"></div></td>
-    </tr>` : ''}`;
+          </div></td>` : ''}
+      ${ct.hasCafe ? `
+      <td style="text-align:center;"><button type="button" class="mention-toggle ${p.mentioned ? 'on' : ''}" id="mention-${type}-${idx}"
+            onclick="toggleMention('${type}',${idx})">${p.mentioned ? '✓ 언급함' : '언급안함'}</button></td>` : ''}
+    </tr>`;
   }).join('');
   grid.innerHTML = `
     <div class="post-table-wrap">
       <table class="post-table">
         <thead><tr>
-          <th></th><th>제목</th><th>게시일</th>
+          <th></th>
+          <th>제목</th><th>게시일</th>
+          ${ct.hasCafe ? `<th><span class="full-label">카페</span><span class="print-label">카페</span></th>` : ''}
           ${ct.hasYoutube ? `<th${type==='longform' ? ' class="th-yt-longform"' : ' class="th-ratio"'}><span class="full-label">Youtube 조회수</span><span class="print-label">Youtube</span></th>` : ''}
-          ${ct.hasInstagram ? `<th class="th-ratio"><span class="full-label">Insta 조회수</span><span class="print-label">Instagram</span></th><th class="th-ratio"><span class="full-label">팔로워 비율(%)</span><span class="print-label">팔로워%</span></th><th class="th-ratio"><span class="full-label">반응 수</span><span class="print-label">반응수</span></th><th class="th-ratio"><span class="full-label">반응 팔로워 %</span><span class="print-label">반응%</span></th><th></th>` : ''}
+          ${ct.hasInstagram ? `<th class="th-ratio"><span class="full-label">Insta 조회수</span><span class="print-label">Instagram</span></th><th class="th-ratio"><span class="full-label">팔로워 비율(%)</span><span class="print-label">팔로워%</span></th>` : ''}
+          ${ct.hasCafe ? `<th style="text-align:center;"><span class="full-label">차공조연 언급</span><span class="print-label">언급</span></th>` : ''}
         </tr></thead>
         <tbody>${rowsHtml}</tbody>
       </table>
-    </div>`;
+    </div>
+    ${ct.hasCafe ? `<button type="button" class="btn no-print" style="margin-top:2px;" onclick="addPostRow('${type}')">+ 행 추가</button>` : ''}`;
   if(ct.hasInstagram){
     state.posts[type].forEach((p, idx) => {
       refreshRatioBar(`bar-${type}-${idx}-f`, p.igFollowerPct);
-      refreshRatioBar(`bar-${type}-${idx}-r`, p.igReactionFollowerPct);
-      refreshPostVisual(type, idx);
     });
   }
+  refreshViewHighlights(type);
 }
 
 function updatePostField(type, idx, field, value){
@@ -949,7 +1147,7 @@ function updatePostField(type, idx, field, value){
   const row = document.getElementById(`post-${type}-${idx}`);
   if(row){
     const p = state.posts[type][idx];
-    row.classList.toggle('empty', !(p.title || p.igViews || p.ytViews));
+    row.classList.toggle('empty', !(p.title || p.igViews || p.ytViews || p.cafeName || p.mentioned));
   }
   scheduleAutoSave();
 }
@@ -962,10 +1160,95 @@ function movePost(type, idx, dir){
   arr[idx] = arr[newIdx];
   arr[newIdx] = tmp;
   renderPostGrid(type);
-  refreshContentChart(type);
+  refreshShortsChart();
   refreshSummary();
   refreshHomepageInsights(state.homepage.rows);
+  refreshHomepageChart(state.homepage.rows);
+  renderMentionEffect();
   scheduleAutoSave();
+}
+
+function addPostRow(type){
+  const ct = CONTENT_TYPES.find(c => c.key === type);
+  state.posts[type].push(emptyPost(ct));
+  renderPostGrid(type);
+  refreshShortsChart();
+  refreshSummary();
+  scheduleAutoSave();
+  showToast('행을 추가했습니다');
+}
+
+function deletePost(type, idx){
+  const arr = state.posts[type];
+  if(arr.length <= 1){ showToast('최소 1개의 행은 남아있어야 합니다', true); return; }
+  const p = arr[idx];
+  const hasData = p.title || p.igViews || p.ytViews || p.cafeName || p.mentioned;
+  if(hasData && !confirm(`${idx+1}번째 줄을 삭제할까요? 삭제한 줄은 되돌릴 수 없습니다.`)) return;
+  arr.splice(idx, 1);
+  renderPostGrid(type);
+  refreshShortsChart();
+  refreshSummary();
+  refreshHomepageInsights(state.homepage.rows);
+  refreshHomepageChart(state.homepage.rows);
+  renderMentionEffect();
+  scheduleAutoSave();
+  showToast('행을 삭제했습니다');
+}
+
+function resetPost(type, idx){
+  const p = state.posts[type][idx];
+  const hasData = p.title || p.igViews || p.ytViews || p.cafeName || p.mentioned;
+  if(hasData && !confirm(`${idx+1}번째 줄의 내용을 초기화할까요?`)) return;
+  const ct = CONTENT_TYPES.find(c => c.key === type);
+  state.posts[type][idx] = emptyPost(ct);
+  renderPostGrid(type);
+  refreshShortsChart();
+  refreshSummary();
+  refreshHomepageInsights(state.homepage.rows);
+  refreshHomepageChart(state.homepage.rows);
+  renderMentionEffect();
+  scheduleAutoSave();
+  showToast(`${idx+1}번째 줄을 초기화했습니다`);
+}
+
+let _measureCanvas = null;
+function measureTextWidth(text, font){
+  if(!_measureCanvas) _measureCanvas = document.createElement('canvas');
+  const mctx = _measureCanvas.getContext('2d');
+  mctx.font = font;
+  return mctx.measureText(text).width;
+}
+
+function applyViewMaxMark(cellId, markId, isMax, displayText, forPrint){
+  const cell = document.getElementById(cellId);
+  const mark = document.getElementById(markId);
+  if(!cell || !mark) return;
+  cell.classList.toggle('view-max-cell', isMax);
+  if(!isMax){ mark.style.display = 'none'; return; }
+  const font = forPrint ? '9.8px "SF Mono","Roboto Mono",ui-monospace,monospace' : '11.5px "SF Mono","Roboto Mono",ui-monospace,monospace';
+  const w = measureTextWidth(displayText, font);
+  mark.style.width = Math.max(6, Math.ceil(w) + 2) + 'px';
+  mark.style.display = 'block';
+}
+
+function refreshViewHighlights(type, forPrint){
+  const ct = CONTENT_TYPES.find(c => c.key === type);
+  if(!ct.hasYoutube && !ct.hasInstagram) return;
+  const posts = state.posts[type];
+  // Youtube·Instagram 각각 별도로 최고 조회수를 계산해서, 두 플랫폼 모두 최고 기록에
+  // 형광펜이 칠해지도록 함 (기존에는 두 값을 합쳐 하나의 최고값만 찾아 한쪽이 누락됐음)
+  const ytMaxVal = ct.hasYoutube ? Math.max(0, ...posts.map(p => Number(p.ytViews) || 0)) : 0;
+  const igMaxVal = ct.hasInstagram ? Math.max(0, ...posts.map(p => Number(p.igViews) || 0)) : 0;
+  posts.forEach((p, idx) => {
+    if(ct.hasYoutube){
+      const isMax = ytMaxVal > 0 && (Number(p.ytViews) || 0) === ytMaxVal;
+      applyViewMaxMark(`ytcell-${type}-${idx}`, `ytmark-${type}-${idx}`, isMax, fmtNum(p.ytViews), forPrint);
+    }
+    if(ct.hasInstagram){
+      const isMax = igMaxVal > 0 && (Number(p.igViews) || 0) === igMaxVal;
+      applyViewMaxMark(`igcell-${type}-${idx}`, `igmark-${type}-${idx}`, isMax, fmtNum(p.igViews), forPrint);
+    }
+  });
 }
 
 function refreshRatioBar(containerId, pctValue){
@@ -976,165 +1259,19 @@ function refreshRatioBar(containerId, pctValue){
   el.innerHTML = `<div class="mini-bar-f" style="width:${pct}%"></div><div class="mini-bar-nf" style="width:${100-pct}%"></div>`;
 }
 
-function toggleDetail(type, idx){
-  const row = document.getElementById(`detailrow-${type}-${idx}`);
-  const btn = document.getElementById(`toggle-${type}-${idx}`);
-  if(!row) return;
-  const opening = row.classList.contains('hidden');
-  row.classList.toggle('hidden', !opening);
-  if(btn) btn.classList.toggle('open', opening);
-}
-
-function refreshPostVisual(type, idx){
+function toggleMention(type, idx){
   const p = state.posts[type][idx];
-  const el = document.getElementById(`igcard-${type}-${idx}`);
-  if(!el) return;
-  const views = Number(p.igViews) || 0;
-  const fPct = Math.max(0, Math.min(100, Number(p.igFollowerPct) || 0));
-  const reactions = Number(p.igReactions) || 0;
-  const rPct = Math.max(0, Math.min(100, Number(p.igReactionFollowerPct) || 0));
-  el.innerHTML = `
-    <div class="ig-metric-card">
-      <div class="ig-metric-head"><span class="info-dot">i</span>Instagram 인사이트</div>
-      <div class="ig-metric-total"><span>조회수</span><b>${views.toLocaleString()}</b></div>
-      <div class="ig-bar-row"><span class="ig-bar-label">팔로워</span><div class="ig-bar-track"><div class="ig-bar-fill follower" style="width:${fPct}%"></div></div><span class="ig-bar-pct">${fPct.toFixed(1)}%</span></div>
-      <div class="ig-bar-row"><span class="ig-bar-label">팔로워가 아닌 사람</span><div class="ig-bar-track"><div class="ig-bar-fill nonfollower" style="width:${100-fPct}%"></div></div><span class="ig-bar-pct">${(100-fPct).toFixed(1)}%</span></div>
-      <div class="ig-edit-divider"></div>
-      <div class="ig-metric-total"><span>반응 수</span><b>${reactions.toLocaleString()}</b></div>
-      <div class="ig-bar-row"><span class="ig-bar-label">팔로워</span><div class="ig-bar-track"><div class="ig-bar-fill follower" style="width:${rPct}%"></div></div><span class="ig-bar-pct">${rPct.toFixed(1)}%</span></div>
-      <div class="ig-bar-row"><span class="ig-bar-label">팔로워가 아닌 사람</span><div class="ig-bar-track"><div class="ig-bar-fill nonfollower" style="width:${100-rPct}%"></div></div><span class="ig-bar-pct">${(100-rPct).toFixed(1)}%</span></div>
-    </div>`;
-}
-
-function buildContentChartData(type){
-  const ct = CONTENT_TYPES.find(c => c.key === type);
-  const posts = state.posts[type];
-  const labels = posts.map((p,i) => `#${i+1}`);
-  const datasets = [];
-  if(ct.hasYoutube){
-    const ytData = posts.map(p => Number(p.ytViews) || 0);
-    datasets.push({label:'YouTube', data: ytData, backgroundColor:'#ff0000', borderRadius:4});
+  p.mentioned = !p.mentioned;
+  const btn = document.getElementById(`mention-${type}-${idx}`);
+  if(btn){
+    btn.classList.toggle('on', p.mentioned);
+    btn.textContent = p.mentioned ? '✓ 언급함' : '언급안함';
   }
-  if(ct.hasInstagram){
-    const igData = posts.map(p => Number(p.igViews) || 0);
-    const igColor = type === 'cardnews' ? CARDNEWS_COLOR : '#ffb300';
-    datasets.push({label:'Instagram', data: igData, backgroundColor:igColor, borderRadius:4});
-  }
-  return {labels, datasets};
-}
-
-/* 막대 위에 값(조회수)을 작게 표시하는 커스텀 Chart.js 플러그인 */
-const barValueLabelPlugin = {
-  id: 'barValueLabelPlugin',
-  afterDatasetsDraw(chart){
-    if(!chart.options.plugins || !chart.options.plugins.valueLabels || !chart.options.plugins.valueLabels.enabled) return;
-    const {ctx} = chart;
-    chart.data.datasets.forEach((dataset, dsIndex) => {
-      const meta = chart.getDatasetMeta(dsIndex);
-      if(meta.hidden) return;
-      meta.data.forEach((bar, index) => {
-        const value = dataset.data[index];
-        if(!value) return;
-        ctx.save();
-        ctx.fillStyle = '#888';
-        ctx.font = '9px -apple-system, sans-serif';
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'bottom';
-        ctx.fillText(Number(value).toLocaleString(), bar.x, bar.y - 2);
-        ctx.restore();
-      });
-    });
-  }
-};
-Chart.register(barValueLabelPlugin);
-
-function refreshContentChart(type){
-  const ctx = document.getElementById('chart-'+type);
-  const data = buildContentChartData(type);
-  const maxVal = Math.max(0, ...data.datasets.flatMap(d => d.data));
-  const posts = state.posts[type];
-  const options = {
-    responsive:true, maintainAspectRatio:false,
-    layout:{padding:{top:14}},
-    plugins:{
-      valueLabels:{enabled:true},
-      legend:{position:'bottom', labels:{boxWidth:10, font:{size:11}}},
-      tooltip:{callbacks:{title:(items)=>{
-        const p = posts[items[0].dataIndex];
-        return (p && p.title) ? p.title : items[0].label;
-      }}}
-    },
-    scales:{
-      y:{ beginAtZero:true, suggestedMax: maxVal > 0 ? undefined : 100,
-          ticks:{ precision:0, callback:(v)=> Number(v).toLocaleString() },
-          grid:{color:'#f2f2f5'} },
-      x:{grid:{display:false}}
-    }
-  };
-  if(contentCharts[type]){ contentCharts[type].data = data; contentCharts[type].options = options; contentCharts[type].update('none'); }
-  else contentCharts[type] = new Chart(ctx, {type:'bar', data, options});
-
-  // 인쇄용 정적 SVG 차트도 함께 갱신 (Chart.js 캔버스는 인쇄 시 크기 재계산 타이밍 문제가
-  // 반복적으로 발생해서, 인쇄에서는 아예 별도의 순수 SVG 막대그래프를 그려 문제를 원천 차단한다)
-  const printEl = document.getElementById('printchart-'+type);
-  if(printEl) printEl.innerHTML = buildMiniChartSVG(type);
-}
-
-function buildMiniChartSVG(type){
-  const ct = CONTENT_TYPES.find(c => c.key === type);
-  const posts = state.posts[type];
-  const ytData = ct.hasYoutube ? posts.map(p => Number(p.ytViews) || 0) : null;
-  const igData = ct.hasInstagram ? posts.map(p => Number(p.igViews) || 0) : null;
-  const igColor = type === 'cardnews' ? CARDNEWS_COLOR : '#ffb300';
-  const maxV = Math.max(1, ...(ytData||[0]), ...(igData||[0]));
-  // 1페이지(롱폼·쇼츠)는 인쇄 가독성을 위해 그래프 글씨를 카드뉴스보다 크게 표시
-  const isPage1 = (type === 'longform' || type === 'shorts');
-  const valueFontSize = isPage1 ? 9.5 : 8;
-  const labelFontSize = isPage1 ? 10 : 8.5;
-  // padTop을 넉넉히 잡아 막대 위 수치 라벨이 상단 범례(legend)와 겹치지 않도록 함
-  const W = 600, H = 150, padTop = isPage1 ? 34 : 30, padBottom = 18;
-  const plotH = H - padTop - padBottom;
-  const n = posts.length || 1;
-  const groupW = W / n;
-  const seriesCount = (ytData ? 1 : 0) + (igData ? 1 : 0) || 1;
-  // 막대를 더 얇게: 그룹 폭 대비 막대가 차지하는 비율을 낮추고, 두 시리즈 사이 간격을 확보
-  const gap = seriesCount > 1 ? 5 : 0;
-  const barW = seriesCount > 1
-    ? Math.max(2, (groupW * 0.34 - gap) / 2)
-    : Math.max(2, groupW * 0.24);
-  const totalBarsW = barW * seriesCount + gap * (seriesCount - 1);
-  const groupStart = (groupW - totalBarsW) / 2;
-  let bars = '';
-  for(let i=0;i<n;i++){
-    let x = i*groupW + groupStart;
-    if(ytData){
-      const v = ytData[i];
-      const h = (v/maxV) * plotH;
-      const y = padTop+plotH-h;
-      bars += `<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${barW.toFixed(1)}" height="${h.toFixed(1)}" fill="#ff0000" rx="1"/>`;
-      if(v > 0) bars += `<text x="${(x+barW/2).toFixed(1)}" y="${(y-3).toFixed(1)}" font-size="${valueFontSize}" text-anchor="middle" fill="#333">${v.toLocaleString()}</text>`;
-      x += barW + gap;
-    }
-    if(igData){
-      const v = igData[i];
-      const h = (v/maxV) * plotH;
-      const y = padTop+plotH-h;
-      bars += `<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${barW.toFixed(1)}" height="${h.toFixed(1)}" fill="${igColor}" rx="1"/>`;
-      if(v > 0) bars += `<text x="${(x+barW/2).toFixed(1)}" y="${(y-3).toFixed(1)}" font-size="${valueFontSize}" text-anchor="middle" fill="#333">${v.toLocaleString()}</text>`;
-    }
-    const labelX = i*groupW + groupW/2;
-    bars += `<text x="${labelX.toFixed(1)}" y="${H-3}" font-size="${labelFontSize}" text-anchor="middle" fill="#3d3d52">#${i+1}</text>`;
-  }
-  let legend = '';
-  let lx = 2;
-  const legendGap = isPage1 ? 62 : 52;
-  if(ytData){ legend += `<rect x="${lx}" y="1" width="6" height="6" fill="#ff0000"/><text x="${lx+8}" y="6.5" font-size="${labelFontSize}" fill="#333">YouTube</text>`; lx += legendGap; }
-  if(igData){ legend += `<rect x="${lx}" y="1" width="6" height="6" fill="${igColor}"/><text x="${lx+8}" y="6.5" font-size="${labelFontSize}" fill="#333">Instagram</text>`; }
-  return `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;display:block;">
-    <line x1="0" y1="${padTop+plotH}" x2="${W}" y2="${padTop+plotH}" stroke="#ccc" stroke-width="1"/>
-    ${bars}
-    ${legend}
-  </svg>`;
+  const row = document.getElementById(`post-${type}-${idx}`);
+  if(row) row.classList.toggle('empty', !(p.title || p.cafeName || p.mentioned));
+  refreshHomepageInsights(state.homepage.rows);
+  renderMentionEffect();
+  scheduleAutoSave();
 }
 
 /* ===================================================================
@@ -1199,6 +1336,7 @@ function renderHomepage(){
     document.getElementById('hpLegend').innerHTML = '';
     if(hpChart){ hpChart.destroy(); hpChart = null; }
     refreshSummary();
+    renderMentionEffect();
     return;
   }
   const totalPV = rows.reduce((s,r)=>s+r.pageviews,0);
@@ -1208,34 +1346,46 @@ function renderHomepage(){
   const totalComment = rows.reduce((s,r)=>s+r.comments,0);
   const bestDay = rows.reduce((a,b)=> b.pageviews > a.pageviews ? b : a, rows[0]);
   statRow.innerHTML = `
-    <div class="hp-stat"><label>합계 페이지뷰</label><b>${totalPV.toLocaleString()}</b></div>
-    <div class="hp-stat"><label>합계 방문자</label><b>${totalV.toLocaleString()}</b></div>
-    <div class="hp-stat"><label>일평균 방문자</label><b>${Math.round(totalV/rows.length).toLocaleString()}</b></div>
-    <div class="hp-stat"><label>최대 페이지뷰</label><b>${bestDay.date.slice(5).replace('-','/')}(${DAY_KO[(()=>{const t=bestDay.date.split('-'); return new Date(+t[0],+t[1]-1,+t[2]).getDay();})()]})</b><div class="sub" style="font-size:11px;color:var(--text-light)">방문자 ${bestDay.visitors.toLocaleString()}명 · 페이지뷰 ${bestDay.pageviews.toLocaleString()}회</div></div>
-    <div class="hp-stat" style="flex:1.6;min-width:150px;"><label>가입 / 새 글 / 댓글</label><b style="font-size:17px;white-space:nowrap;">${totalSignup.toLocaleString()} / ${totalPost.toLocaleString()} / ${totalComment.toLocaleString()}</b></div>
+    <div class="hp-stat-group">
+      <div class="hp-stat"><label>합계 페이지뷰</label><b>${totalPV.toLocaleString()}</b></div>
+      <div class="hp-stat"><label>합계 방문자</label><b>${totalV.toLocaleString()}</b></div>
+      <div class="hp-stat"><label>일평균 방문자</label><b>${Math.round(totalV/rows.length).toLocaleString()}</b></div>
+    </div>
+    <div class="hp-stat-group">
+      <div class="hp-stat"><label>최대 페이지뷰</label><b>${bestDay.date.slice(5).replace('-','/')}(${DAY_KO[(()=>{const t=bestDay.date.split('-'); return new Date(+t[0],+t[1]-1,+t[2]).getDay();})()]})</b></div>
+      <div class="hp-stat"><label>당일 방문자 · 페이지뷰</label><b>방문자 ${bestDay.visitors.toLocaleString()}명 · 페이지뷰 ${bestDay.pageviews.toLocaleString()}회</b></div>
+    </div>
   `;
+  const maxPVVal = Math.max(...rows.map(r=>r.pageviews));
+  const maxVVal  = Math.max(...rows.map(r=>r.visitors));
   tableWrap.innerHTML = `
     <table class="hp-table">
       <thead><tr><th>일자</th><th>페이지뷰</th><th>방문자</th><th>가입</th><th>새 글</th><th>댓글</th></tr></thead>
-      <tbody>${[...rows].reverse().map(r=>`<tr><td>${r.date}</td><td>${r.pageviews.toLocaleString()}</td><td>${r.visitors.toLocaleString()}</td><td>${r.signups.toLocaleString()}</td><td>${r.newposts.toLocaleString()}</td><td>${r.comments.toLocaleString()}</td></tr>`).join('')}</tbody>
+      <tbody>${[...rows].reverse().map(r=>`<tr><td>${r.date}</td><td>${r.pageviews===maxPVVal ? '<mark class="hp-max-hl">'+r.pageviews.toLocaleString()+'</mark>' : r.pageviews.toLocaleString()}</td><td>${r.visitors===maxVVal ? '<mark class="hp-max-hl">'+r.visitors.toLocaleString()+'</mark>' : r.visitors.toLocaleString()}</td><td>${r.signups.toLocaleString()}</td><td>${r.newposts.toLocaleString()}</td><td>${r.comments.toLocaleString()}</td></tr>`).join('')}</tbody>
       <tfoot><tr><td>합계</td><td>${totalPV.toLocaleString()}</td><td>${totalV.toLocaleString()}</td><td>${totalSignup.toLocaleString()}</td><td>${totalPost.toLocaleString()}</td><td>${totalComment.toLocaleString()}</td></tr></tfoot>
     </table>`;
   refreshHomepageChart(rows);
   refreshHomepageInsights(rows);
   refreshSummary();
+  renderMentionEffect();
 }
 
 function computeChartMarkers(rows){
   const dateIndex = {}; rows.forEach((r,i) => dateIndex[r.date] = i);
-  const list = []; const counts = {};
+  const list = []; const counts = {}; const cafeShownIdx = {};
   CONTENT_TYPES.forEach(ct => {
     state.posts[ct.key].forEach(p => {
-      if(p.date && dateIndex[p.date] !== undefined){
-        const idx = dateIndex[p.date];
-        counts[idx] = counts[idx] || 0;
-        list.push({idx, color: TYPE_COLOR[ct.key], short: TYPE_SHORT[ct.key], stack: counts[idx]});
-        counts[idx]++;
+      if(!p.date || dateIndex[p.date] === undefined) return;
+      const idx = dateIndex[p.date];
+      if(ct.hasCafe){
+        // 차공조연을 언급한 카페 활동만 표시하고, 같은 날 여러 건이어도 '페' 마커는 하나만 표시
+        if(!p.mentioned) return;
+        if(cafeShownIdx[idx]) return;
+        cafeShownIdx[idx] = true;
       }
+      counts[idx] = counts[idx] || 0;
+      list.push({idx, color: TYPE_COLOR[ct.key], short: TYPE_SHORT[ct.key], stack: counts[idx]});
+      counts[idx]++;
     });
   });
   return list;
@@ -1248,29 +1398,34 @@ function refreshHomepageChart(rows){
   const labels = rows.map(r => r.date.slice(5));
   const dataV  = rows.map(r => r.visitors);
   const dataPV = rows.map(r => r.pageviews);
+  const maxV  = Math.max(1, ...dataV);
+  const maxPV = Math.max(1, ...dataPV);
   const data = {
     labels,
     datasets: [
-      {type:'bar',  label:'페이지뷰', data: dataPV, backgroundColor:'#cfe0fb', yAxisID:'y1', borderRadius:4, order:2},
-      {type:'line', label:'방문자',   data: dataV,  borderColor:'#2f80ed', backgroundColor:'#2f80ed', tension:.3, yAxisID:'y', order:1, pointRadius:3},
+      {type:'bar',  label:'페이지뷰', data: dataPV, backgroundColor:'#adb5c4', yAxisID:'y1', borderRadius:4, order:2, valueLabelOffset:-6,  valueLabelColor:'#586274'},
+      {type:'line', label:'방문자',   data: dataV,  borderColor:'#2f80ed', backgroundColor:'#2f80ed', tension:0, yAxisID:'y', order:1, pointRadius:3, valueLabelOffset:-18, valueLabelColor:'#2f80ed'},
     ]
   };
   const options = {
     responsive:true, maintainAspectRatio:false,
+    layout:{padding:{top:26}},
     interaction:{mode:'index', intersect:false},
-    plugins:{legend:{position:'bottom', labels:{boxWidth:10, font:{size:11}}}},
+    plugins:{valueLabels:{enabled:true}, legend:{position:'bottom', labels:{boxWidth:10, font:{size:11}}}},
     scales:{
-      y:  {beginAtZero:true, position:'left',  ticks:{precision:0, callback:(v)=>Number(v).toLocaleString()}, grid:{color:'#f2f2f5'}},
-      y1: {beginAtZero:true, position:'right', ticks:{precision:0, callback:(v)=>Number(v).toLocaleString()}, grid:{display:false}},
+      // 발행일 마커가 그래프 최상단 근처에 그려지므로, 최고값 막대·꺾은선이 마커와
+      // 겹치지 않도록 축 상한을 실제 최댓값보다 여유 있게 잡는다
+      y:  {beginAtZero:true, position:'left',  suggestedMax: Math.ceil(maxV*1.3),  ticks:{precision:0, callback:(v)=>Number(v).toLocaleString()}, grid:{color:'#f2f2f5'}},
+      y1: {beginAtZero:true, position:'right', suggestedMax: Math.ceil(maxPV*1.3), ticks:{precision:0, callback:(v)=>Number(v).toLocaleString()}, grid:{display:false}},
     }
   };
   const markers = computeChartMarkers(rows);
-  if(hpChart){ hpChart.data = data; hpChart.options = options; hpChart.$markers = markers; hpChart.update('none'); }
+  if(hpChart){ hpChart.data = data; hpChart.options = options; hpChart.$markers = markers; hpChart.resize(); hpChart.update('none'); }
   else { hpChart = new Chart(ctx, {type:'bar', data, options}); hpChart.$markers = markers; hpChart.update('none'); }
 
   document.getElementById('hpLegend').innerHTML =
     CONTENT_TYPES.map(ct => `<span><span class="legend-dot" style="background:${TYPE_COLOR[ct.key]}"></span>${ct.label} 발행일</span>`).join('') +
-    `<span><span class="legend-dot" style="background:#2f80ed"></span>방문자</span><span><span class="legend-dot" style="background:#cfe0fb"></span>페이지뷰</span>`;
+    `<span><span class="legend-dot" style="background:#2f80ed"></span>방문자</span><span><span class="legend-dot" style="background:#adb5c4"></span>페이지뷰</span>`;
 
   // 인쇄용 정적 SVG (Chart.js 캔버스는 인쇄 시 재계산 타이밍 문제가 반복돼서 여기서도 동일하게 회피)
   const printEl = document.getElementById('printchart-homepage');
@@ -1284,8 +1439,8 @@ function buildHomepageChartSVG(rows, markers, labels, dataV, dataPV){
   const plotH = H - padTop - padBottom;
   const plotW = W - padLeft - padRight;
   const groupW = plotW / n;
-  const maxV = Math.max(1, ...dataV);
-  const maxPV = Math.max(1, ...dataPV);
+  const maxV = Math.max(1, ...dataV) * 1.3;
+  const maxPV = Math.max(1, ...dataPV) * 1.3;
 
   // 막대: 페이지뷰 (오른쪽 축 기준)
   let bars = '';
@@ -1294,8 +1449,8 @@ function buildHomepageChartSVG(rows, markers, labels, dataV, dataPV){
     const h = (dataPV[i]/maxPV) * plotH;
     const x = padLeft + i*groupW + (groupW-barW)/2;
     const y = padTop + plotH - h;
-    bars += `<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${barW.toFixed(1)}" height="${h.toFixed(1)}" fill="#cfe0fb" rx="1.5"/>`;
-    bars += `<text x="${(x+barW/2).toFixed(1)}" y="${(y-2).toFixed(1)}" font-size="5.6" text-anchor="middle" fill="#6b8cb8">${Number(dataPV[i]).toLocaleString()}</text>`;
+    bars += `<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${barW.toFixed(1)}" height="${h.toFixed(1)}" fill="#adb5c4" rx="1.5"/>`;
+    bars += `<text x="${(x+barW/2).toFixed(1)}" y="${(y-2).toFixed(1)}" font-size="5.6" text-anchor="middle" fill="#586274">${Number(dataPV[i]).toLocaleString()}</text>`;
   }
 
   // 선: 방문자 (왼쪽 축 기준)
@@ -1326,7 +1481,7 @@ function buildHomepageChartSVG(rows, markers, labels, dataV, dataPV){
 
   const legend = `
     <rect x="2" y="1" width="6" height="6" fill="#2f80ed"/><text x="10" y="6.5" font-size="7" fill="#333">방문자</text>
-    <rect x="52" y="1" width="6" height="6" fill="#cfe0fb"/><text x="60" y="6.5" font-size="7" fill="#333">페이지뷰</text>`;
+    <rect x="52" y="1" width="6" height="6" fill="#adb5c4"/><text x="60" y="6.5" font-size="7" fill="#333">페이지뷰</text>`;
 
   return `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;display:block;">
     <line x1="${padLeft}" y1="${padTop+plotH}" x2="${W-padRight}" y2="${padTop+plotH}" stroke="#ccc" stroke-width="1"/>
@@ -1348,16 +1503,19 @@ function refreshHomepageInsights(rows){
   CONTENT_TYPES.forEach(ct => {
     state.posts[ct.key].forEach(p => {
       if(!p.date || dateIndex[p.date] === undefined) return;
+      if(ct.hasCafe && !p.mentioned) return; // 차공조연을 언급한 카페 활동만 표시
       const i = dateIndex[p.date];
       const today = rows[i]; const prev = rows[i-1];
       const views = (ct.hasYoutube ? (Number(p.ytViews)||0) : 0) + (ct.hasInstagram ? (Number(p.igViews)||0) : 0);
-      let txt = `${p.date.slice(5)} ${ct.label} 발행${p.title ? ' · '+p.title : ''} — 조회수 ${views.toLocaleString()} · 당일 방문자 ${today.visitors.toLocaleString()}명`;
+      const label = ct.hasCafe ? (p.cafeName || '카페') : ct.label;
+      const metricTxt = ct.hasCafe ? `차공조연 ${p.mentioned ? '언급함' : '언급안함'}` : `조회수 ${views.toLocaleString()}`;
+      let txt = `${p.date.slice(5)} ${label} 발행${p.title ? ' · '+p.title : ''} — ${metricTxt} · 당일 방문자 ${today.visitors.toLocaleString()}명`;
       if(prev){
         const diff = today.visitors - prev.visitors;
         const pct = prev.visitors ? Math.round(diff/prev.visitors*100) : 0;
         txt += ` (전날 ${prev.visitors.toLocaleString()}명 대비 ${diff>=0?'+':''}${diff.toLocaleString()}명, ${diff>=0?'+':''}${pct}%)`;
       }
-      items.push({txt, color: TYPE_COLOR[ct.key], label: ct.label});
+      items.push({txt, color: TYPE_COLOR[ct.key], label});
     });
   });
   if(!items.length){
@@ -1387,6 +1545,62 @@ function computePublishImpact(){
 }
 
 /* ===================================================================
+   차공조연 언급 효과: 셀인카페·지성아빠 등 카페 활동 게시일에 차공조연을
+   언급했는지 여부에 따라 같은 날 홈페이지 방문자·페이지뷰가 어떻게
+   달라지는지 비교 (여러 카페를 함께 활동해도 카페 이름과 무관하게 집계)
+=================================================================== */
+function computeMentionEffect(){
+  const rows = state.homepage.rows || [];
+  if(!rows.length) return null;
+  const dateIndex = {}; rows.forEach((r,i) => dateIndex[r.date] = i);
+  const mentioned = [], notMentioned = [];
+  const byCafe = {};
+  state.posts.cafe.forEach(p => {
+    if(!p.date || dateIndex[p.date] === undefined) return;
+    const row = rows[dateIndex[p.date]];
+    (p.mentioned ? mentioned : notMentioned).push(row);
+    const cafeKey = p.cafeName || '카페 미지정';
+    if(!byCafe[cafeKey]) byCafe[cafeKey] = {total:0, mentioned:0};
+    byCafe[cafeKey].total++;
+    if(p.mentioned) byCafe[cafeKey].mentioned++;
+  });
+  const avg = (arr, key) => arr.length ? Math.round(arr.reduce((s,r)=>s+r[key],0)/arr.length) : null;
+  return {
+    mentionedCount: mentioned.length, notMentionedCount: notMentioned.length,
+    mentionedV: avg(mentioned,'visitors'), mentionedPV: avg(mentioned,'pageviews'),
+    notMentionedV: avg(notMentioned,'visitors'), notMentionedPV: avg(notMentioned,'pageviews'),
+    byCafe,
+  };
+}
+
+function renderMentionEffect(){
+  const el = document.getElementById('mentionEffectCard');
+  if(!el) return;
+  const stats = computeMentionEffect();
+  if(!stats || (!stats.mentionedCount && !stats.notMentionedCount)){
+    el.innerHTML = `<div class="chart-title">차공조연 언급 효과</div>
+      <div class="section-desc" style="margin:0;">카페 활동에 카페 이름·게시일·차공조연 언급 여부를 입력하고 홈페이지 데이터 기간과 겹치면 언급 여부에 따른 방문자·페이지뷰 차이가 여기에 표시됩니다.</div>`;
+    return;
+  }
+  const diffV  = (stats.mentionedV!=null && stats.notMentionedV && stats.notMentionedV!==0) ? Math.round((stats.mentionedV-stats.notMentionedV)/stats.notMentionedV*100) : null;
+  const diffPV = (stats.mentionedPV!=null && stats.notMentionedPV && stats.notMentionedPV!==0) ? Math.round((stats.mentionedPV-stats.notMentionedPV)/stats.notMentionedPV*100) : null;
+  const cafeBreakdown = Object.entries(stats.byCafe)
+    .map(([name, c]) => `${escAttr(name)} ${c.mentioned}/${c.total}건 언급`)
+    .join(' · ');
+  el.innerHTML = `
+    <div class="chart-title">차공조연 언급 효과 (카페 활동 게시일 기준 홈페이지 유입)</div>
+    <div class="hp-stat-row" style="margin-top:0;">
+      <div class="hp-stat"><label>언급함 (${stats.mentionedCount}건)</label><b>${stats.mentionedV!=null ? stats.mentionedV.toLocaleString() : '—'}명</b>
+        <div class="sub" style="font-size:11px;color:var(--text-light)">페이지뷰 ${stats.mentionedPV!=null ? stats.mentionedPV.toLocaleString() : '—'}</div></div>
+      <div class="hp-stat"><label>언급안함 (${stats.notMentionedCount}건)</label><b>${stats.notMentionedV!=null ? stats.notMentionedV.toLocaleString() : '—'}명</b>
+        <div class="sub" style="font-size:11px;color:var(--text-light)">페이지뷰 ${stats.notMentionedPV!=null ? stats.notMentionedPV.toLocaleString() : '—'}</div></div>
+    </div>
+    ${diffV!=null ? `<div class="sub" style="margin-top:6px;font-size:11.5px;color:var(--text-muted);">언급한 날의 평균 방문자가 언급하지 않은 날보다 <mark class="hl">${diffV>=0?'+':''}${diffV}%</mark>${diffPV!=null ? `, 페이지뷰는 <mark class="hl">${diffPV>=0?'+':''}${diffPV}%</mark>` : ''} ${diffV>=0?'많습니다':'적습니다'}.</div>` : `<div class="sub" style="margin-top:6px;font-size:11.5px;color:var(--text-light);">두 그룹을 비교하려면 언급함/언급안함 게시물이 각각 하나 이상 필요합니다.</div>`}
+    ${cafeBreakdown ? `<div class="sub" style="margin-top:4px;font-size:10.5px;color:var(--text-light);">카페별 언급 현황 · ${cafeBreakdown}</div>` : ''}
+  `;
+}
+
+/* ===================================================================
    종합 요약
 =================================================================== */
 function refreshSummary(){
@@ -1403,7 +1617,7 @@ function refreshSummary(){
       if(p.title || p.date) cnt++;
     });
     typeCounts[ct.key] = cnt;
-    publishedCount += cnt;
+    if(ct.key !== 'cafe') publishedCount += cnt;
   });
 
   const rows = state.homepage.rows;
@@ -1427,7 +1641,7 @@ function refreshSummary(){
     </div>
     <div class="card summary-card">
       <label>이번 주 콘텐츠 발행 편수</label><b>${publishedCount}편</b>
-      <div class="sub">롱폼 ${typeCounts.longform||0} · 쇼츠 ${typeCounts.shorts||0} · 카드뉴스 ${typeCounts.cardnews||0}</div>
+      <div class="sub">롱폼 ${typeCounts.longform||0} · 쇼츠 ${typeCounts.shorts||0} · 카드뉴스 ${typeCounts.cardnews||0}<br>카페 ${typeCounts.cafe||0}</div>
     </div>
     <div class="card summary-card">
       <label>이번 주 콘텐츠 총 조회수</label><b>${totalContentViews.toLocaleString()}</b>
@@ -1516,13 +1730,19 @@ function savePDF(){
    지연되어 인쇄 스냅샷 시점엔 캔버스가 비어 보일 수 있다. 그래서 기존 차트 인스턴스는 유지한 채
    resize()로 현재 레이아웃 크기를 다시 읽게 하고, update('none')으로 애니메이션 없이 즉시 다시 그린다. */
 function resizeAllCharts(){
-  const all = [...Object.values(contentCharts), ...Object.values(sparkCharts), hpChart].filter(Boolean);
+  const all = [...Object.values(sparkCharts), hpChart, shortsChart].filter(Boolean);
   all.forEach(c => {
     try{ c.resize(); c.update('none'); }catch(e){}
   });
 }
-window.addEventListener('beforeprint', resizeAllCharts);
-window.addEventListener('afterprint', resizeAllCharts);
+window.addEventListener('beforeprint', () => {
+  resizeAllCharts();
+  ['longform','shorts','cardnews'].forEach(t => refreshViewHighlights(t, true));
+});
+window.addEventListener('afterprint', () => {
+  resizeAllCharts();
+  ['longform','shorts','cardnews'].forEach(t => refreshViewHighlights(t, false));
+});
 
 let toastTimer = null;
 function showToast(msg, isError){
