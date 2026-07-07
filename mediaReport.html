@@ -1072,16 +1072,7 @@ async function saveReport(){
   const payload = JSON.parse(JSON.stringify(state));
   payload.exportedAt = new Date().toISOString();
 
-  // 1) 기존처럼 JSON 파일로도 백업 다운로드
-  const blob = new Blob([JSON.stringify(payload, null, 2)], {type:'application/json'});
-  const url = URL.createObjectURL(blob);
-  const fname = `media-report_${state.period.start||'unknown'}_${state.period.end||''}.json`;
-  const a = document.createElement('a');
-  a.href = url; a.download = fname;
-  document.body.appendChild(a); a.click(); a.remove();
-  URL.revokeObjectURL(url);
-
-  // 2) Firebase에 이번 주 리포트를 이력(hist_*)으로 저장 → 팔로워 추이 등에 자동 반영
+  // Firebase에 이번 주 리포트를 이력(hist_*)으로 저장 → 팔로워 추이 등에 자동 반영
   const histKey = 'hist_' + (state.period.end || state.period.start || String(Date.now()));
   await storeSet(histKey, payload);
   await storeSet('current', state);
@@ -1090,7 +1081,7 @@ async function saveReport(){
     historyReports.sort((x,y) => new Date((x.period&&(x.period.end||x.period.start))||0) - new Date((y.period&&(y.period.end||y.period.start))||0));
   }
   setCloudStatus('☁ 자동 저장됨 · ' + new Date().toLocaleTimeString('ko-KR'));
-  showToast('리포트를 저장했습니다 (파일 + 클라우드) · ' + fname + ' ✓');
+  showToast('리포트를 클라우드에 저장했습니다 ✓');
 }
 
 function applyStateFromData(data){
