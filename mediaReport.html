@@ -1418,7 +1418,7 @@ function refreshSummary(){
     const avgPct = impacts.reduce((s,i)=>s+i.pct,0) / impacts.length;
     const best = impacts.reduce((a,b)=> b.pct > a.pct ? b : a, impacts[0]);
     impactHtml = `<label>콘텐츠 발행일 방문자 효과</label><b>${avgPct>=0?'+':''}${avgPct.toFixed(0)}%</b>
-      <div class="sub">발행 다음날 방문자 변화 평균 · 최고 효과: <mark class="hl">${escAttr(best.title)} (${best.pct>=0?'+':''}${best.pct.toFixed(0)}%)</mark></div>`;
+      <div class="sub">발행일 방문자 변화 평균(전날 대비) · 최고 효과: <mark class="hl">${escAttr(best.title)} (${best.pct>=0?'+':''}${best.pct.toFixed(0)}%)</mark></div>`;
   }
 
   grid.innerHTML = `
