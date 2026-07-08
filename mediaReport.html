@@ -308,9 +308,9 @@ table.hp-table mark.hp-max-hl{
 .toast.show{opacity:1; transform:translateX(-50%) translateY(-6px);}
 
 /* ===== Print (A4 세로형, 2페이지 목표) ===== */
-@page{ size:A4 portrait; margin:8mm 9mm; }
-/* 1페이지는 위아래 여백을 조금 더 넉넉하게 */
-@page :first{ margin:11mm 9mm; }
+@page{ size:A4 portrait; margin:20mm 9mm 8mm 9mm; }
+/* 1페이지는 아래 여백을 조금 더 넉넉하게(위 여백은 모든 페이지 공통 2cm) */
+@page :first{ margin:20mm 9mm 11mm 9mm; }
 @media print{
   :root{ --text-muted:#26263a; --text-light:#3d3d52; }
   html, body{-webkit-print-color-adjust:exact; print-color-adjust:exact;}
@@ -502,7 +502,7 @@ table.hp-table mark.hp-max-hl{
       <span class="period-sep">~</span>
       <input type="date" id="periodEnd" onchange="onPeriodChange()">
       <button class="btn week-nav-btn" onclick="shiftWeek(1)" title="다음 일주일">다음 ▶</button>
-      <button class="btn week-nav-btn" onclick="goToday()" title="오늘 포함 최근 7일">오늘</button>
+      <button class="btn week-nav-btn" onclick="goToday()" title="전주 화요일 ~ 이번주 월요일">이번 주</button>
       <span class="period-print-label" id="periodPrintLabel"></span>
     </div>
     <div class="toolbar-actions">
@@ -610,7 +610,7 @@ table.hp-table mark.hp-max-hl{
     <p class="section-desc">관리자 페이지의 일자별 표를 그대로 복사해서 아래에 붙여넣으세요.</p>
     <div class="section-body" id="body-hp">
       <div class="card hp-card">
-        <div class="paste-zone no-print" id="pasteZone" contenteditable="true" data-placeholder="여기를 클릭하고 Ctrl+V(⌘V)로 붙여넣기 — 일자 / 페이지뷰 / 방문자 / 가입 / 새 글 / 댓글">
+        <div class="paste-zone no-print" id="pasteZone" contenteditable="true" data-placeholder="여기를 클릭하고 Ctrl+V(⌘V)로 붙여넣기 — 일자 / 주문수 / 매출액 / 전환율 / 페이지뷰 / 방문자 / ... (일자·페이지뷰·방문자만 사용)">
         </div>
         <div class="hp-stat-row" id="hpStatRow"></div>
         <div class="hp-main-row">
@@ -687,9 +687,26 @@ function scheduleAutoSave(){
   setCloudStatus('☁ 저장 중...');
   clearTimeout(_autoSaveTimer);
   _autoSaveTimer = setTimeout(async () => {
-    const ok = await storeSet('current', state);
+    const payload = syncCurrentToHistory(); // 이번 기간 데이터를 이력(hist_*)에도 항상 반영
+    const jobs = [storeSet('current', state)];
+    if(payload) jobs.push(storeSet('hist_' + (payload.period.end || payload.period.start), payload));
+    const results = await Promise.all(jobs);
+    const ok = results.every(Boolean);
     setCloudStatus(ok ? ('☁ 자동 저장됨 · ' + new Date().toLocaleTimeString('ko-KR')) : '☁ 저장 실패', !ok);
   }, 800);
+}
+
+/* 현재 화면의 입력 내용을 '지금 선택된 기간'의 이력(historyReports, 메모리)에 즉시 반영한다.
+   이렇게 해야 '저장' 버튼을 누르지 않고 자동저장만 된 상태에서 다른 주로 이동했다가
+   다시 돌아와도, 방금 입력했던 데이터가 사라지지 않고(=초기화되지 않고) 그대로 불러와진다. */
+function syncCurrentToHistory(){
+  if(!state.period.start && !state.period.end) return null;
+  const payload = JSON.parse(JSON.stringify(state));
+  payload.exportedAt = new Date().toISOString();
+  const idx = historyReports.findIndex(h => h.period && h.period.start === payload.period.start && h.period.end === payload.period.end);
+  if(idx >= 0) historyReports[idx] = payload; else historyReports.push(payload);
+  historyReports.sort((x,y) => new Date((x.period&&(x.period.end||x.period.start))||0) - new Date((y.period&&(y.period.end||y.period.start))||0));
+  return payload;
 }
 
 /* ===================================================================
@@ -724,6 +741,22 @@ function todayStr(offset){
   const d = new Date(); d.setDate(d.getDate() + (offset||0));
   return formatDateLocal(d);
 }
+/* 리포트 기간 기준: '전주 화요일 ~ 이번주 월요일'
+   (예: 오늘이 수요일이면 → 지난주 화요일부터 이번주 월요일까지 7일)
+   day: 일=0, 월=1, ... 토=6. 월요일로부터 지난 일수 = (day+6)%7 */
+function mostRecentMonday(){
+  const d = new Date();
+  const diffFromMonday = (d.getDay() + 6) % 7;
+  d.setDate(d.getDate() - diffFromMonday);
+  return d;
+}
+function defaultPeriod(){
+  const monday = mostRecentMonday();
+  const end = formatDateLocal(monday);
+  const tue = new Date(monday); tue.setDate(tue.getDate() - 6);
+  const start = formatDateLocal(tue);
+  return {start, end};
+}
 function emptyPost(ct){
   const o = {title:'', date:''};
   if(ct.hasYoutube) o.ytViews = '';
@@ -732,8 +765,9 @@ function emptyPost(ct){
   return o;
 }
 function initState(){
+  const dp = defaultPeriod();
   state = {
-    period:{start: todayStr(-6), end: todayStr(0)},
+    period:{start: dp.start, end: dp.end},
     yt:{followers:'', prev:''},
     ig:{followers:'', prev:''},
     posts:{
@@ -790,15 +824,45 @@ const contentMarkerPlugin = {
     if(!markers || !markers.length) return;
     const {ctx, chartArea, scales} = chart;
     if(!scales.x) return;
+    const posOf = (m) => ({
+      x: scales.x.getPixelForValue(m.idx),
+      y: chartArea.top + 12 + (m.stack||0) * 15
+    });
+    // 발행일→효과일 연결선(점선 화살표)을 마커보다 먼저 그린다
     markers.forEach(m=>{
-      const xPos = scales.x.getPixelForValue(m.idx);
-      const yPos = chartArea.top + 12 + (m.stack||0) * 15;
+      if(!m.effect) return;
+      const cause = markers.find(c => c.idx === m.fromIdx && !c.effect);
+      if(!cause) return;
+      const p1 = posOf(cause), p2 = posOf(m);
+      ctx.save();
+      ctx.strokeStyle = m.color;
+      ctx.globalAlpha = 0.55;
+      ctx.lineWidth = 1.4;
+      ctx.setLineDash([3,3]);
+      ctx.beginPath();
+      ctx.moveTo(p1.x, p1.y);
+      ctx.lineTo(p2.x, p2.y);
+      ctx.stroke();
+      ctx.restore();
+    });
+    markers.forEach(m=>{
+      const {x: xPos, y: yPos} = posOf(m);
       ctx.save();
       ctx.beginPath();
-      ctx.arc(xPos, yPos, 7, 0, Math.PI*2);
-      ctx.fillStyle = m.color;
-      ctx.fill();
-      ctx.fillStyle = '#fff';
+      ctx.arc(xPos, yPos, m.effect ? 7 : 7, 0, Math.PI*2);
+      if(m.effect){
+        // 효과일 마커: 채우지 않고 테두리만 그려 '발행일 자체는 아니지만 그 영향'임을 구분
+        ctx.fillStyle = '#fff';
+        ctx.fill();
+        ctx.lineWidth = 2;
+        ctx.strokeStyle = m.color;
+        ctx.stroke();
+        ctx.fillStyle = m.color;
+      } else {
+        ctx.fillStyle = m.color;
+        ctx.fill();
+        ctx.fillStyle = '#fff';
+      }
       ctx.font = '9px -apple-system, sans-serif';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
@@ -954,13 +1018,29 @@ function renderAll(){
   refreshSummary();
 }
 
+let _periodChangeTimer = null;
 function onPeriodChange(){
-  state.period.start = document.getElementById('periodStart').value;
-  state.period.end   = document.getElementById('periodEnd').value;
-  updatePeriodPrintLabel();
-  refreshFollowerSpark('yt'); refreshFollowerSpark('ig');
-  refreshHomepageChart(state.homepage.rows);
-  scheduleAutoSave();
+  // 시작일/종료일 두 입력이 각각 onchange를 따로 발생시키므로, 둘 다 반영될 때까지
+  // 짧게 기다렸다가 한 번만 처리한다 (안 그러면 중간 상태에서 잘못 초기화될 수 있음).
+  clearTimeout(_periodChangeTimer);
+  _periodChangeTimer = setTimeout(() => {
+    const newStart = document.getElementById('periodStart').value;
+    const newEnd   = document.getElementById('periodEnd').value;
+    if(newStart === state.period.start && newEnd === state.period.end){
+      updatePeriodPrintLabel();
+      refreshFollowerSpark('yt'); refreshFollowerSpark('ig');
+      refreshHomepageChart(periodHomepageRows());
+      scheduleAutoSave();
+      return;
+    }
+    // 기간이 실제로 바뀌는 경우: 지금 입력 중이던 데이터를 먼저 이전 기간의 이력으로
+    // 남겨두고(=사라지지 않게), 새로 선택한 기간에 저장된 데이터가 있으면 불러온다.
+    syncCurrentToHistory();
+    const loaded = loadOrResetPeriod(newStart, newEnd);
+    showToast(loaded
+      ? '저장된 데이터를 불러왔습니다 · ' + newStart + ' ~ ' + newEnd
+      : '새 기간입니다 (입력 초기화) · ' + newStart + ' ~ ' + newEnd);
+  }, 250);
 }
 
 function addDaysToDateStr(dateStr, days){
@@ -991,12 +1071,33 @@ function resetContentForPeriod(start, end){
   state.homepage = {rows:[]};
 }
 
+/* 두 날짜 구간이 겹치는 일수를 계산 (겹치지 않으면 0) */
+function periodOverlapDays(aStart, aEnd, bStart, bEnd){
+  if(!aStart || !aEnd || !bStart || !bEnd) return 0;
+  const start = aStart > bStart ? aStart : bStart;
+  const end   = aEnd   < bEnd   ? aEnd   : bEnd;
+  if(start > end) return 0;
+  return Math.round((new Date(end) - new Date(start)) / 86400000) + 1;
+}
+
 function loadOrResetPeriod(newStart, newEnd){
-  const match = historyReports.find(h => h.period && h.period.start === newStart && h.period.end === newEnd);
+  let match = historyReports.find(h => h.period && h.period.start === newStart && h.period.end === newEnd);
+  if(!match){
+    // 정확히 같은 기간의 이력이 없으면, 겹치는 날짜가 가장 많은 이력을 대신 불러온다.
+    // (날짜 picker를 하루이틀만 옮겨도 방금 전 주에 입력한 데이터가 사라지지 않도록)
+    let best = null, bestOverlap = 0;
+    historyReports.forEach(h => {
+      if(!h.period) return;
+      const overlap = periodOverlapDays(h.period.start, h.period.end, newStart, newEnd);
+      if(overlap > bestOverlap){ bestOverlap = overlap; best = h; }
+    });
+    if(best) match = best;
+  }
   document.getElementById('periodStart').value = newStart;
   document.getElementById('periodEnd').value = newEnd;
   if(match){
     applyStateFromData(match);
+    state.period = {start:newStart, end:newEnd}; // 화면에는 사용자가 고른 날짜를 그대로 유지
   } else {
     resetContentForPeriod(newStart, newEnd);
   }
@@ -1010,20 +1111,24 @@ function loadOrResetPeriod(newStart, newEnd){
 }
 
 function shiftWeek(direction){
-  const curStart = document.getElementById('periodStart').value || state.period.start || todayStr(-6);
-  const curEnd   = document.getElementById('periodEnd').value   || state.period.end   || todayStr(0);
+  const dp = defaultPeriod();
+  const curStart = document.getElementById('periodStart').value || state.period.start || dp.start;
+  const curEnd   = document.getElementById('periodEnd').value   || state.period.end   || dp.end;
   const newStart = addDaysToDateStr(curStart, 7 * direction);
   const newEnd   = addDaysToDateStr(curEnd, 7 * direction);
+  syncCurrentToHistory(); // 지금 보고 있던 기간의 입력 내용을 이동 전에 이력으로 보존
   const loaded = loadOrResetPeriod(newStart, newEnd);
   const dirLabel = (direction > 0 ? '다음' : '이전') + ' 주로 이동했습니다 · ' + newStart + ' ~ ' + newEnd;
   showToast(loaded ? dirLabel + ' (저장된 데이터를 불러왔습니다)' : dirLabel + ' (새 입력)');
 }
 
 function goToday(){
-  const newStart = todayStr(-6);
-  const newEnd = todayStr(0);
+  const dp = defaultPeriod();
+  const newStart = dp.start;
+  const newEnd = dp.end;
+  syncCurrentToHistory(); // 지금 보고 있던 기간의 입력 내용을 이동 전에 이력으로 보존
   const loaded = loadOrResetPeriod(newStart, newEnd);
-  showToast(loaded ? '오늘 포함 최근 7일로 이동했습니다 (저장된 데이터를 불러왔습니다)' : '오늘 포함 최근 7일로 이동했습니다 (새 입력)');
+  showToast(loaded ? '이번 주(전주 화~이번주 월)로 이동했습니다 (저장된 데이터를 불러왔습니다)' : '이번 주(전주 화~이번주 월)로 이동했습니다 (새 입력)');
 }
 
 /* ===================================================================
@@ -1099,8 +1204,8 @@ function renderPostGrid(type){
             oninput="updatePostField('${type}',${idx},'title',this.value)"></td>
       <td><input type="date" value="${escAttr(p.date)}"
             oninput="updatePostField('${type}',${idx},'date',this.value)"
-            onchange="refreshHomepageChart(state.homepage.rows); refreshHomepageInsights(state.homepage.rows); renderMentionEffect();"></td>
-      ${ct.hasCafe ? `<td><select class="num-fill" style="text-align:left;" onchange="updatePostField('${type}',${idx},'cafeName',this.value); refreshHomepageInsights(state.homepage.rows); renderMentionEffect();">
+            onchange="refreshHomepageChart(periodHomepageRows()); refreshHomepageInsights(periodHomepageRows()); renderMentionEffect();"></td>
+      ${ct.hasCafe ? `<td><select class="num-fill" style="text-align:left;" onchange="updatePostField('${type}',${idx},'cafeName',this.value); refreshHomepageInsights(periodHomepageRows()); renderMentionEffect();">
             <option value="" ${!p.cafeName ? 'selected' : ''}>카페 선택</option>
             ${CAFE_NAMES.map(n => `<option value="${escAttr(n)}" ${p.cafeName===n ? 'selected' : ''}>${escAttr(n)}</option>`).join('')}
           </select></td>` : ''}
@@ -1162,8 +1267,8 @@ function movePost(type, idx, dir){
   renderPostGrid(type);
   refreshShortsChart();
   refreshSummary();
-  refreshHomepageInsights(state.homepage.rows);
-  refreshHomepageChart(state.homepage.rows);
+  refreshHomepageInsights(periodHomepageRows());
+  refreshHomepageChart(periodHomepageRows());
   renderMentionEffect();
   scheduleAutoSave();
 }
@@ -1188,8 +1293,8 @@ function deletePost(type, idx){
   renderPostGrid(type);
   refreshShortsChart();
   refreshSummary();
-  refreshHomepageInsights(state.homepage.rows);
-  refreshHomepageChart(state.homepage.rows);
+  refreshHomepageInsights(periodHomepageRows());
+  refreshHomepageChart(periodHomepageRows());
   renderMentionEffect();
   scheduleAutoSave();
   showToast('행을 삭제했습니다');
@@ -1204,8 +1309,8 @@ function resetPost(type, idx){
   renderPostGrid(type);
   refreshShortsChart();
   refreshSummary();
-  refreshHomepageInsights(state.homepage.rows);
-  refreshHomepageChart(state.homepage.rows);
+  refreshHomepageInsights(periodHomepageRows());
+  refreshHomepageChart(periodHomepageRows());
   renderMentionEffect();
   scheduleAutoSave();
   showToast(`${idx+1}번째 줄을 초기화했습니다`);
@@ -1269,7 +1374,7 @@ function toggleMention(type, idx){
   }
   const row = document.getElementById(`post-${type}-${idx}`);
   if(row) row.classList.toggle('empty', !(p.title || p.cafeName || p.mentioned));
-  refreshHomepageInsights(state.homepage.rows);
+  refreshHomepageInsights(periodHomepageRows());
   renderMentionEffect();
   scheduleAutoSave();
 }
@@ -1286,13 +1391,22 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 });
 
+/* 붙여넣는 표의 열 순서:
+   일자 / 주문수 / 매출액(순구매 금액) / 구매 전환율 / 페이지뷰 / 방문자 /
+   주문당 단가 / 가입 / 문의 / 후기 / 새 글 / 댓글 / SMS / 쿠폰 사용 / 적립금 지급 / 적립금 사용
+   이 중 일자·페이지뷰·방문자만 사용한다 (뒤쪽 열이 없어도 무방). */
+function parseNumCell(str){
+  if(str === undefined || str === null) return 0;
+  const cleaned = String(str).replace(/[^0-9.-]/g, '');
+  return cleaned ? (Number(cleaned) || 0) : 0;
+}
 function parseHomepagePaste(text){
   const lines = text.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
   const rows = [];
   for(const line of lines){
     let cols = line.split('\t');
-    if(cols.length < 3) cols = line.split(/\s{2,}/);
-    if(cols.length < 3) continue;
+    if(cols.length < 6) cols = line.split(/\s{2,}/);
+    if(cols.length < 6) continue;
     cols = cols.map(c => c.trim());
     if(/일자|날짜|date/i.test(cols[0])) continue;
     let d = cols[0].replace(/\./g,'-').replace(/\//g,'-');
@@ -1301,15 +1415,12 @@ function parseHomepagePaste(text){
     d = parts[0] + '-' + parts[1].padStart(2,'0') + '-' + parts[2].padStart(2,'0');
     rows.push({
       date: d,
-      pageviews: Number(cols[1]) || 0,
-      visitors:  Number(cols[2]) || 0,
-      signups:   Number(cols[3]) || 0,
-      newposts:  Number(cols[4]) || 0,
-      comments:  Number(cols[5]) || 0,
+      pageviews: parseNumCell(cols[4]),
+      visitors:  parseNumCell(cols[5]),
     });
   }
   if(!rows.length){
-    showToast('표 형식을 인식하지 못했습니다. 일자·페이지뷰·방문자 순서를 확인해주세요.', true);
+    showToast('표 형식을 인식하지 못했습니다. 일자·주문수·매출액·전환율·페이지뷰·방문자 순서를 확인해주세요.', true);
     return;
   }
   rows.sort((a,b) => new Date(a.date) - new Date(b.date));
@@ -1325,8 +1436,18 @@ function parseHomepagePaste(text){
   scheduleAutoSave();
 }
 
+/* 상단 날짜 picker(state.period.start~end)로 선택된 구간에 해당하는 홈페이지 데이터만
+   걸러낸다. 붙여넣은 원본 데이터(state.homepage.rows)는 그대로 두고, 화면 표시·집계에만
+   이 필터링된 결과를 사용한다. */
+function periodHomepageRows(){
+  const rows = state.homepage.rows || [];
+  const start = state.period.start, end = state.period.end;
+  if(!start && !end) return rows;
+  return rows.filter(r => (!start || r.date >= start) && (!end || r.date <= end));
+}
+
 function renderHomepage(){
-  const rows = state.homepage.rows;
+  const rows = periodHomepageRows();
   const statRow = document.getElementById('hpStatRow');
   const tableWrap = document.getElementById('hpTableWrap');
   if(!rows.length){
@@ -1341,9 +1462,6 @@ function renderHomepage(){
   }
   const totalPV = rows.reduce((s,r)=>s+r.pageviews,0);
   const totalV  = rows.reduce((s,r)=>s+r.visitors,0);
-  const totalSignup = rows.reduce((s,r)=>s+r.signups,0);
-  const totalPost = rows.reduce((s,r)=>s+r.newposts,0);
-  const totalComment = rows.reduce((s,r)=>s+r.comments,0);
   const bestDay = rows.reduce((a,b)=> b.pageviews > a.pageviews ? b : a, rows[0]);
   statRow.innerHTML = `
     <div class="hp-stat-group">
@@ -1360,9 +1478,9 @@ function renderHomepage(){
   const maxVVal  = Math.max(...rows.map(r=>r.visitors));
   tableWrap.innerHTML = `
     <table class="hp-table">
-      <thead><tr><th>일자</th><th>페이지뷰</th><th>방문자</th><th>가입</th><th>새 글</th><th>댓글</th></tr></thead>
-      <tbody>${[...rows].reverse().map(r=>`<tr><td>${r.date}</td><td>${r.pageviews===maxPVVal ? '<mark class="hp-max-hl">'+r.pageviews.toLocaleString()+'</mark>' : r.pageviews.toLocaleString()}</td><td>${r.visitors===maxVVal ? '<mark class="hp-max-hl">'+r.visitors.toLocaleString()+'</mark>' : r.visitors.toLocaleString()}</td><td>${r.signups.toLocaleString()}</td><td>${r.newposts.toLocaleString()}</td><td>${r.comments.toLocaleString()}</td></tr>`).join('')}</tbody>
-      <tfoot><tr><td>합계</td><td>${totalPV.toLocaleString()}</td><td>${totalV.toLocaleString()}</td><td>${totalSignup.toLocaleString()}</td><td>${totalPost.toLocaleString()}</td><td>${totalComment.toLocaleString()}</td></tr></tfoot>
+      <thead><tr><th>일자</th><th>페이지뷰</th><th>방문자</th></tr></thead>
+      <tbody>${[...rows].reverse().map(r=>`<tr><td>${r.date}</td><td>${r.pageviews===maxPVVal ? '<mark class="hp-max-hl">'+r.pageviews.toLocaleString()+'</mark>' : r.pageviews.toLocaleString()}</td><td>${r.visitors===maxVVal ? '<mark class="hp-max-hl">'+r.visitors.toLocaleString()+'</mark>' : r.visitors.toLocaleString()}</td></tr>`).join('')}</tbody>
+      <tfoot><tr><td>합계</td><td>${totalPV.toLocaleString()}</td><td>${totalV.toLocaleString()}</td></tr></tfoot>
     </table>`;
   refreshHomepageChart(rows);
   refreshHomepageInsights(rows);
@@ -1376,19 +1494,83 @@ function computeChartMarkers(rows){
   CONTENT_TYPES.forEach(ct => {
     state.posts[ct.key].forEach(p => {
       if(!p.date || dateIndex[p.date] === undefined) return;
-      const idx = dateIndex[p.date];
+      const pubIdx = dateIndex[p.date];
       if(ct.hasCafe){
         // 차공조연을 언급한 카페 활동만 표시하고, 같은 날 여러 건이어도 '페' 마커는 하나만 표시
         if(!p.mentioned) return;
-        if(cafeShownIdx[idx]) return;
-        cafeShownIdx[idx] = true;
+        if(cafeShownIdx[pubIdx]) return;
+        cafeShownIdx[pubIdx] = true;
       }
-      counts[idx] = counts[idx] || 0;
-      list.push({idx, color: TYPE_COLOR[ct.key], short: TYPE_SHORT[ct.key], stack: counts[idx]});
-      counts[idx]++;
+      counts[pubIdx] = counts[pubIdx] || 0;
+      list.push({idx: pubIdx, color: TYPE_COLOR[ct.key], short: TYPE_SHORT[ct.key], stack: counts[pubIdx]});
+      counts[pubIdx]++;
+
+      // 발행 다음날 방문자가 발행일보다 눈에 띄게 늘었다면(반응이 하루 늦게 나타난 경우),
+      // 다음날에도 옅은 테두리 스타일의 '효과' 마커를 추가해 발행일→효과일 인과관계를 보여준다.
+      if(!ct.hasCafe){
+        const nextIdx = pubIdx + 1;
+        const today = rows[pubIdx], nextDay = rows[nextIdx];
+        if(today && nextDay && nextDay.visitors > today.visitors && nextDay.visitors >= Math.max(5, today.visitors * 1.4)){
+          counts[nextIdx] = counts[nextIdx] || 0;
+          list.push({idx: nextIdx, color: TYPE_COLOR[ct.key], short: TYPE_SHORT[ct.key], stack: counts[nextIdx], effect: true, fromIdx: pubIdx});
+          counts[nextIdx]++;
+        }
+      }
     });
   });
+
+  // 이번 기간 표의 첫날 바로 전날(=화면에 안 보이는 날짜)에 발행된 콘텐츠가 있으면,
+  // 그 다음날인 이번 기간 첫날에 옅은 테두리의 '효과' 마커를 표시한다(원인 막대가 화면 밖에
+  // 있으므로 연결선은 그리지 않음). 롱폼처럼 발행 주기가 길어 게시일이 이번 주 표 시작일보다
+  // 하루 이른 경우, 그 게시물은 지금 화면의 게시물 표(그리드)에는 그대로 입력되어 있지만
+  // 홈페이지 표에는 해당 날짜 행이 없어 기존 로직으로는 마커가 전혀 표시되지 않았다.
+  if(rows.length){
+    const first = rows[0];
+    const prevDate = addDaysToDateStr(first.date, -1);
+    const boundary = findPrevPeriodBoundaryData(first.date); // 저장된 이전 기간의 방문자 수(있으면 급증 판정에 사용)
+
+    // 원인 콘텐츠는 1) 지금 화면의 게시물 그리드(state.posts)에 하루 이른 날짜로 입력된 경우를
+    // 우선 찾고, 없으면 2) 저장된 이전 기간의 게시물 기록에서 찾는다.
+    let causeType = null;
+    for(const ct of CONTENT_TYPES){
+      if(ct.hasCafe) continue;
+      const p = state.posts[ct.key].find(pp => pp.date === prevDate);
+      if(p){ causeType = ct.key; break; }
+    }
+    if(!causeType && boundary && boundary.posts){
+      for(const ct of CONTENT_TYPES){
+        if(ct.hasCafe) continue;
+        const p = (boundary.posts[ct.key] || []).find(pp => pp.date === prevDate);
+        if(p){ causeType = ct.key; break; }
+      }
+    }
+
+    if(causeType){
+      // 전날 방문자 수를 알고 있다면(=저장된 이력이 있다면) 실제 급증 여부를 확인하고,
+      // 모른다면(이전 기간 데이터가 아직 없다면) 게시일 자체를 근거로 그냥 표시한다.
+      const prevVisitors = (boundary && boundary.row) ? boundary.row.visitors : null;
+      const shouldShow = prevVisitors === null ||
+        (first.visitors > prevVisitors && first.visitors >= Math.max(5, prevVisitors * 1.4));
+      if(shouldShow){
+        counts[0] = counts[0] || 0;
+        list.push({idx:0, color: TYPE_COLOR[causeType], short: TYPE_SHORT[causeType], stack: counts[0], effect:true, external:true});
+        counts[0]++;
+      }
+    }
+  }
   return list;
+}
+
+/* 이번 기간 첫날 바로 전날(=지난 기간 마지막 날)의 홈페이지 방문자 데이터와, 그 날 발행된
+   콘텐츠 기록을 저장된 이력(historyReports)에서 찾는다. 지난 기간을 아직 저장하지 않았다면 null. */
+function findPrevPeriodBoundaryData(firstRowDate){
+  const prevDate = addDaysToDateStr(firstRowDate, -1);
+  for(const h of historyReports){
+    if(!h.homepage || !h.homepage.rows) continue;
+    const row = h.homepage.rows.find(r => r.date === prevDate);
+    if(row) return {row, posts: h.posts};
+  }
+  return null;
 }
 
 function refreshHomepageChart(rows){
@@ -1424,8 +1606,10 @@ function refreshHomepageChart(rows){
   else { hpChart = new Chart(ctx, {type:'bar', data, options}); hpChart.$markers = markers; hpChart.update('none'); }
 
   document.getElementById('hpLegend').innerHTML =
-    CONTENT_TYPES.map(ct => `<span><span class="legend-dot" style="background:${TYPE_COLOR[ct.key]}"></span>${ct.label} 발행일</span>`).join('') +
-    `<span><span class="legend-dot" style="background:#2f80ed"></span>방문자</span><span><span class="legend-dot" style="background:#adb5c4"></span>페이지뷰</span>`;
+    CONTENT_TYPES.map(ct => `<span><span class="legend-dot" style="background:${TYPE_COLOR[ct.key]}"></span>${ct.hasCafe ? ct.label + '일' : ct.label + ' 발행일'}</span>`).join('') +
+    `<span><span class="legend-dot" style="background:#2f80ed"></span>방문자</span><span><span class="legend-dot" style="background:#adb5c4"></span>페이지뷰</span>` +
+    (markers.some(m => m.effect && !m.external) ? `<span><span class="legend-dot" style="background:#fff;border:1.4px solid #888;box-sizing:border-box;"></span>발행 다음날 효과 (점선으로 연결)</span>` : '') +
+    (markers.some(m => m.external) ? `<span><span class="legend-dot" style="background:#fff;border:1.4px solid #888;box-sizing:border-box;"></span>지난 기간 발행 콘텐츠의 효과 (원인 발행일은 이전 기간)</span>` : '');
 
   // 인쇄용 정적 SVG (Chart.js 캔버스는 인쇄 시 재계산 타이밍 문제가 반복돼서 여기서도 동일하게 회피)
   const printEl = document.getElementById('printchart-homepage');
@@ -1445,12 +1629,15 @@ function buildHomepageChartSVG(rows, markers, labels, dataV, dataPV){
   // 막대: 페이지뷰 (오른쪽 축 기준)
   let bars = '';
   const barW = groupW * 0.55;
+  const barLabelY = []; // 막대 값 라벨의 y좌표를 저장해두고, 방문자(선) 라벨이 겹치지 않게 계산할 때 사용
   for(let i=0;i<n;i++){
     const h = (dataPV[i]/maxPV) * plotH;
     const x = padLeft + i*groupW + (groupW-barW)/2;
     const y = padTop + plotH - h;
+    const labelY = y - 2;
+    barLabelY[i] = labelY;
     bars += `<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${barW.toFixed(1)}" height="${h.toFixed(1)}" fill="#adb5c4" rx="1.5"/>`;
-    bars += `<text x="${(x+barW/2).toFixed(1)}" y="${(y-2).toFixed(1)}" font-size="5.6" text-anchor="middle" fill="#586274">${Number(dataPV[i]).toLocaleString()}</text>`;
+    bars += `<text x="${(x+barW/2).toFixed(1)}" y="${labelY.toFixed(1)}" font-size="5.6" text-anchor="middle" fill="#586274">${Number(dataPV[i]).toLocaleString()}</text>`;
   }
 
   // 선: 방문자 (왼쪽 축 기준)
@@ -1460,14 +1647,40 @@ function buildHomepageChartSVG(rows, markers, labels, dataV, dataPV){
     return [x,y];
   });
   const linePath = pts.map((p,i) => (i===0?'M':'L')+p[0].toFixed(1)+','+p[1].toFixed(1)).join(' ');
-  const dots = pts.map((p,i) => `<circle cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="2.4" fill="#2f80ed"/><text x="${p[0].toFixed(1)}" y="${(p[1]-5).toFixed(1)}" font-size="5.6" text-anchor="middle" fill="#2f80ed" font-weight="400">${Number(dataV[i]).toLocaleString()}</text>`).join('');
+  // 방문자(선) 값 라벨: 페이지뷰·방문자 두 지표가 같은 날 동시에 최고치를 찍으면 두 라벨의
+  // y좌표가 사실상 같아져 숫자가 겹쳐 뭉개진다. 같은 날 막대 라벨과 12px 이내로 가까우면
+  // 그만큼 위로 띄워서 항상 두 줄로 분리되게 한다(화면용 Chart.js 차트와 동일한 방식).
+  const MIN_LABEL_GAP = 12;
+  const dots = pts.map((p,i) => {
+    let labelY = p[1] - 5;
+    if(Math.abs(labelY - barLabelY[i]) < MIN_LABEL_GAP){
+      labelY = Math.min(labelY, barLabelY[i]) - MIN_LABEL_GAP;
+    }
+    return `<circle cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="2.4" fill="#2f80ed"/><text x="${p[0].toFixed(1)}" y="${labelY.toFixed(1)}" font-size="5.6" text-anchor="middle" fill="#2f80ed" font-weight="400">${Number(dataV[i]).toLocaleString()}</text>`;
+  }).join('');
 
   // 발행일 마커 (콘텐츠 유형별 색상 점, 같은 날 여러 개면 위로 쌓기)
+  // + 발행 다음날 효과가 감지된 경우, 옅은 테두리 마커와 점선 연결선으로 인과관계 표시
+  const markerPos = (m) => ({
+    x: padLeft + m.idx*groupW + groupW/2,
+    y: padTop - 6 - (m.stack||0)*9
+  });
+  let markerLines = '';
+  (markers||[]).forEach(m => {
+    if(!m.effect) return;
+    const cause = (markers||[]).find(c => c.idx === m.fromIdx && !c.effect);
+    if(!cause) return;
+    const p1 = markerPos(cause), p2 = markerPos(m);
+    markerLines += `<line x1="${p1.x.toFixed(1)}" y1="${p1.y.toFixed(1)}" x2="${p2.x.toFixed(1)}" y2="${p2.y.toFixed(1)}" stroke="${m.color}" stroke-width="1" stroke-dasharray="2,2" opacity="0.55"/>`;
+  });
   let markerDots = '';
   (markers||[]).forEach(m => {
-    const x = padLeft + m.idx*groupW + groupW/2;
-    const y = padTop - 6 - (m.stack||0)*9;
-    markerDots += `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="4.2" fill="${m.color}"/><text x="${x.toFixed(1)}" y="${(y+2.6).toFixed(1)}" font-size="5.5" text-anchor="middle" fill="#fff">${m.short}</text>`;
+    const {x, y} = markerPos(m);
+    if(m.effect){
+      markerDots += `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="4.2" fill="#fff" stroke="${m.color}" stroke-width="1.4"/><text x="${x.toFixed(1)}" y="${(y+2.6).toFixed(1)}" font-size="5.5" text-anchor="middle" fill="${m.color}">${m.short}</text>`;
+    } else {
+      markerDots += `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="4.2" fill="${m.color}"/><text x="${x.toFixed(1)}" y="${(y+2.6).toFixed(1)}" font-size="5.5" text-anchor="middle" fill="#fff">${m.short}</text>`;
+    }
   });
 
   // x축 라벨 (너무 많으면 일부만 표시)
@@ -1488,6 +1701,7 @@ function buildHomepageChartSVG(rows, markers, labels, dataV, dataPV){
     ${bars}
     <path d="${linePath}" fill="none" stroke="#2f80ed" stroke-width="1.6"/>
     ${dots}
+    ${markerLines}
     ${markerDots}
     ${xLabels}
     ${legend}
@@ -1500,33 +1714,78 @@ function refreshHomepageInsights(rows){
   if(!rows.length){ ul.innerHTML=''; return; }
   const dateIndex = {}; rows.forEach((r,i) => dateIndex[r.date] = i);
   const items = [];
+
+  // 이번 기간 표 시작일 하루 전에 발행된 콘텐츠가 있으면(=화면의 홈페이지 표에는 안 보이는 날짜),
+  // 그 다음날인 이번 기간 첫날 방문자 변화와 함께 안내한다. 게시물은 1) 지금 화면의 게시물
+  // 그리드에 하루 이른 날짜로 입력된 경우를 우선 찾고, 없으면 2) 저장된 이전 기간 기록에서 찾는다.
+  {
+    const first = rows[0];
+    const prevDate = addDaysToDateStr(first.date, -1);
+    const boundary = findPrevPeriodBoundaryData(first.date);
+
+    let causeType = null, causePost = null;
+    for(const ct of CONTENT_TYPES){
+      if(ct.hasCafe) continue;
+      const p = state.posts[ct.key].find(pp => pp.date === prevDate);
+      if(p){ causeType = ct; causePost = p; break; }
+    }
+    if(!causeType && boundary && boundary.posts){
+      for(const ct of CONTENT_TYPES){
+        if(ct.hasCafe) continue;
+        const p = (boundary.posts[ct.key] || []).find(pp => pp.date === prevDate);
+        if(p){ causeType = ct; causePost = p; break; }
+      }
+    }
+
+    if(causeType){
+      const prevVisitors = (boundary && boundary.row) ? boundary.row.visitors : null;
+      let txt = `${prevDate.slice(5)} ${causeType.label} 발행${causePost.title ? ' · '+causePost.title : ''} → `;
+      if(prevVisitors !== null){
+        const diff = first.visitors - prevVisitors;
+        const pct = prevVisitors ? Math.round(diff/prevVisitors*100) : 0;
+        txt += `<mark>다음날 방문자 ${first.visitors.toLocaleString()}명 (전날 대비 ${diff>=0?'+':''}${pct}%)</mark>`;
+      } else {
+        txt += `다음날 방문자 ${first.visitors.toLocaleString()}명`;
+      }
+      items.push({txt, color: TYPE_COLOR[causeType.key], label: causeType.label, date: prevDate});
+    }
+  }
+
   CONTENT_TYPES.forEach(ct => {
     state.posts[ct.key].forEach(p => {
       if(!p.date || dateIndex[p.date] === undefined) return;
       if(ct.hasCafe && !p.mentioned) return; // 차공조연을 언급한 카페 활동만 표시
       const i = dateIndex[p.date];
-      const today = rows[i]; const prev = rows[i-1];
+      const today = rows[i]; const prev = rows[i-1]; const nextDay = rows[i+1];
       const views = (ct.hasYoutube ? (Number(p.ytViews)||0) : 0) + (ct.hasInstagram ? (Number(p.igViews)||0) : 0);
       const label = ct.hasCafe ? (p.cafeName || '카페') : ct.label;
+      const verb = ct.hasCafe ? '활동' : '발행';
       const metricTxt = ct.hasCafe ? `차공조연 ${p.mentioned ? '언급함' : '언급안함'}` : `조회수 ${views.toLocaleString()}`;
-      let txt = `${p.date.slice(5)} ${label} 발행${p.title ? ' · '+p.title : ''} — ${metricTxt} · 당일 방문자 ${today.visitors.toLocaleString()}명`;
+      let txt = `${p.date.slice(5)} ${label} ${verb}${p.title ? ' · '+p.title : ''} — ${metricTxt} · 당일 방문자 ${today.visitors.toLocaleString()}명`;
       if(prev){
         const diff = today.visitors - prev.visitors;
         const pct = prev.visitors ? Math.round(diff/prev.visitors*100) : 0;
         txt += ` (전날 ${prev.visitors.toLocaleString()}명 대비 ${diff>=0?'+':''}${diff.toLocaleString()}명, ${diff>=0?'+':''}${pct}%)`;
       }
-      items.push({txt, color: TYPE_COLOR[ct.key], label});
+      // 발행 다음날 방문자가 당일보다 크게 늘었다면(반응이 하루 늦게 나타난 경우) 함께 표시
+      if(!ct.hasCafe && nextDay && nextDay.visitors > today.visitors && nextDay.visitors >= Math.max(5, today.visitors * 1.4)){
+        const diff2 = nextDay.visitors - today.visitors;
+        const pct2 = today.visitors ? Math.round(diff2/today.visitors*100) : 0;
+        txt += ` → <mark>다음날(${nextDay.date.slice(5)}) 방문자 ${nextDay.visitors.toLocaleString()}명으로 급증 (당일 대비 +${diff2.toLocaleString()}명, +${pct2}%)</mark>`;
+      }
+      items.push({txt, color: TYPE_COLOR[ct.key], label, date: p.date});
     });
   });
   if(!items.length){
     ul.innerHTML = '<li style="color:var(--text-light)">발행일이 이번 홈페이지 데이터 기간과 겹치는 콘텐츠가 없습니다. 콘텐츠의 게시일을 입력하면 방문자 영향이 여기에 표시됩니다.</li>';
     return;
   }
+  items.sort((a,b) => a.date < b.date ? -1 : a.date > b.date ? 1 : 0); // 오래된 날짜 → 최신 날짜 순
   ul.innerHTML = items.map(it => `<li><span class="tag" style="background:${it.color}">${it.label}</span>${it.txt}</li>`).join('');
 }
 
 function computePublishImpact(){
-  const rows = state.homepage.rows || [];
+  const rows = periodHomepageRows();
   if(!rows.length) return [];
   const dateIndex = {}; rows.forEach((r,i) => dateIndex[r.date] = i);
   const impacts = [];
@@ -1550,7 +1809,7 @@ function computePublishImpact(){
    달라지는지 비교 (여러 카페를 함께 활동해도 카페 이름과 무관하게 집계)
 =================================================================== */
 function computeMentionEffect(){
-  const rows = state.homepage.rows || [];
+  const rows = periodHomepageRows();
   if(!rows.length) return null;
   const dateIndex = {}; rows.forEach((r,i) => dateIndex[r.date] = i);
   const mentioned = [], notMentioned = [];
@@ -1620,7 +1879,7 @@ function refreshSummary(){
     if(ct.key !== 'cafe') publishedCount += cnt;
   });
 
-  const rows = state.homepage.rows;
+  const rows = periodHomepageRows();
   const totalPV = rows.reduce((s,r)=>s+r.pageviews,0);
   const totalV  = rows.reduce((s,r)=>s+r.visitors,0);
 
