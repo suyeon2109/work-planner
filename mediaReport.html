@@ -338,6 +338,20 @@ table.hp-table mark.hp-max-hl{
 }
 .toast.show{opacity:1; transform:translateX(-50%) translateY(-6px);}
 
+/* ===== 이력 관리 모달 ===== */
+.history-manager-overlay{position:fixed; inset:0; background:rgba(20,20,26,.45); z-index:2000; display:flex; align-items:center; justify-content:center; padding:20px;}
+.history-manager-modal{background:#fff; border-radius:14px; padding:20px 22px; width:min(640px, 92vw); max-height:80vh; overflow:auto; box-shadow:0 24px 60px rgba(0,0,0,.35);}
+.history-manager-head{display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; gap:10px;}
+.history-manager-head h3{font-size:16px;}
+.history-manager-desc{font-size:12.5px; color:var(--text-muted); margin-bottom:14px; line-height:1.6;}
+.history-manager-row{display:flex; align-items:center; justify-content:space-between; gap:10px; padding:9px 12px; border:1px solid var(--border); border-radius:9px; margin-bottom:6px; font-size:12.5px;}
+.history-manager-row .hm-period{font-weight:600; margin-bottom:3px;}
+.history-manager-row .hm-status{font-size:11px; padding:2px 8px; border-radius:10px; display:inline-block; margin-right:4px;}
+.history-manager-row .hm-status.has{background:#e7f5f2; color:var(--success);}
+.history-manager-row .hm-status.empty{background:var(--surface-2); color:var(--text-muted);}
+.history-manager-row .hm-del{color:var(--danger); border-color:#f6c9c9; font-size:11.5px; padding:5px 10px; flex-shrink:0;}
+.history-manager-empty{font-size:12.5px; color:var(--text-light); padding:8px 2px;}
+
 /* ===== Print (A4 세로형, 2페이지 목표) ===== */
 @page{ size:A4 portrait; margin:19mm 9mm 18mm 9mm; }
 /* 1페이지는 아래 여백을 조금 더 넉넉하게(위 여백은 모든 페이지 공통) */
@@ -371,6 +385,7 @@ table.hp-table mark.hp-max-hl{
   .brand-text h1{font-size:12px;}
   .brand-text span{font-size:8px;}
   .doc-number{display:inline-block !important; font-size:15px !important; color:#000 !important; font-weight:800 !important; margin-left:4px; align-self:flex-end; padding:1px 7px; background:#eef0f4; border-radius:4px; letter-spacing:.02em;}
+  .doc-number.doc-number-hidden{display:none !important;}
   .hp-header-summary{display:flex !important; align-items:center; gap:5px; align-self:flex-end; margin-left:6px; font-size:12px !important; font-weight:700 !important; color:#000 !important;}
   .hp-header-summary .delta-badge{font-size:10px; padding:2px 7px; border-radius:10px; font-weight:600;}
   .toolbar-actions, #cloudStatus{display:none !important;}
@@ -589,6 +604,7 @@ table.hp-table mark.hp-max-hl{
     </div>
     <div class="toolbar-actions">
       <button class="btn btn-danger-outline" onclick="resetAll()">🗑 초기화</button>
+      <button class="btn" onclick="openHistoryManager()" title="저장된 리포트 이력을 확인하고, 문서번호 계산에 잘못 포함된 주차를 정리합니다">🗂 이력 관리</button>
       <button class="btn" onclick="printReport()">🖨 인쇄</button>
       <button class="btn" onclick="savePDF()">📄 PDF로 저장</button>
       <button class="btn btn-primary" onclick="saveReport()">💾 저장</button>
@@ -722,6 +738,18 @@ table.hp-table mark.hp-max-hl{
 
 <div class="toast" id="toast"></div>
 
+<!-- 저장된 리포트 이력(문서번호 계산에 쓰이는 historyReports) 확인/정리용 모달. 인쇄에는 노출되지 않는다. -->
+<div class="history-manager-overlay no-print" id="historyManagerOverlay" style="display:none;">
+  <div class="history-manager-modal">
+    <div class="history-manager-head">
+      <h3>저장된 리포트 이력</h3>
+      <button type="button" class="btn" onclick="closeHistoryManager()">닫기</button>
+    </div>
+    <p class="history-manager-desc">문서번호(예: 2026-001)는 아래 목록 중 "내용 있음"이고 도입일(2026-06-30) 이후인 주차의 개수를 기준으로 매겨집니다. 실제로 발행하지 않았는데 남아있는 주차가 있다면 삭제할 수 있습니다.</p>
+    <div id="historyManagerList"></div>
+  </div>
+</div>
+
 
 <!-- Firebase SDK (dailyPlan.html과 동일한 프로젝트에 연결) -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -766,6 +794,10 @@ async function storeList(prefix) {
     return snap.docs.map(d => ({ id: d.id, v: d.data().v }));
   } catch (e) { console.error(e); return []; }
 }
+async function storeDelete(key) {
+  try { await getDb().collection(FS_COL).doc(key).delete(); return true; }
+  catch (e) { console.error(e); return false; }
+}
 
 function setCloudStatus(text, isError){
   const el = document.getElementById('cloudStatus');
@@ -791,11 +823,33 @@ function scheduleAutoSave(){
 /* 현재 화면의 입력 내용을 '지금 선택된 기간'의 이력(historyReports, 메모리)에 즉시 반영한다.
    이렇게 해야 '저장' 버튼을 누르지 않고 자동저장만 된 상태에서 다른 주로 이동했다가
    다시 돌아와도, 방금 입력했던 데이터가 사라지지 않고(=초기화되지 않고) 그대로 불러와진다. */
+/* 지금 화면에 실제로 입력된 내용이 하나라도 있는지 확인한다. 리포트 번호(예: 2026-001)는
+   '실제로 저장된 리포트 수'를 기준으로 매기므로, 아무것도 입력하지 않은 채 다음/이전 버튼으로
+   화면만 넘겨본 주차까지 이력에 남으면 번호가 실제 발행 수보다 앞서가 버린다. */
+function reportHasContent(data){
+  if(!data) return false;
+  if(data.yt && (data.yt.followers || data.yt.prev)) return true;
+  if(data.ig && (data.ig.followers || data.ig.prev)) return true;
+  if(data.homepage && data.homepage.rows && data.homepage.rows.length) return true;
+  for(const ct of CONTENT_TYPES){
+    const list = (data.posts && data.posts[ct.key]) || [];
+    for(const p of list){
+      if(p.title || p.date || p.ytViews || p.igViews || p.cafeName || p.mentioned) return true;
+    }
+  }
+  return false;
+}
+function hasAnyContent(){ return reportHasContent(state); }
+
 function syncCurrentToHistory(){
   if(!state.period.start && !state.period.end) return null;
+  const idx = historyReports.findIndex(h => h.period && h.period.start === state.period.start && h.period.end === state.period.end);
+  if(idx < 0 && !hasAnyContent()){
+    // 아직 이력에 없는 완전히 빈 기간(입력 없이 화면만 넘겨본 주차)은 이력에 남기지 않는다.
+    return null;
+  }
   const payload = JSON.parse(JSON.stringify(state));
   payload.exportedAt = new Date().toISOString();
-  const idx = historyReports.findIndex(h => h.period && h.period.start === payload.period.start && h.period.end === payload.period.end);
   if(idx >= 0) historyReports[idx] = payload; else historyReports.push(payload);
   historyReports.sort((x,y) => new Date((x.period&&(x.period.end||x.period.start))||0) - new Date((y.period&&(y.period.end||y.period.start))||0));
   return payload;
@@ -1114,10 +1168,12 @@ const DOC_NUMBER_EPOCH_START = '2026-06-30';
 function computeDocNumber(){
   const startStr = (document.getElementById('periodStart') && document.getElementById('periodStart').value) || state.period.start || '';
   if(!startStr) return '';
+  if(startStr < DOC_NUMBER_EPOCH_START) return ''; // 번호 체계 도입 이전 주차는 번호를 매기지 않는다
   const year = startStr.slice(0, 4);
   const count = historyReports.filter(h => {
     const hs = h.period && h.period.start;
-    return hs && hs >= DOC_NUMBER_EPOCH_START && hs.slice(0, 4) === year && hs < startStr;
+    if(!(hs && hs >= DOC_NUMBER_EPOCH_START && hs.slice(0, 4) === year && hs < startStr)) return false;
+    return reportHasContent(h); // 실제 입력 없이 화면만 넘겨봐서 남은 빈 이력은 세지 않는다
   }).length;
   const seq = String(count + 1).padStart(3, '0');
   return `${year}-${seq}`;
@@ -1125,7 +1181,57 @@ function computeDocNumber(){
 
 function updateDocNumber(){
   const el = document.getElementById('docNumber');
-  if(el) el.textContent = computeDocNumber();
+  if(!el) return;
+  const num = computeDocNumber();
+  el.textContent = num;
+  el.classList.toggle('doc-number-hidden', !num); // 번호 도입 이전 주차는 빈 배지 대신 아예 숨긴다
+}
+
+/* ===================================================================
+   저장된 리포트 이력 관리 (문서번호 계산에 실제로 포함되는 항목을 직접 확인/정리)
+=================================================================== */
+function openHistoryManager(){
+  renderHistoryManagerList();
+  document.getElementById('historyManagerOverlay').style.display = 'flex';
+}
+function closeHistoryManager(){
+  document.getElementById('historyManagerOverlay').style.display = 'none';
+}
+function renderHistoryManagerList(){
+  const list = document.getElementById('historyManagerList');
+  if(!list) return;
+  if(!historyReports.length){
+    list.innerHTML = '<div class="history-manager-empty">저장된 이력이 없습니다.</div>';
+    return;
+  }
+  const sorted = [...historyReports].sort((a,b) => {
+    const as = (a.period && a.period.start) || '';
+    const bs = (b.period && b.period.start) || '';
+    return as < bs ? -1 : as > bs ? 1 : 0;
+  });
+  list.innerHTML = sorted.map(h => {
+    const period = h.period || {};
+    const has = reportHasContent(h);
+    const counted = !!(period.start && period.start >= DOC_NUMBER_EPOCH_START) && has;
+    return `<div class="history-manager-row">
+      <div>
+        <div class="hm-period">${escAttr(period.start || '?')} ~ ${escAttr(period.end || '?')}</div>
+        <span class="hm-status ${has ? 'has' : 'empty'}">${has ? '내용 있음' : '비어있음'}</span>
+        <span class="hm-status ${counted ? 'has' : 'empty'}">${counted ? '번호 계산에 포함됨' : '번호 계산 제외'}</span>
+      </div>
+      <button type="button" class="btn hm-del" onclick="deleteHistoryEntry('${escAttr(period.start || '')}','${escAttr(period.end || '')}')">삭제</button>
+    </div>`;
+  }).join('');
+}
+async function deleteHistoryEntry(start, end){
+  if(!confirm(`${start} ~ ${end} 기간의 저장된 이력을 삭제할까요? 되돌릴 수 없습니다.`)) return;
+  const idx = historyReports.findIndex(h => h.period && h.period.start === start && h.period.end === end);
+  if(idx >= 0) historyReports.splice(idx, 1);
+  const key = 'hist_' + (end || start);
+  await storeDelete(key);
+  updateDocNumber();
+  renderHistoryManagerList();
+  showToast('이력을 삭제했습니다');
 }
 
 function renderAll(){
