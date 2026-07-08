@@ -44,10 +44,13 @@ button{cursor:pointer;}
 .brand-mark{width:30px;height:30px;flex-shrink:0;display:block;}
 .brand-text h1{font-size:16px;}
 .brand-text span{font-size:11.5px;color:var(--text-muted);}
+.doc-number{display:none;}
+.hp-header-summary{display:none;}
 .period-picker{display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--text-muted);}
 .period-picker input{border:1px solid var(--border);border-radius:7px;padding:6px 8px;font-size:12.5px;color:var(--text);background:var(--surface-2);}
 .period-label{font-size:11.5px;color:var(--text-light);margin-right:2px;white-space:nowrap;}
 .period-print-label{display:none;}
+.period-print-block{display:none;}
 .week-nav-btn{padding:6px 10px; font-size:12px; white-space:nowrap;}
 .toolbar-actions{display:flex;gap:8px;}
 .btn{
@@ -114,7 +117,7 @@ input[type="file"]{display:none;}
 .channel-card.ig{border-top:3px solid var(--insta-yellow);}
 .channel-card-head{display:flex;align-items:center;gap:6px;margin-bottom:8px;}
 .channel-badge{
-  font-size:10px;font-weight:400;letter-spacing:.03em;padding:2px 7px;border-radius:20px;color:#fff;
+  font-size:9px;font-weight:400;letter-spacing:.03em;padding:1.5px 6px;border-radius:20px;color:#fff;
 }
 .channel-badge.yt{background:var(--yt);}
 .channel-badge.ig{background:var(--insta-yellow); color:var(--insta-yellow-text);}
@@ -122,10 +125,14 @@ input[type="file"]{display:none;}
 .channel-stat-row{display:flex;align-items:flex-end;gap:10px;flex-wrap:wrap;}
 .channel-stat-main{flex:1;min-width:110px;}
 .channel-stat-main label{font-size:10.5px;color:var(--text-muted);display:block;margin-bottom:2px;}
-.channel-stat-main .stat-input-row{display:flex;align-items:baseline;gap:6px;}
+.stat-label-row{display:flex;align-items:baseline;gap:4px;}
+.stat-label-row label{margin-bottom:0;}
+.stat-label-row label:first-child{width:110px;flex-shrink:0;}
+.stat-label-row .prev-label{width:80px;flex-shrink:0;text-align:left;color:var(--text-light);}
+.channel-stat-main .stat-input-row{display:flex;align-items:baseline;gap:4px;flex-wrap:wrap;margin-top:2px;}
 .channel-stat-main input.big-num{
-  font-family:var(--font-num); font-size:22px; font-weight:400; border:none; background:transparent;
-  width:110px; padding:0; color:var(--text);
+  font-family:var(--font-num); font-size:18px; font-weight:400; border:none; background:transparent;
+  width:110px; padding:0; color:var(--text); line-height:1.1; vertical-align:bottom;
 }
 .channel-stat-main input.big-num:focus{outline:none; border-bottom:2px solid var(--text);}
 .channel-spark{display:none;}
@@ -133,7 +140,6 @@ input[type="file"]{display:none;}
 .delta-badge.up{color:var(--success);background:#e7f5f2;}
 .delta-badge.down{color:var(--danger);background:#fdecec;}
 .delta-badge.flat{color:var(--text-muted);background:var(--surface-2);}
-.prev-input-wrap{font-size:11.5px;color:var(--text-light);display:flex;align-items:center;gap:5px;}
 .prev-input-wrap input{width:80px;border:1px solid var(--border);border-radius:6px;padding:3px 6px;font-size:12px;color:var(--text-muted);}
 .channel-spark{width:100%;height:54px;margin-top:10px;}
 
@@ -193,6 +199,10 @@ table.post-table th.th-ratio{text-align:left;}
 #grid-longform th:nth-child(3), #grid-longform td:nth-child(3){width:14%;}
 #grid-longform th:nth-child(4), #grid-longform td:nth-child(4){width:46%;}
 
+#grid-blog th:nth-child(2), #grid-blog td:nth-child(2){width:40%;}
+#grid-blog th:nth-child(3), #grid-blog td:nth-child(3){width:14%;}
+#grid-blog th:nth-child(4), #grid-blog td:nth-child(4){width:46%;}
+
 #grid-shorts th:nth-child(2), #grid-shorts td:nth-child(2){width:40%;}
 #grid-shorts th:nth-child(3), #grid-shorts td:nth-child(3){width:14%;}
 #grid-shorts th:nth-child(4), #grid-shorts td:nth-child(4){width:15%;}
@@ -229,15 +239,16 @@ table.post-table th.th-ratio{text-align:left;}
 .paste-zone:focus, .paste-zone.drag{border-color:var(--hp); background:var(--hp-soft); outline:none;}
 .paste-zone:empty:before{content:attr(data-placeholder); color:var(--text-light);}
 .paste-zone .paste-icon{font-size:20px;}
-.hp-table-wrap{margin-top:0; overflow-x:auto; border:1px solid var(--border); border-radius:8px;}
+.hp-table-wrap{margin-top:0; overflow-x:auto; border:1px solid var(--border); border-radius:8px; padding:0 10px;}
 table.hp-table{width:100%; border-collapse:collapse; font-size:11.5px; table-layout:fixed;}
 table.hp-table th:first-child, table.hp-table td:first-child{width:24%;}
-table.hp-table th:not(:first-child), table.hp-table td:not(:first-child){width:15.2%;}
+table.hp-table th:not(:first-child), table.hp-table td:not(:first-child){width:38%;}
 table.hp-table th{
   text-align:right; font-size:10.5px; color:var(--text-light); font-weight:400; text-transform:uppercase;
   letter-spacing:.03em; padding:6px 10px; border-bottom:1px solid var(--border);
 }
 table.hp-table th:first-child, table.hp-table td:first-child{text-align:left;}
+table.hp-table th:not(:first-child), table.hp-table td:not(:first-child){text-align:center;}
 table.hp-table td{padding:8px 10px; text-align:right; border-bottom:1px solid #f0f0f3; font-family:var(--font-num);}
 table.hp-table td:first-child{font-family:var(--font); font-weight:400;}
 table.hp-table tr:last-child td{border-bottom:none;}
@@ -262,6 +273,11 @@ table.hp-table tfoot td{font-weight:400; border-top:1.5px solid var(--text); bac
 .insight-list li .tag{
   flex-shrink:0; font-size:8.5px; line-height:1.3; font-weight:400; padding:2px 6px; border-radius:5px; color:#fff;
 }
+.insight-list li.hp-top-impact{background:#fff4d6; border:1px solid #f2c14e;}
+.insight-list li .hp-top-badge{
+  flex-shrink:0; font-size:8.5px; line-height:1.3; font-weight:700; padding:2px 6px; border-radius:5px;
+  background:#e2432b; color:#fff; letter-spacing:.02em;
+}
 
 /* ===== Summary section ===== */
 .summary-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;}
@@ -269,6 +285,7 @@ table.hp-table tfoot td{font-weight:400; border-top:1.5px solid var(--text); bac
 .summary-card label{font-size:10px;color:var(--text-muted);display:block;margin-bottom:3px;}
 .summary-card b{font-family:var(--font-num);font-size:19px;font-weight:400;}
 .summary-card .sub{font-size:10.5px;color:var(--text-light);margin-top:2px;}
+.summary-card .sub.sub-breakdown{font-size:12px;}
 .sub mark.hl{
   background:transparent;
   background-image:linear-gradient(120deg, #fff299 0%, #ffe066 100%);
@@ -279,6 +296,20 @@ table.hp-table tfoot td{font-weight:400; border-top:1.5px solid var(--text); bac
   font-weight:400;
   padding:0 1px;
 }
+/* 발행 후 48시간 효과 카드(롱폼/쇼츠): 게시물별(#1, #2 …) 방문자·페이지뷰 증감률 목록 */
+.wi-list{margin-top:3px;}
+.wi-line{margin-bottom:5px;}
+.wi-line:last-child{margin-bottom:0;}
+.wi-row{font-size:10.5px; display:flex; align-items:baseline; gap:1px; row-gap:1px; flex-wrap:wrap;}
+.wi-idx{font-family:var(--font-num); font-size:9.5px; color:var(--text-light); flex-shrink:0; min-width:9px;}
+.wi-row b{font-family:var(--font-num); font-weight:400; font-size:17px;}
+.wi-metric{white-space:nowrap; flex-shrink:0;}
+.wi-lbl-print{display:none;}
+.wi-title{font-size:10.5px; color:var(--text-light); display:flex; align-items:baseline; gap:3px; max-width:100%; margin-top:1px; min-width:0;}
+.wi-title-text{overflow:hidden; text-overflow:ellipsis; white-space:nowrap; min-width:0; flex:1;}
+.wi-empty{font-size:11px; color:var(--text-light);}
+.wi-tag{flex-shrink:0; max-width:56px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:8.5px; line-height:1.3; font-weight:400; padding:1px 4px; border-radius:5px; color:#fff;}
+.type-badge{display:inline-block; font-size:9px; line-height:1.4; font-weight:400; padding:1px 8px; border-radius:999px; color:#fff;}
 /* 표 안에서 최고 조회수 숫자 밑에 숫자 길이만큼만 형광펜 표시 */
 .post-table td.view-max-cell{position:relative;}
 .view-max-mark{
@@ -308,15 +339,17 @@ table.hp-table mark.hp-max-hl{
 .toast.show{opacity:1; transform:translateX(-50%) translateY(-6px);}
 
 /* ===== Print (A4 세로형, 2페이지 목표) ===== */
-@page{ size:A4 portrait; margin:20mm 9mm 8mm 9mm; }
-/* 1페이지는 아래 여백을 조금 더 넉넉하게(위 여백은 모든 페이지 공통 2cm) */
-@page :first{ margin:20mm 9mm 11mm 9mm; }
+@page{ size:A4 portrait; margin:19mm 9mm 18mm 9mm; }
+/* 1페이지는 아래 여백을 조금 더 넉넉하게(위 여백은 모든 페이지 공통) */
+@page :first{ margin:19mm 9mm 20mm 9mm; }
+/* 페이지 우측 하단에 1/2, 2/2 형식의 쪽 번호 표시 (아래쪽 여백 확보) */
+@page{ @bottom-right{ content: counter(page) "/" counter(pages); font-size:21px; color:#6b6b7a; padding-bottom:3mm; } }
 @media print{
   :root{ --text-muted:#26263a; --text-light:#3d3d52; }
   html, body{-webkit-print-color-adjust:exact; print-color-adjust:exact;}
   .paste-zone, .btn, .no-print, .section-toggle-btn, .detail-toggle, .toast{display:none !important;}
   body{background:#fff; padding:0; font-size:9.4px;}
-  .wrap{max-width:100%; padding:0; margin:0;}
+  .wrap{max-width:100%; padding:0; margin-top:18mm !important; margin-left:0; margin-right:0; margin-bottom:0;}
   .card{box-shadow:none; border:1px solid #ddd;}
   .section{margin-bottom:9px;}
 
@@ -326,29 +359,48 @@ table.hp-table mark.hp-max-hl{
     break-inside:avoid; page-break-inside:avoid;
   }
 
-  /* 상단 바: 로고/제목과 리포트 기간만 인쇄에 남기고, 조작용 버튼류는 숨김 */
+  /* 상단 바: 로고/제목과 리포트 기간만 인쇄에 남기고, 조작용 버튼류는 숨김.
+     모든 페이지 맨 위에 반복해서 나오도록 고정 위치로 배치(각 페이지 여백 안에 그려짐). */
   .topbar{
-    display:block !important; position:static; background:#fff; backdrop-filter:none;
-    border-bottom:1px solid #ddd; box-shadow:none; margin-bottom:8px;
+    display:block !important; position:fixed !important; top:0; left:0; right:0;
+    background:#fff; backdrop-filter:none;
+    border-bottom:1px solid #ddd; box-shadow:none; margin-bottom:0;
   }
   .topbar-inner{padding:0 0 6px; gap:8px;}
   .brand-mark{width:20px; height:20px;}
   .brand-text h1{font-size:12px;}
   .brand-text span{font-size:8px;}
+  .doc-number{display:inline-block !important; font-size:15px !important; color:#000 !important; font-weight:800 !important; margin-left:4px; align-self:flex-end; padding:1px 7px; background:#eef0f4; border-radius:4px; letter-spacing:.02em;}
+  .hp-header-summary{display:flex !important; align-items:center; gap:5px; align-self:flex-end; margin-left:6px; font-size:12px !important; font-weight:700 !important; color:#000 !important;}
+  .hp-header-summary .delta-badge{font-size:10px; padding:2px 7px; border-radius:10px; font-weight:600;}
   .toolbar-actions, #cloudStatus{display:none !important;}
   .period-label, .period-sep, .period-picker input[type="date"]{display:none !important;}
   .period-picker{font-size:9.5px; gap:0;}
+  .period-print-block{display:flex !important; flex-direction:column; align-items:flex-end; gap:2px;}
   .period-print-label{display:inline !important; font-size:9.5px; color:var(--text-muted); white-space:nowrap;}
+  .print-date-label{display:inline !important; font-size:8px; color:var(--text-muted); white-space:nowrap;}
 
   /* 종합 요약: 5칸 항상 한 줄, 세로 크기 2배로 확대 */
   .summary-section{margin-bottom:9px; padding-top:12px;}
   .section-sns{padding-top:4px;}
   #tab-longform{padding-top:4px;}
-  .summary-grid{display:grid !important; grid-template-columns:repeat(5, 1fr) !important; gap:8px !important;}
-  .summary-card{padding:9px 10px;}
-  .summary-card b{font-size:17px;}
+  .summary-grid{display:grid !important; grid-template-columns:repeat(5, 1fr) !important; gap:5px !important;}
+  .summary-card{padding:7px 7px;}
+  .summary-card b{font-size:13px;}
   .summary-card label{font-size:8.5px; margin-bottom:5px;}
-  .summary-card .sub{font-size:9px; line-height:1.4; margin-top:4px;}
+  .summary-card .sub{font-size:7.5px; line-height:1.4; margin-top:4px;}
+  .summary-card .sub.sub-breakdown{font-size:8.5px;}
+  .wi-list{margin-top:2px;}
+  .wi-line{margin-bottom:1px;}
+  .wi-row{font-size:6px; gap:0.4px; row-gap:0.5px;}
+  .wi-row b{font-size:11px;}
+  .wi-idx{font-size:5.2px; min-width:5px;}
+  .wi-title{font-size:7.2px; max-width:150px;}
+  .wi-empty{font-size:6.5px;}
+  .wi-tag{font-size:5.5px; padding:0.3px 2px; border-radius:3px; max-width:22px;}
+  .type-badge{font-size:7px; padding:0.5px 5px;}
+  .wi-lbl-full{display:none;}
+  .wi-lbl-print{display:inline;}
 
   .section-head{margin-bottom:7px; gap:6px;}
   .section-head h2{font-size:11.5px;}
@@ -361,18 +413,26 @@ table.hp-table mark.hp-max-hl{
   .channel-row{display:grid !important; grid-template-columns:1fr 1fr !important; gap:8px; margin-bottom:7px;}
   .channel-card{padding:6px 10px;}
   .channel-card-head{margin-bottom:3px;}
-  .channel-stat-main input.big-num{font-size:14px;}
+  .channel-badge{font-size:6.5px; padding:1px 5px;}
+  .channel-card-head .ch-name{font-size:9px;}
+  .channel-stat-main label{font-size:8px;}
+  .channel-stat-main input.big-num{font-size:14px; line-height:1.1;}
+  .prev-input-wrap input{font-size:9px; padding:2px 5px;}
+  .delta-badge{font-size:8px; padding:2px 6px;}
 
-  .content-type-columns{gap:7px;}
-  .tab-panel{margin-bottom:5px !important; padding-top:0; border-top:none;}
+  .content-type-columns{gap:4px;}
+  .tab-panel{margin-bottom:3px !important; padding-top:0; border-top:none;}
   .content-subtitle{font-size:9.5px; margin-bottom:3px;}
   .content-subtitle .cnt-badge{display:none;}
 
-  /* 카페 활동부터 2페이지로: 롱폼·쇼츠·카드뉴스는 1페이지, 카페 활동+홈페이지 현황은 2페이지에 함께 배치 */
-  #tab-cafe{page-break-before:always; break-before:page;}
+  /* 카페 활동부터 2페이지로: 롱폼·쇼츠·카드뉴스는 1페이지, 카페 활동+Blog+홈페이지 현황은
+     2페이지에 함께 배치. margin-top은 2페이지 맨 위에서도 고정 헤더와 겹치지 않도록
+     확보한 여백(.wrap의 margin-top과 동일) — margin-top은 페이지가 바뀔 때마다는
+     자동으로 재적용되지 않으므로, 강제 페이지 나눔 지점에 직접 지정해준다. */
+  #tab-cafe{page-break-before:always; break-before:page; margin-top:18mm !important;}
 
   /* 홈페이지 현황: 카페 활동 바로 아래(2페이지)로 자연스럽게 이어지도록 여백만 확보 */
-  .section-hp{margin-top:6mm; margin-bottom:0;}
+  .section-hp{margin-top:3mm; margin-bottom:0;}
 
   /* 게시물 표: 고정 레이아웃 + 컬럼별 폭 지정으로 가로 넘침 방지 */
   .post-row.empty{display:none !important;}
@@ -380,13 +440,13 @@ table.hp-table mark.hp-max-hl{
   .post-table{min-width:0 !important; width:100%; table-layout:fixed;}
   .post-table th, .post-table td{padding:2.5px 2px; vertical-align:middle; overflow:hidden;}
   .post-table th{font-size:7.6px;}
-  .post-table td:first-child, .post-table th:first-child{width:12px;}
+  .post-table td:first-child, .post-table th:first-child{width:5%;}
   .post-table input{padding:1.5px 2px !important; font-size:8.2px !important;}
   .post-table select{padding:1.5px 2px !important; font-size:8.2px !important; -webkit-appearance:none !important; -moz-appearance:none !important; appearance:none !important; background-image:none !important;}
   .post-table input[type="date"]{width:100%; min-width:0; padding:1px 0 !important; font-size:7.6px !important; text-align:left;}
   .post-table input[type="date"]::-webkit-calendar-picker-indicator{display:none !important;}
   .post-table input[type="text"]{overflow:hidden; text-overflow:ellipsis;}
-  .post-idx-cell{font-size:7.6px; width:12px;}
+  .post-idx-cell{font-size:7.6px; width:5%;}
   .ratio-cell{flex-wrap:nowrap; white-space:nowrap; gap:3px !important;}
   .ratio-cell input{width:29px !important; min-width:0 !important; font-size:8.2px !important; flex-shrink:0; padding:1px !important;}
   .mini-bar{width:13px !important; height:5px; flex-shrink:0;}
@@ -395,7 +455,7 @@ table.hp-table mark.hp-max-hl{
   .full-label{display:none;}
   .print-label{display:inline;}
 
-  /* 롱폼·쇼츠·카드뉴스(1페이지): 표 글씨 크기 확대 — 카페 활동(2페이지)는 기존 크기 유지 */
+  /* 롱폼·쇼츠·카드뉴스(1페이지): 표 글씨 크기 확대 — 카페 활동·Blog(2페이지)는 기존 크기 유지 */
   #tab-longform .content-subtitle, #tab-shorts .content-subtitle, #tab-cardnews .content-subtitle{font-size:11px;}
   #tab-longform .post-table th, #tab-shorts .post-table th, #tab-cardnews .post-table th{font-size:9.2px;}
   #tab-longform .post-idx-cell, #tab-shorts .post-idx-cell, #tab-cardnews .post-idx-cell{font-size:9.2px;}
@@ -403,26 +463,37 @@ table.hp-table mark.hp-max-hl{
   #tab-longform .post-table input[type="date"], #tab-shorts .post-table input[type="date"], #tab-cardnews .post-table input[type="date"]{font-size:9px !important;}
   #tab-shorts .ratio-cell input, #tab-cardnews .ratio-cell input{width:33px !important; font-size:9.8px !important;}
 
-  /* 컬럼별 고정폭: 제목도 명시적으로 지정해서 표종류별로 균형 있게 분배되도록 함 */
-  #grid-longform th:nth-child(2), #grid-longform td:nth-child(2){width:140px;}
-  #grid-longform th:nth-child(3), #grid-longform td:nth-child(3){width:62px;}
-  #grid-longform th:nth-child(4), #grid-longform td:nth-child(4){width:95px;}
+  /* 컬럼별 고정폭: 표 전체 컬럼(인덱스~게시일)을 표 종류와 무관하게 항상 5%/40%/14%로
+     통일한다. Chrome은 table-layout:fixed 상태에서 %와 px를 섞어 쓰면(합이 100%가 안 맞을 때)
+     남은 여백을 px 컬럼들끼리 비율대로 재분배해버려 표마다 인덱스·조회수 컬럼 폭이 실제로는
+     다르게 렌더링되는 버그가 있었다 — 그래서 페이지가 달라도(1페이지 롱폼/쇼츠/카드뉴스,
+     2페이지 카페 활동/Blog) 제목·게시일 세로선이 어긋나 보였다. 모든 컬럼을 %로 지정해
+     합을 정확히 100%로 맞추면 이 재분배가 발생하지 않아 전 표에서 세로선이 항상 일치한다. */
+  #grid-longform th:nth-child(2), #grid-longform td:nth-child(2),
+  #grid-blog th:nth-child(2), #grid-blog td:nth-child(2),
+  #grid-shorts th:nth-child(2), #grid-shorts td:nth-child(2),
+  #grid-cardnews th:nth-child(2), #grid-cardnews td:nth-child(2),
+  #grid-cafe th:nth-child(2), #grid-cafe td:nth-child(2){width:40%;}
 
-  #grid-shorts th:nth-child(2), #grid-shorts td:nth-child(2){width:150px;}
-  #grid-shorts th:nth-child(3), #grid-shorts td:nth-child(3){width:70px;}
-  #grid-shorts th:nth-child(4), #grid-shorts td:nth-child(4){width:70px;}
-  #grid-shorts th:nth-child(5), #grid-shorts td:nth-child(5){width:70px;}
-  #grid-shorts th:nth-child(6), #grid-shorts td:nth-child(6){width:60px;}
+  #grid-longform th:nth-child(3), #grid-longform td:nth-child(3),
+  #grid-blog th:nth-child(3), #grid-blog td:nth-child(3),
+  #grid-shorts th:nth-child(3), #grid-shorts td:nth-child(3),
+  #grid-cardnews th:nth-child(3), #grid-cardnews td:nth-child(3),
+  #grid-cafe th:nth-child(3), #grid-cafe td:nth-child(3){width:14%;}
 
-  #grid-cardnews th:nth-child(2), #grid-cardnews td:nth-child(2){width:180px;}
-  #grid-cardnews th:nth-child(3), #grid-cardnews td:nth-child(3){width:75px;}
-  #grid-cardnews th:nth-child(4), #grid-cardnews td:nth-child(4){width:75px;}
-  #grid-cardnews th:nth-child(5), #grid-cardnews td:nth-child(5){width:65px;}
+  #grid-longform th:nth-child(4), #grid-longform td:nth-child(4){width:41%;}
 
-  #grid-cafe th:nth-child(2), #grid-cafe td:nth-child(2){width:190px;}
-  #grid-cafe th:nth-child(3), #grid-cafe td:nth-child(3){width:65px;}
-  #grid-cafe th:nth-child(4), #grid-cafe td:nth-child(4){width:60px;}
-  #grid-cafe th:nth-child(5), #grid-cafe td:nth-child(5){width:65px;}
+  #grid-blog th:nth-child(4), #grid-blog td:nth-child(4){width:41%;}
+
+  #grid-shorts th:nth-child(4), #grid-shorts td:nth-child(4){width:14%;}
+  #grid-shorts th:nth-child(5), #grid-shorts td:nth-child(5){width:14%;}
+  #grid-shorts th:nth-child(6), #grid-shorts td:nth-child(6){width:13%;}
+
+  #grid-cardnews th:nth-child(4), #grid-cardnews td:nth-child(4){width:22%;}
+  #grid-cardnews th:nth-child(5), #grid-cardnews td:nth-child(5){width:19%;}
+
+  #grid-cafe th:nth-child(4), #grid-cafe td:nth-child(4){width:20%;}
+  #grid-cafe th:nth-child(5), #grid-cafe td:nth-child(5){width:21%;}
 
   /* 인쇄 시에는 모든 차트에서 Chart.js 캔버스 대신 정적 SVG를 사용 (캔버스는 인쇄 타이밍 문제가 있음) */
   .chart-canvas-wrap{display:none !important;}
@@ -435,24 +506,30 @@ table.hp-table mark.hp-max-hl{
   .post-card{padding:6px 8px !important;}
 
   .hp-main-row{
-    grid-template-columns:1fr !important;
-    grid-template-areas:"table" "chart" "insights" !important;
-    gap:12px; margin-top:8px;
+    grid-template-columns:1fr 200px !important;
+    grid-template-areas:"chart table" "insights insights" !important;
+    gap:6px; margin-top:4px;
   }
+  .hp-chart-card{max-width:none !important; margin-left:0 !important; margin-right:0 !important;}
+  .hp-table-wrap{padding:10px 4px 4px !important;}
+  table.hp-table th:first-child, table.hp-table td:first-child{width:34%;}
+  table.hp-table th:not(:first-child), table.hp-table td:not(:first-child){width:33%;}
   /* 합계 페이지뷰 ~ 가입/새글/댓글까지 5개 지표를 한 줄로 표시 */
   .hp-stat-row{display:flex !important; flex-wrap:nowrap !important; gap:5px !important; margin:3px 0 !important;}
   .hp-stat-group{display:contents;}
-  .hp-chart-wrap{height:150px !important;}
+  #hpStatRow{display:none !important;}
+  .hp-chart-wrap{height:128px !important;}
   .hp-mention-card{padding:6px 8px !important;}
   .hp-stat{padding:3px 5px !important; flex:1 1 0; min-width:0;}
   .hp-stat label{font-size:6.6px; white-space:nowrap;}
   .hp-stat b{font-size:10px; white-space:nowrap;}
-  #hpStatRow .hp-stat label{font-size:5.4px;}
-  #hpStatRow .hp-stat b{font-size:7.6px;}
   .hp-stat .sub{font-size:6px !important; line-height:1.25 !important; margin-top:1px !important; white-space:nowrap !important; overflow:hidden; text-overflow:ellipsis;}
   table.hp-table th, table.hp-table td{padding:1.5px 4px !important; font-size:8.2px;}
-  .insight-list{margin-top:0;}
-  .insight-list li{padding:1px 4px; font-size:6.8px; line-height:1.25; margin-bottom:0.5px;}
+  .insight-list{margin-top:6px !important;}
+  .insight-list li{padding:3.5px 6px; font-size:8.6px; line-height:1.45; margin-bottom:3.5px;}
+  .insight-list li .tag{font-size:6.8px; padding:2px 6px; border-radius:4px;}
+  .insight-list li.hp-top-impact{background:#fff4d6 !important; border:1px solid #f0b93d;}
+  .insight-list li .hp-top-badge{font-size:6px; padding:1px 4px; border-radius:4px;}
   .legend-row{margin-top:4px; font-size:8px;}
 }
 @media (max-width:1220px){
@@ -494,6 +571,8 @@ table.hp-table mark.hp-max-hl{
         <h1>미디어채널 주간 리포트</h1>
         <span>SNS · 홈페이지 통합 분석</span>
       </div>
+      <span class="doc-number" id="docNumber"></span>
+      <div class="hp-header-summary" id="hpHeaderSummary"></div>
     </div>
     <div class="period-picker">
       <span class="period-label">리포트 주간</span>
@@ -503,7 +582,10 @@ table.hp-table mark.hp-max-hl{
       <input type="date" id="periodEnd" onchange="onPeriodChange()">
       <button class="btn week-nav-btn" onclick="shiftWeek(1)" title="다음 일주일">다음 ▶</button>
       <button class="btn week-nav-btn" onclick="goToday()" title="전주 화요일 ~ 이번주 월요일">이번 주</button>
-      <span class="period-print-label" id="periodPrintLabel"></span>
+      <div class="period-print-block">
+        <span class="period-print-label" id="periodPrintLabel"></span>
+        <span class="print-date-label" id="printDateLabel"></span>
+      </div>
     </div>
     <div class="toolbar-actions">
       <button class="btn btn-danger-outline" onclick="resetAll()">🗑 초기화</button>
@@ -533,7 +615,7 @@ table.hp-table mark.hp-max-hl{
       <h2>SNS 현황</h2>
       <span class="section-toggle-btn" id="toggle-sns">−</span>
     </div>
-    <p class="section-desc">유튜브·인스타그램 팔로워 및 최근 콘텐츠 성과 (롱폼 2주 1편·쇼츠 주 4편·카드뉴스 주 1편·카페 활동 수시)</p>
+    <p class="section-desc">유튜브·인스타그램 팔로워 및 최근 콘텐츠 성과</p>
     <div class="section-body" id="body-sns">
       <div class="channel-row">
         <div class="card channel-card yt">
@@ -543,14 +625,17 @@ table.hp-table mark.hp-max-hl{
           </div>
           <div class="channel-stat-row">
             <div class="channel-stat-main">
-              <label>구독자 수</label>
+              <div class="stat-label-row">
+                <label>구독자 수</label>
+                <label class="prev-label">지난주</label>
+              </div>
               <div class="stat-input-row">
                 <input type="text" inputmode="numeric" class="big-num" id="yt_followers" placeholder="0" oninput="formatNumberField(this); onFollowerInput()">
+                <span class="prev-input-wrap">
+                  <input type="text" inputmode="numeric" id="yt_prev" placeholder="—" oninput="formatNumberField(this); onFollowerInput()">
+                </span>
                 <span id="yt_delta"></span>
               </div>
-            </div>
-            <div class="prev-input-wrap">
-              지난주 <input type="text" inputmode="numeric" id="yt_prev" placeholder="—" oninput="formatNumberField(this); onFollowerInput()">
             </div>
           </div>
         </div>
@@ -562,14 +647,17 @@ table.hp-table mark.hp-max-hl{
           </div>
           <div class="channel-stat-row">
             <div class="channel-stat-main">
-              <label>팔로워 수</label>
+              <div class="stat-label-row">
+                <label>팔로워 수</label>
+                <label class="prev-label">지난주</label>
+              </div>
               <div class="stat-input-row">
                 <input type="text" inputmode="numeric" class="big-num" id="ig_followers" placeholder="0" oninput="formatNumberField(this); onFollowerInput()">
+                <span class="prev-input-wrap">
+                  <input type="text" inputmode="numeric" id="ig_prev" placeholder="—" oninput="formatNumberField(this); onFollowerInput()">
+                </span>
                 <span id="ig_delta"></span>
               </div>
-            </div>
-            <div class="prev-input-wrap">
-              지난주 <input type="text" inputmode="numeric" id="ig_prev" placeholder="—" oninput="formatNumberField(this); onFollowerInput()">
             </div>
           </div>
         </div>
@@ -577,24 +665,28 @@ table.hp-table mark.hp-max-hl{
 
       <div class="content-type-columns">
         <div id="tab-longform" class="tab-panel">
-          <h3 class="content-subtitle">롱폼 <span class="cnt-badge">2주 1편 · Youtube</span></h3>
+          <h3 class="content-subtitle">롱폼 <span class="cnt-badge">Youtube</span></h3>
           <div class="card post-card"><div class="post-grid" id="grid-longform"></div></div>
         </div>
         <div id="tab-shorts" class="tab-panel">
-          <h3 class="content-subtitle">쇼츠 <span class="cnt-badge">주 4편 · Youtube+Instagram</span></h3>
+          <h3 class="content-subtitle">쇼츠/릴스 <span class="cnt-badge">Youtube+Instagram</span></h3>
           <div class="card post-card"><div class="post-grid" id="grid-shorts"></div></div>
           <div class="card chart-box" style="margin-top:10px;">
-            <div class="chart-title">쇼츠 조회수 비교 (Youtube vs Instagram)</div>
+            <div class="chart-title">쇼츠/릴스 조회수 비교 (Youtube vs Instagram)</div>
             <div class="chart-canvas-wrap shorts-chart-wrap"><canvas id="chart-shorts"></canvas></div><div class="print-mini-chart" id="printchart-shorts"></div>
           </div>
         </div>
         <div id="tab-cardnews" class="tab-panel">
-          <h3 class="content-subtitle">카드뉴스 <span class="cnt-badge">주 1편 · Instagram 전용</span></h3>
+          <h3 class="content-subtitle">카드뉴스 <span class="cnt-badge">Instagram 전용</span></h3>
           <div class="card post-card"><div class="post-grid" id="grid-cardnews"></div></div>
         </div>
         <div id="tab-cafe" class="tab-panel">
           <h3 class="content-subtitle">카페 활동 <span class="cnt-badge">셀인카페 · 지성아빠 등 네이버 카페</span></h3>
           <div class="card post-card"><div class="post-grid" id="grid-cafe"></div></div>
+        </div>
+        <div id="tab-blog" class="tab-panel">
+          <h3 class="content-subtitle">Blog</h3>
+          <div class="card post-card"><div class="post-grid" id="grid-blog"></div></div>
         </div>
       </div>
     </div>
@@ -715,14 +807,16 @@ function syncCurrentToHistory(){
 const DAY_KO = ['일','월','화','수','목','금','토'];
 const CONTENT_TYPES = [
   {key:'longform', label:'롱폼', hasYoutube:true,  hasInstagram:false, hasCafe:false},
-  {key:'shorts',   label:'쇼츠', hasYoutube:true,  hasInstagram:true,  hasCafe:false},
+  {key:'shorts',   label:'쇼츠/릴스', hasYoutube:true,  hasInstagram:true,  hasCafe:false},
   {key:'cardnews', label:'카드뉴스', hasYoutube:false, hasInstagram:true, hasCafe:false},
   {key:'cafe',     label:'카페 활동', hasYoutube:false, hasInstagram:false, hasCafe:true},
+  {key:'blog',     label:'Blog', hasYoutube:true,  hasInstagram:false, hasCafe:false},
 ];
 const CARDNEWS_COLOR = '#1a9d6f';
 const CAFE_COLOR = '#6a5cf5';
-const TYPE_COLOR = {longform:'#ff0000', shorts:'#f2994a', cardnews:CARDNEWS_COLOR, cafe:CAFE_COLOR};
-const TYPE_SHORT  = {longform:'롱', shorts:'쇼', cardnews:'카', cafe:'페'};
+const BLOG_COLOR = '#17a2b8';
+const TYPE_COLOR = {longform:'#ff0000', shorts:'#f2994a', cardnews:CARDNEWS_COLOR, cafe:CAFE_COLOR, blog:BLOG_COLOR};
+const TYPE_SHORT  = {longform:'롱', shorts:'쇼', cardnews:'카', cafe:'페', blog:'블'};
 const CAFE_NAMES = ['셀인카페', '지성아빠'];
 
 let state = null;
@@ -775,6 +869,7 @@ function initState(){
       shorts:   Array.from({length:5}, ()=>emptyPost(CONTENT_TYPES[1])),
       cardnews: Array.from({length:5}, ()=>emptyPost(CONTENT_TYPES[2])),
       cafe:     Array.from({length:4}, ()=>emptyPost(CONTENT_TYPES[3])),
+      blog:     Array.from({length:5}, ()=>emptyPost(CONTENT_TYPES[4])),
     },
     homepage:{rows:[]}
   };
@@ -826,7 +921,7 @@ const contentMarkerPlugin = {
     if(!scales.x) return;
     const posOf = (m) => ({
       x: scales.x.getPixelForValue(m.idx),
-      y: chartArea.top + 12 + (m.stack||0) * 15
+      y: chartArea.top + 20 + (m.stack||0) * 30
     });
     // 발행일→효과일 연결선(점선 화살표)을 마커보다 먼저 그린다
     markers.forEach(m=>{
@@ -849,12 +944,12 @@ const contentMarkerPlugin = {
       const {x: xPos, y: yPos} = posOf(m);
       ctx.save();
       ctx.beginPath();
-      ctx.arc(xPos, yPos, m.effect ? 7 : 7, 0, Math.PI*2);
+      ctx.arc(xPos, yPos, 13, 0, Math.PI*2);
       if(m.effect){
         // 효과일 마커: 채우지 않고 테두리만 그려 '발행일 자체는 아니지만 그 영향'임을 구분
         ctx.fillStyle = '#fff';
         ctx.fill();
-        ctx.lineWidth = 2;
+        ctx.lineWidth = 3;
         ctx.strokeStyle = m.color;
         ctx.stroke();
         ctx.fillStyle = m.color;
@@ -863,7 +958,7 @@ const contentMarkerPlugin = {
         ctx.fill();
         ctx.fillStyle = '#fff';
       }
-      ctx.font = '9px -apple-system, sans-serif';
+      ctx.font = '700 15px -apple-system, sans-serif';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
       ctx.fillText(m.short, xPos, yPos + 0.5);
@@ -1000,6 +1095,37 @@ function updatePeriodPrintLabel(){
   const e = document.getElementById('periodEnd').value;
   const el = document.getElementById('periodPrintLabel');
   if(el) el.textContent = (s && e) ? `${formatDateDot(s)} ~ ${formatDateDot(e)}` : '';
+  updateDocNumber();
+  updatePrintDateLabel();
+}
+
+/* 인쇄용 '작성일자'는 리포트가 다루는 기간과 무관하게, 실제로 인쇄/저장하는 시점(오늘)을 표시한다. */
+function updatePrintDateLabel(){
+  const el = document.getElementById('printDateLabel');
+  if(el) el.textContent = `작성일자 : ${formatDateDot(todayStr())}`;
+}
+
+/* 리포트 일련번호(예: 2026-001) 계산: 달력 주차가 아니라, 같은 연도에서
+   현재 기간보다 시작일이 앞선(=먼저 발행된) 이력 건수 + 1 로 매긴다.
+   -> 이 방식을 처음 도입한 주(이력이 비어있는 경우)가 자연스럽게 001이 된다. */
+/* 이 번호 체계는 2026-06-30로 시작하는 주(2026-001)부터 도입되었으므로,
+   그 이전에 저장되어 있던 이력은 번호 계산에서 제외한다. */
+const DOC_NUMBER_EPOCH_START = '2026-06-30';
+function computeDocNumber(){
+  const startStr = (document.getElementById('periodStart') && document.getElementById('periodStart').value) || state.period.start || '';
+  if(!startStr) return '';
+  const year = startStr.slice(0, 4);
+  const count = historyReports.filter(h => {
+    const hs = h.period && h.period.start;
+    return hs && hs >= DOC_NUMBER_EPOCH_START && hs.slice(0, 4) === year && hs < startStr;
+  }).length;
+  const seq = String(count + 1).padStart(3, '0');
+  return `${year}-${seq}`;
+}
+
+function updateDocNumber(){
+  const el = document.getElementById('docNumber');
+  if(el) el.textContent = computeDocNumber();
 }
 
 function renderAll(){
@@ -1067,6 +1193,7 @@ function resetContentForPeriod(start, end){
     shorts:   Array.from({length:5}, ()=>emptyPost(CONTENT_TYPES[1])),
     cardnews: Array.from({length:5}, ()=>emptyPost(CONTENT_TYPES[2])),
     cafe:     Array.from({length:4}, ()=>emptyPost(CONTENT_TYPES[3])),
+    blog:     Array.from({length:5}, ()=>emptyPost(CONTENT_TYPES[4])),
   };
   state.homepage = {rows:[]};
 }
@@ -1098,6 +1225,11 @@ function loadOrResetPeriod(newStart, newEnd){
   if(match){
     applyStateFromData(match);
     state.period = {start:newStart, end:newEnd}; // 화면에는 사용자가 고른 날짜를 그대로 유지
+    // match가 정확히 같은 기간이 아니라 '가장 많이 겹치는' 이력일 수 있으므로,
+    // 그 이력에 들어있던 글 중 실제로는 새 기간 범위 밖의 게시일을 가진 것들은
+    // 이번 기간 데이터가 아니다 → 빈 슬롯으로 되돌린다 (예: 이전 주로 이동했는데
+    // 겹치지 않는 기간에 있던 Blog 글이 그대로 남아있던 문제).
+    clearPostsOutsidePeriod(newStart, newEnd);
   } else {
     resetContentForPeriod(newStart, newEnd);
   }
@@ -1209,7 +1341,7 @@ function renderPostGrid(type){
             <option value="" ${!p.cafeName ? 'selected' : ''}>카페 선택</option>
             ${CAFE_NAMES.map(n => `<option value="${escAttr(n)}" ${p.cafeName===n ? 'selected' : ''}>${escAttr(n)}</option>`).join('')}
           </select></td>` : ''}
-      ${ct.hasYoutube ? `<td id="ytcell-${type}-${idx}"><span class="view-max-mark" id="ytmark-${type}-${idx}" style="display:none;"></span><input type="text" inputmode="numeric" class="num-fill${type==='longform' ? ' num-left' : ''}" value="${escAttr(fmtNum(p.ytViews))}" placeholder="0"
+      ${ct.hasYoutube ? `<td id="ytcell-${type}-${idx}"><span class="view-max-mark" id="ytmark-${type}-${idx}" style="display:none;"></span><input type="text" inputmode="numeric" class="num-fill${(type==='longform'||type==='blog') ? ' num-left' : ''}" value="${escAttr(fmtNum(p.ytViews))}" placeholder="0"
             oninput="formatNumberField(this); updatePostField('${type}',${idx},'ytViews',stripCommas(this.value)); refreshSummary(); refreshShortsChart(); refreshViewHighlights('${type}');"></td>` : ''}
       ${ct.hasInstagram ? `
       <td id="igcell-${type}-${idx}"><span class="view-max-mark" id="igmark-${type}-${idx}" style="display:none;"></span><input type="text" inputmode="numeric" class="num-fill" value="${escAttr(fmtNum(p.igViews))}" placeholder="0"
@@ -1231,7 +1363,7 @@ function renderPostGrid(type){
           <th></th>
           <th>제목</th><th>게시일</th>
           ${ct.hasCafe ? `<th><span class="full-label">카페</span><span class="print-label">카페</span></th>` : ''}
-          ${ct.hasYoutube ? `<th${type==='longform' ? ' class="th-yt-longform"' : ' class="th-ratio"'}><span class="full-label">Youtube 조회수</span><span class="print-label">Youtube</span></th>` : ''}
+          ${ct.hasYoutube ? `<th${(type==='longform'||type==='blog') ? ' class="th-yt-longform"' : ' class="th-ratio"'}><span class="full-label">${type==='blog' ? '조회수' : 'Youtube 조회수'}</span><span class="print-label">${type==='blog' ? '조회수' : 'Youtube'}</span></th>` : ''}
           ${ct.hasInstagram ? `<th class="th-ratio"><span class="full-label">Insta 조회수</span><span class="print-label">Instagram</span></th><th class="th-ratio"><span class="full-label">팔로워 비율(%)</span><span class="print-label">팔로워%</span></th>` : ''}
           ${ct.hasCafe ? `<th style="text-align:center;"><span class="full-label">차공조연 언급</span><span class="print-label">언급</span></th>` : ''}
         </tr></thead>
@@ -1456,12 +1588,14 @@ function renderHomepage(){
     document.getElementById('hpInsights').innerHTML = '';
     document.getElementById('hpLegend').innerHTML = '';
     if(hpChart){ hpChart.destroy(); hpChart = null; }
+    updateHpHeaderSummary(null, null);
     refreshSummary();
     renderMentionEffect();
     return;
   }
   const totalPV = rows.reduce((s,r)=>s+r.pageviews,0);
   const totalV  = rows.reduce((s,r)=>s+r.visitors,0);
+  updateHpHeaderSummary(totalPV, totalV);
   const bestDay = rows.reduce((a,b)=> b.pageviews > a.pageviews ? b : a, rows[0]);
   statRow.innerHTML = `
     <div class="hp-stat-group">
@@ -1490,17 +1624,16 @@ function renderHomepage(){
 
 function computeChartMarkers(rows){
   const dateIndex = {}; rows.forEach((r,i) => dateIndex[r.date] = i);
-  const list = []; const counts = {}; const cafeShownIdx = {};
+  const list = []; const counts = {}; const typeShownIdx = {};
   CONTENT_TYPES.forEach(ct => {
     state.posts[ct.key].forEach(p => {
       if(!p.date || dateIndex[p.date] === undefined) return;
       const pubIdx = dateIndex[p.date];
-      if(ct.hasCafe){
-        // 차공조연을 언급한 카페 활동만 표시하고, 같은 날 여러 건이어도 '페' 마커는 하나만 표시
-        if(!p.mentioned) return;
-        if(cafeShownIdx[pubIdx]) return;
-        cafeShownIdx[pubIdx] = true;
-      }
+      if(ct.hasCafe && !p.mentioned) return;
+      // 같은 날 같은 콘텐츠 타입으로 여러 건이 발행되어도 배지는 하나만 표시
+      const shownKey = ct.key + '_' + pubIdx;
+      if(typeShownIdx[shownKey]) return;
+      typeShownIdx[shownKey] = true;
       counts[pubIdx] = counts[pubIdx] || 0;
       list.push({idx: pubIdx, color: TYPE_COLOR[ct.key], short: TYPE_SHORT[ct.key], stack: counts[pubIdx]});
       counts[pubIdx]++;
@@ -1561,6 +1694,42 @@ function computeChartMarkers(rows){
   return list;
 }
 
+/* 헤더에 표시할 'HP : N명 방문, N 뷰' 요약 텍스트를 계산해 반영한다. totalPV/totalV가 없으면
+   (선택된 기간에 홈페이지 데이터가 없으면) 빈 문자열로 비운다. 지난주(현재 기간 시작일 바로
+   전날을 마지막 날로 하는 이력)의 합계를 찾을 수 있으면 그 대비 증감(▲/▼)도 함께 표시한다. */
+function findPrevPeriodHomepageTotals(){
+  const curStart = (document.getElementById('periodStart') && document.getElementById('periodStart').value) || state.period.start || '';
+  if(!curStart) return null;
+  const prevEnd = addDaysToDateStr(curStart, -1);
+  const h = historyReports.find(hh => hh.period && hh.period.end === prevEnd);
+  if(!h || !h.homepage || !h.homepage.rows || !h.homepage.rows.length) return null;
+  const pv = h.homepage.rows.reduce((s,r)=>s+(r.pageviews||0),0);
+  const v  = h.homepage.rows.reduce((s,r)=>s+(r.visitors||0),0);
+  return {pv, v};
+}
+
+function updateHpHeaderSummary(totalPV, totalV){
+  const el = document.getElementById('hpHeaderSummary');
+  if(!el) return;
+  if(totalPV == null || totalV == null){
+    el.innerHTML = '';
+    return;
+  }
+  let html = `<span>HP : ${totalV.toLocaleString()}명 방문, ${totalPV.toLocaleString()} 뷰</span>`;
+  const prev = findPrevPeriodHomepageTotals();
+  if(prev){
+    const diffV = totalV - prev.v;
+    const diffPV = totalPV - prev.pv;
+    const clsV = diffV > 0 ? 'up' : diffV < 0 ? 'down' : 'flat';
+    const clsPV = diffPV > 0 ? 'up' : diffPV < 0 ? 'down' : 'flat';
+    const arrowV = diffV > 0 ? '▲' : diffV < 0 ? '▼' : '—';
+    const arrowPV = diffPV > 0 ? '▲' : diffPV < 0 ? '▼' : '—';
+    html += `<span class="delta-badge ${clsV}">방문 ${arrowV}${Math.abs(diffV).toLocaleString()}</span>`;
+    html += `<span class="delta-badge ${clsPV}">뷰 ${arrowPV}${Math.abs(diffPV).toLocaleString()}</span>`;
+  }
+  el.innerHTML = html;
+}
+
 /* 이번 기간 첫날 바로 전날(=지난 기간 마지막 날)의 홈페이지 방문자 데이터와, 그 날 발행된
    콘텐츠 기록을 저장된 이력(historyReports)에서 찾는다. 지난 기간을 아직 저장하지 않았다면 null. */
 function findPrevPeriodBoundaryData(firstRowDate){
@@ -1591,7 +1760,7 @@ function refreshHomepageChart(rows){
   };
   const options = {
     responsive:true, maintainAspectRatio:false,
-    layout:{padding:{top:26}},
+    layout:{padding:{top:50}},
     interaction:{mode:'index', intersect:false},
     plugins:{valueLabels:{enabled:true}, legend:{position:'bottom', labels:{boxWidth:10, font:{size:11}}}},
     scales:{
@@ -1619,7 +1788,7 @@ function refreshHomepageChart(rows){
 function buildHomepageChartSVG(rows, markers, labels, dataV, dataPV){
   const n = rows.length || 1;
   const W = 600, H = 260;
-  const padTop = 34, padBottom = 18, padLeft = 4, padRight = 4;
+  const padTop = 60, padBottom = 18, padLeft = 4, padRight = 4;
   const plotH = H - padTop - padBottom;
   const plotW = W - padLeft - padRight;
   const groupW = plotW / n;
@@ -1627,7 +1796,10 @@ function buildHomepageChartSVG(rows, markers, labels, dataV, dataPV){
   const maxPV = Math.max(1, ...dataPV) * 1.3;
 
   // 막대: 페이지뷰 (오른쪽 축 기준)
+  // 막대 자체(rect)와 값 라벨(text)을 분리해 만든다 — 라벨은 아래에서 다른 모든 도형(막대·선·점·
+  // 발행일 마커)보다 나중에, SVG 맨 끝에 그려서 어떤 도형에도 숫자가 가려지지 않도록 한다.
   let bars = '';
+  let barLabelsSvg = '';
   const barW = groupW * 0.55;
   const barLabelY = []; // 막대 값 라벨의 y좌표를 저장해두고, 방문자(선) 라벨이 겹치지 않게 계산할 때 사용
   for(let i=0;i<n;i++){
@@ -1637,7 +1809,7 @@ function buildHomepageChartSVG(rows, markers, labels, dataV, dataPV){
     const labelY = y - 2;
     barLabelY[i] = labelY;
     bars += `<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${barW.toFixed(1)}" height="${h.toFixed(1)}" fill="#adb5c4" rx="1.5"/>`;
-    bars += `<text x="${(x+barW/2).toFixed(1)}" y="${labelY.toFixed(1)}" font-size="5.6" text-anchor="middle" fill="#586274">${Number(dataPV[i]).toLocaleString()}</text>`;
+    barLabelsSvg += `<text x="${(x+barW/2).toFixed(1)}" y="${labelY.toFixed(1)}" font-size="5.6" text-anchor="middle" fill="#586274" stroke="#fff" stroke-width="2.4" paint-order="stroke">${Number(dataPV[i]).toLocaleString()}</text>`;
   }
 
   // 선: 방문자 (왼쪽 축 기준)
@@ -1650,20 +1822,25 @@ function buildHomepageChartSVG(rows, markers, labels, dataV, dataPV){
   // 방문자(선) 값 라벨: 페이지뷰·방문자 두 지표가 같은 날 동시에 최고치를 찍으면 두 라벨의
   // y좌표가 사실상 같아져 숫자가 겹쳐 뭉개진다. 같은 날 막대 라벨과 12px 이내로 가까우면
   // 그만큼 위로 띄워서 항상 두 줄로 분리되게 한다(화면용 Chart.js 차트와 동일한 방식).
+  // 점(circle)은 도형이라 먼저 그리고, 값 라벨(text)은 막대 라벨과 마찬가지로 따로 모아뒀다가
+  // 맨 마지막에 그려서 점이나 막대에 가려지지 않게 한다.
   const MIN_LABEL_GAP = 12;
-  const dots = pts.map((p,i) => {
+  let dots = '';
+  let dotLabelsSvg = '';
+  pts.forEach((p,i) => {
     let labelY = p[1] - 5;
     if(Math.abs(labelY - barLabelY[i]) < MIN_LABEL_GAP){
       labelY = Math.min(labelY, barLabelY[i]) - MIN_LABEL_GAP;
     }
-    return `<circle cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="2.4" fill="#2f80ed"/><text x="${p[0].toFixed(1)}" y="${labelY.toFixed(1)}" font-size="5.6" text-anchor="middle" fill="#2f80ed" font-weight="400">${Number(dataV[i]).toLocaleString()}</text>`;
-  }).join('');
+    dots += `<circle cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="2.4" fill="#2f80ed"/>`;
+    dotLabelsSvg += `<text x="${p[0].toFixed(1)}" y="${labelY.toFixed(1)}" font-size="5.6" text-anchor="middle" fill="#2f80ed" font-weight="400" stroke="#fff" stroke-width="2.4" paint-order="stroke">${Number(dataV[i]).toLocaleString()}</text>`;
+  });
 
   // 발행일 마커 (콘텐츠 유형별 색상 점, 같은 날 여러 개면 위로 쌓기)
   // + 발행 다음날 효과가 감지된 경우, 옅은 테두리 마커와 점선 연결선으로 인과관계 표시
   const markerPos = (m) => ({
     x: padLeft + m.idx*groupW + groupW/2,
-    y: padTop - 6 - (m.stack||0)*9
+    y: padTop - 11 - (m.stack||0)*20
   });
   let markerLines = '';
   (markers||[]).forEach(m => {
@@ -1677,9 +1854,9 @@ function buildHomepageChartSVG(rows, markers, labels, dataV, dataPV){
   (markers||[]).forEach(m => {
     const {x, y} = markerPos(m);
     if(m.effect){
-      markerDots += `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="4.2" fill="#fff" stroke="${m.color}" stroke-width="1.4"/><text x="${x.toFixed(1)}" y="${(y+2.6).toFixed(1)}" font-size="5.5" text-anchor="middle" fill="${m.color}">${m.short}</text>`;
+      markerDots += `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="8" fill="#fff" stroke="${m.color}" stroke-width="2.4"/><text x="${x.toFixed(1)}" y="${(y+3.6).toFixed(1)}" font-size="10" font-weight="700" text-anchor="middle" fill="${m.color}">${m.short}</text>`;
     } else {
-      markerDots += `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="4.2" fill="${m.color}"/><text x="${x.toFixed(1)}" y="${(y+2.6).toFixed(1)}" font-size="5.5" text-anchor="middle" fill="#fff">${m.short}</text>`;
+      markerDots += `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="8" fill="${m.color}"/><text x="${x.toFixed(1)}" y="${(y+3.6).toFixed(1)}" font-size="10" font-weight="700" text-anchor="middle" fill="#fff">${m.short}</text>`;
     }
   });
 
@@ -1705,6 +1882,8 @@ function buildHomepageChartSVG(rows, markers, labels, dataV, dataPV){
     ${markerDots}
     ${xLabels}
     ${legend}
+    ${barLabelsSvg}
+    ${dotLabelsSvg}
   </svg>`;
 }
 
@@ -1743,11 +1922,12 @@ function refreshHomepageInsights(rows){
       if(prevVisitors !== null){
         const diff = first.visitors - prevVisitors;
         const pct = prevVisitors ? Math.round(diff/prevVisitors*100) : 0;
-        txt += `<mark>다음날 방문자 ${first.visitors.toLocaleString()}명 (전날 대비 ${diff>=0?'+':''}${pct}%)</mark>`;
+        txt += `다음날 방문자 ${first.visitors.toLocaleString()}명 (전날 대비 ${diff>=0?'+':''}${pct}%)`;
       } else {
         txt += `다음날 방문자 ${first.visitors.toLocaleString()}명`;
       }
-      items.push({txt, color: TYPE_COLOR[causeType.key], label: causeType.label, date: prevDate});
+      // 랭킹은 증감률이 아니라 실제 페이지뷰(동률이면 방문자수)가 가장 높은 날 기준
+      items.push({txt, color: TYPE_COLOR[causeType.key], label: causeType.label, tagLabel: causeType.label, date: prevDate, impactPV: first.pageviews||0, impactV: first.visitors||0});
     }
   }
 
@@ -1759,6 +1939,7 @@ function refreshHomepageInsights(rows){
       const today = rows[i]; const prev = rows[i-1]; const nextDay = rows[i+1];
       const views = (ct.hasYoutube ? (Number(p.ytViews)||0) : 0) + (ct.hasInstagram ? (Number(p.igViews)||0) : 0);
       const label = ct.hasCafe ? (p.cafeName || '카페') : ct.label;
+      const tagLabel = ct.hasCafe ? '카페활동' : ct.label; // 배지에는 개별 카페 이름 대신 통일된 문구로 표시
       const verb = ct.hasCafe ? '활동' : '발행';
       const metricTxt = ct.hasCafe ? `차공조연 ${p.mentioned ? '언급함' : '언급안함'}` : `조회수 ${views.toLocaleString()}`;
       let txt = `${p.date.slice(5)} ${label} ${verb}${p.title ? ' · '+p.title : ''} — ${metricTxt} · 당일 방문자 ${today.visitors.toLocaleString()}명`;
@@ -1767,13 +1948,18 @@ function refreshHomepageInsights(rows){
         const pct = prev.visitors ? Math.round(diff/prev.visitors*100) : 0;
         txt += ` (전날 ${prev.visitors.toLocaleString()}명 대비 ${diff>=0?'+':''}${diff.toLocaleString()}명, ${diff>=0?'+':''}${pct}%)`;
       }
+      // 랭킹용: 당일과 다음날 중 페이지뷰가 더 높은 쪽(동률이면 방문자수 비교용으로 그 날의 값을 그대로 사용)을 이 콘텐츠의 영향으로 본다.
+      let impactPV = today.pageviews||0, impactV = today.visitors||0;
+      if(nextDay && (nextDay.pageviews||0) > impactPV){
+        impactPV = nextDay.pageviews||0; impactV = nextDay.visitors||0;
+      }
       // 발행 다음날 방문자가 당일보다 크게 늘었다면(반응이 하루 늦게 나타난 경우) 함께 표시
       if(!ct.hasCafe && nextDay && nextDay.visitors > today.visitors && nextDay.visitors >= Math.max(5, today.visitors * 1.4)){
         const diff2 = nextDay.visitors - today.visitors;
         const pct2 = today.visitors ? Math.round(diff2/today.visitors*100) : 0;
         txt += ` → <mark>다음날(${nextDay.date.slice(5)}) 방문자 ${nextDay.visitors.toLocaleString()}명으로 급증 (당일 대비 +${diff2.toLocaleString()}명, +${pct2}%)</mark>`;
       }
-      items.push({txt, color: TYPE_COLOR[ct.key], label, date: p.date});
+      items.push({txt, color: TYPE_COLOR[ct.key], label, tagLabel, date: p.date, impactPV, impactV});
     });
   });
   if(!items.length){
@@ -1781,26 +1967,133 @@ function refreshHomepageInsights(rows){
     return;
   }
   items.sort((a,b) => a.date < b.date ? -1 : a.date > b.date ? 1 : 0); // 오래된 날짜 → 최신 날짜 순
-  ul.innerHTML = items.map(it => `<li><span class="tag" style="background:${it.color}">${it.label}</span>${it.txt}</li>`).join('');
+
+  // 당일/다음날 중 페이지뷰가 가장 높은 top3 항목에 강조 표시 (동률이면 방문자수로 비교)
+  const rankOrder = items.map((it,idx) => idx).filter(idx => items[idx].impactPV > 0)
+    .sort((a,b) => {
+      const pvDiff = items[b].impactPV - items[a].impactPV;
+      return pvDiff !== 0 ? pvDiff : items[b].impactV - items[a].impactV;
+    }).slice(0,3);
+  const rankOf = {}; rankOrder.forEach((idx,r) => rankOf[idx] = r+1);
+
+  ul.innerHTML = items.map((it,idx) => {
+    const rank = rankOf[idx];
+    const cls = rank ? ' class="hp-top-impact"' : '';
+    return `<li${cls}><span class="tag" style="background:${it.color}">${it.tagLabel}</span>${it.txt}</li>`;
+  }).join('');
 }
 
+function addDaysStr(dateStr, n){
+  const d = new Date(dateStr + 'T00:00:00');
+  d.setDate(d.getDate() + n);
+  return formatDateLocal(d);
+}
+
+/* 발행(업로드) 시점 기준 48시간 이내(발행 당일·다음날 중 더 높은 날)의 방문자·페이지뷰 최고치와,
+   (전날 데이터가 있는 경우) 전날 대비 증감률(%)을 구한다. 홈페이지 데이터가 일 단위이므로
+   '48시간 이내'는 발행일 당일과 그 다음날 중 최고치로 근사한다.
+   날짜 문자열로 직접 다음날/전날을 계산해서 찾기 때문에, 발행 당일 데이터가 없어도
+   다음날 데이터만 있으면(예: 리포트 기간 첫날 직전에 발행된 콘텐츠) 그 효과를 놓치지 않는다.
+   방문자·페이지뷰는 서로 다른 날짜에서 각각 최고치를 골라 섞지 않고, '페이지뷰가 더 높은
+   하루'를 기준일로 정한 뒤 그 날의 방문자·페이지뷰를 함께 사용한다(같은 날짜 값끼리 짝지음). */
+function windowPctForDate(rows, dateIndex, date){
+  const dayRow  = dateIndex[date] !== undefined ? rows[dateIndex[date]] : null;
+  const nextDate = addDaysStr(date, 1);
+  const nextRow = dateIndex[nextDate] !== undefined ? rows[dateIndex[nextDate]] : null;
+  const windowRows = [dayRow, nextRow].filter(Boolean);
+  if(!windowRows.length) return null; // 발행일·다음날 데이터가 모두 없으면 계산 불가
+
+  const peakRow = windowRows.reduce((a,b) => (b.pageviews||0) > (a.pageviews||0) ? b : a);
+  const peakV  = peakRow.visitors;
+  const peakPV = peakRow.pageviews || 0;
+
+  const prevDate = addDaysStr(date, -1);
+  const prev = dateIndex[prevDate] !== undefined ? rows[dateIndex[prevDate]] : null;
+  let vPct = null, pvPct = null, diffV = null, diffPV = null;
+  if(prev && prev.visitors){
+    vPct = (peakV - prev.visitors) / prev.visitors * 100;
+    pvPct = prev.pageviews ? (peakPV - prev.pageviews) / prev.pageviews * 100 : null;
+    diffV = peakV - prev.visitors;
+    diffPV = peakPV - prev.pageviews;
+  }
+  return {vPct, pvPct, diffV, diffPV, peakV, peakPV};
+}
+
+/* '콘텐츠 발행 효과'(Top 2 하이라이트)는 홈페이지 유입과 직접 연결되는
+   롱폼·쇼츠 콘텐츠만 집계한다(카드뉴스·카페 활동은 홈페이지 유입 연관성이 약해 제외).
+   증감률(%)은 방문자가 워낙 적을 때 왜곡돼 보일 수 있어, 발행 후 48시간(당일·다음날) 동안
+   실제로 기록한 방문자·페이지뷰 최고치를 기준으로 콘텐츠 순위를 매긴다. */
 function computePublishImpact(){
   const rows = periodHomepageRows();
   if(!rows.length) return [];
   const dateIndex = {}; rows.forEach((r,i) => dateIndex[r.date] = i);
   const impacts = [];
-  CONTENT_TYPES.forEach(ct => {
+  const targetTypes = CONTENT_TYPES.filter(ct => ct.key === 'longform' || ct.key === 'shorts');
+  targetTypes.forEach(ct => {
     state.posts[ct.key].forEach(p => {
-      if(!p.date || dateIndex[p.date] === undefined) return;
-      const i = dateIndex[p.date];
-      const today = rows[i], prev = rows[i-1];
-      if(!prev || !prev.visitors) return;
-      const diff = today.visitors - prev.visitors;
-      const pct = diff / prev.visitors * 100;
-      impacts.push({pct, diff, title: p.title || '제목 미입력', type: ct.label});
+      if(!p.date) return;
+      const w = windowPctForDate(rows, dateIndex, p.date);
+      if(!w) return;
+      impacts.push({peakV: w.peakV, peakPV: w.peakPV, vPct: w.vPct, title: p.title || '제목 미입력', type: ct.label, typeKey: ct.key});
     });
   });
   return impacts;
+}
+
+/* 발행 후 48시간(당일·다음날) 이내 홈페이지 방문자가 가장 많이 "증가(%)"한 콘텐츠 1건을 찾는다.
+   증감률은 발행 전날 데이터가 있어야 계산되므로, 전날 데이터가 없는 콘텐츠는 후보에서 제외한다. */
+function bestPublishPctImpact(impacts){
+  const withPct = impacts.filter(it => it.vPct !== null && it.vPct !== undefined);
+  if(!withPct.length) return null;
+  return withPct.reduce((a,b) => b.vPct > a.vPct ? b : a, withPct[0]);
+}
+
+/* 방문자·페이지뷰 지표 한 조각의 HTML. 화면에서는 전체 단어(방문자/페이지뷰)를 쓰고,
+   인쇄에서는 카드 폭이 훨씬 좁아 한 줄에 안 들어가므로 짧은 표기(방문/페이지뷰)로 자동 전환한다
+   (wi-lbl-full / wi-lbl-print를 CSS @media print에서 서로 바꿔 보여줌). */
+function wiMetricHtml(fullLabel, printLabel, valueHtml){
+  return `<span class="wi-metric"><span class="wi-lbl-full">${fullLabel}</span><span class="wi-lbl-print">${printLabel}</span> <b>${valueHtml}</b></span>`;
+}
+
+/* 종합 요약의 'Top 2' 카드용 렌더링: 발행 후 48시간 이내 방문자·페이지뷰 최고치가
+   가장 높았던 콘텐츠 상위 2건을 절대 수치(명·회)로 표시한다(증감률이 아님). */
+function renderTopContentImpacts(impacts){
+  const top = [...impacts].sort((a,b) => b.peakV - a.peakV).slice(0,2);
+  if(!top.length){
+    return '<div class="wi-empty">발행일이 홈페이지 데이터 기간과 겹치는 콘텐츠가 없습니다</div>';
+  }
+  return '<div class="wi-list">' + top.map((it, idx) => {
+    const metrics = wiMetricHtml('방문자', '방문', `${it.peakV.toLocaleString()}명`) + wiMetricHtml('· 페이지뷰', '·페이지뷰', `${it.peakPV.toLocaleString()}회`);
+    return `<div class="wi-line"><div class="wi-row"><span class="wi-idx">${idx+1}위</span>${metrics}</div><div class="wi-title"><span class="wi-tag" style="background:${TYPE_COLOR[it.typeKey]}">${it.type}</span><span class="wi-title-text">${escAttr(it.title)}</span></div></div>`;
+  }).join('') + '</div>';
+}
+
+/* 콘텐츠 유형별 발행 후 48시간 이내 방문자·페이지뷰 최고치를 게시물 슬롯(#1, #2 …) 순서대로 반환.
+   'Top 2' 카드와 동일하게 절대 수치(명·회) 기준이며, 발행일·다음날 데이터가 전혀 없는 슬롯은
+   has:false로 표시해 목록에서 아예 제외한다(빈 슬롯 표시 안 함). */
+function computeContentWindowImpacts(typeKey, maxCount){
+  const rows = periodHomepageRows();
+  const dateIndex = {}; rows.forEach((r,i) => dateIndex[r.date] = i);
+  const posts = (state.posts[typeKey] || []).slice(0, maxCount);
+  return posts.map((p, idx) => {
+    const num = idx + 1;
+    if(!p.date) return {num, title: p.title, has:false};
+    const w = windowPctForDate(rows, dateIndex, p.date);
+    if(!w) return {num, title: p.title, has:false};
+    return {num, title: p.title, has:true, peakV: w.peakV, peakPV: w.peakPV};
+  });
+}
+
+/* 위 목록을 종합 요약 카드 안에 표시할 HTML로 렌더링. 데이터 없는 슬롯은 표시하지 않는다. */
+function renderWindowImpactList(items){
+  const withData = items.filter(it => it.has).sort((a,b) => b.peakV - a.peakV);
+  if(!withData.length){
+    return '<div class="wi-empty">발행일이 홈페이지 데이터 기간과 겹치는 콘텐츠가 없습니다</div>';
+  }
+  return '<div class="wi-list">' + withData.map(it => {
+    const metrics = wiMetricHtml('방문자', '방문', `${it.peakV.toLocaleString()}명`) + wiMetricHtml('· 페이지뷰', '·페이지뷰', `${it.peakPV.toLocaleString()}회`);
+    return `<div class="wi-line"><div class="wi-row"><span class="wi-idx">#${it.num}</span>${metrics}</div>${it.title ? `<div class="wi-title"><span class="wi-title-text">${escAttr(it.title)}</span></div>` : ''}</div>`;
+  }).join('') + '</div>';
 }
 
 /* ===================================================================
@@ -1865,54 +2158,49 @@ function renderMentionEffect(){
 function refreshSummary(){
   const grid = document.getElementById('summaryGrid');
 
-  let totalContentViews = 0, topPost = null, publishedCount = 0;
-  const typeCounts = {};
+  let totalContentViews = 0, topPost = null;
+  const typeTotals = {longform:0, shortsYt:0, shortsIg:0};
   CONTENT_TYPES.forEach(ct => {
-    let cnt = 0;
     state.posts[ct.key].forEach(p => {
-      const v = (ct.hasYoutube ? (Number(p.ytViews)||0) : 0) + (ct.hasInstagram ? (Number(p.igViews)||0) : 0);
+      const ytV = ct.hasYoutube ? (Number(p.ytViews)||0) : 0;
+      const igV = ct.hasInstagram ? (Number(p.igViews)||0) : 0;
+      const v = ytV + igV;
       totalContentViews += v;
-      if(v > 0 && (!topPost || v > topPost.views)) topPost = {views:v, title: p.title || ('제목 미입력'), type: ct.label};
-      if(p.title || p.date) cnt++;
+      if(ct.key === 'longform') typeTotals.longform += ytV;
+      if(ct.key === 'shorts'){ typeTotals.shortsYt += ytV; typeTotals.shortsIg += igV; }
+      if(v > 0 && (!topPost || v > topPost.views)) topPost = {views:v, title: p.title || ('제목 미입력'), type: ct.label, ytViews: ytV, igViews: igV, splitPlatforms: (ct.hasYoutube && ct.hasInstagram)};
     });
-    typeCounts[ct.key] = cnt;
-    if(ct.key !== 'cafe') publishedCount += cnt;
   });
-
-  const rows = periodHomepageRows();
-  const totalPV = rows.reduce((s,r)=>s+r.pageviews,0);
-  const totalV  = rows.reduce((s,r)=>s+r.visitors,0);
+  const topPostDetail = topPost ? (topPost.splitPlatforms
+    ? `쇼츠 ${topPost.ytViews.toLocaleString()} / 릴스 ${topPost.igViews.toLocaleString()}`
+    : topPost.type+', '+topPost.views.toLocaleString()) : '';
 
   const impacts = computePublishImpact();
-  let impactHtml;
-  if(!impacts.length){
-    impactHtml = `<label>콘텐츠 발행일 방문자 효과</label><b>—</b><div class="sub">발행일이 홈페이지 데이터 기간과 겹치면 표시됩니다</div>`;
-  } else {
-    const avgPct = impacts.reduce((s,i)=>s+i.pct,0) / impacts.length;
-    const best = impacts.reduce((a,b)=> b.pct > a.pct ? b : a, impacts[0]);
-    impactHtml = `<label>콘텐츠 발행일 방문자 효과</label><b>${avgPct>=0?'+':''}${avgPct.toFixed(0)}%</b>
-      <div class="sub">발행일 방문자 변화 평균(전날 대비) · 최고 효과: <mark class="hl">${escAttr(best.title)} (${best.pct>=0?'+':''}${best.pct.toFixed(0)}%)</mark></div>`;
-  }
+  const bestPct = bestPublishPctImpact(impacts);
+  const longformImpacts = computeContentWindowImpacts('longform', 2);
+  const shortsImpacts = computeContentWindowImpacts('shorts', 4);
 
   grid.innerHTML = `
-    <div class="card summary-card">
-      ${impactHtml}
+    <div class="card summary-card summary-card-list">
+      <label>콘텐츠 발행 효과 Top 2</label>
+      ${renderTopContentImpacts(impacts)}
     </div>
     <div class="card summary-card">
-      <label>이번 주 콘텐츠 발행 편수</label><b>${publishedCount}편</b>
-      <div class="sub">롱폼 ${typeCounts.longform||0} · 쇼츠 ${typeCounts.shorts||0} · 카드뉴스 ${typeCounts.cardnews||0}<br>카페 ${typeCounts.cafe||0}</div>
+      <label>콘텐츠 발행 최고 증가율</label><b>${bestPct ? (bestPct.vPct>=0?'+':'')+bestPct.vPct.toFixed(0)+'%' : '—'}</b>
+      <div class="sub">${bestPct ? '최고 성과: <mark class="hl">'+escAttr(bestPct.title)+' ('+bestPct.type+')</mark>' : '발행일이 홈페이지 데이터 기간과 겹치는 콘텐츠가 없습니다'}</div>
     </div>
     <div class="card summary-card">
       <label>이번 주 콘텐츠 총 조회수</label><b>${totalContentViews.toLocaleString()}</b>
-      <div class="sub">${topPost ? '최고 성과: <mark class="hl">'+escAttr(topPost.title)+' ('+topPost.type+', '+topPost.views.toLocaleString()+')</mark>' : '입력된 콘텐츠가 없습니다'}</div>
+      <div class="sub sub-breakdown">(롱폼 ${typeTotals.longform.toLocaleString()} / 쇼츠 ${typeTotals.shortsYt.toLocaleString()} / 릴스 ${typeTotals.shortsIg.toLocaleString()})</div>
+      <div class="sub">${topPost ? '최고 성과: <mark class="hl">'+escAttr(topPost.title)+' ('+topPostDetail+')</mark>' : '입력된 콘텐츠가 없습니다'}</div>
     </div>
-    <div class="card summary-card">
-      <label>홈페이지 방문자</label><b>${totalV.toLocaleString()}</b>
-      <div class="sub">일평균 ${rows.length ? Math.round(totalV/rows.length).toLocaleString() : 0}명</div>
+    <div class="card summary-card summary-card-list">
+      <label><span class="type-badge" style="background:${TYPE_COLOR.longform}">롱폼</span> 업로드 48시간 효과</label>
+      ${renderWindowImpactList(longformImpacts)}
     </div>
-    <div class="card summary-card">
-      <label>홈페이지 페이지뷰</label><b>${totalPV.toLocaleString()}</b>
-      <div class="sub">일평균 ${rows.length ? Math.round(totalPV/rows.length).toLocaleString() : 0}회</div>
+    <div class="card summary-card summary-card-list">
+      <label><span class="type-badge" style="background:${TYPE_COLOR.shorts}">쇼츠/릴스</span> 업로드 48시간 효과</label>
+      ${renderWindowImpactList(shortsImpacts)}
     </div>
   `;
 }
@@ -1933,6 +2221,7 @@ async function saveReport(){
     historyReports.push(payload);
     historyReports.sort((x,y) => new Date((x.period&&(x.period.end||x.period.start))||0) - new Date((y.period&&(y.period.end||y.period.start))||0));
   }
+  updateDocNumber();
   setCloudStatus('☁ 자동 저장됨 · ' + new Date().toLocaleTimeString('ko-KR'));
   showToast('리포트를 클라우드에 저장했습니다 ✓');
 }
@@ -1951,6 +2240,19 @@ function applyStateFromData(data){
   state.homepage = data.homepage || state.homepage;
 }
 
+/* 게시일(date)이 채워져 있는데 [start, end] 범위 밖인 글은 이번 기간의 데이터가
+   아니므로 빈 슬롯으로 되돌린다. 아직 날짜를 안 넣은(입력 중인) 글은 판단할 수
+   없으므로 그대로 둔다. */
+function clearPostsOutsidePeriod(start, end){
+  CONTENT_TYPES.forEach(ct => {
+    if(!Array.isArray(state.posts[ct.key])) return;
+    state.posts[ct.key] = state.posts[ct.key].map(p => {
+      if(p.date && (p.date < start || p.date > end)) return emptyPost(ct);
+      return p;
+    });
+  });
+}
+
 function resetAll(){
   if(!confirm('이번 주 입력 내용을 모두 초기화할까요? (불러온 이력 데이터에는 영향이 없습니다)')) return;
   initState();
@@ -1966,13 +2268,11 @@ function printReport(){
 
 /* PDF로 저장: 별도 라이브러리 없이, 이 문서에 이미 최적화된 @media print 스타일을
    그대로 활용해 브라우저의 '인쇄 → PDF로 저장'을 호출한다. 저장 시 제안되는
-   파일명이 리포트 기간을 담도록 인쇄 직전에만 문서 제목을 잠시 바꿔준다. */
+   파일명이 리포트 발행 번호(예: 2026-001)를 담도록 인쇄 직전에만 문서 제목을 잠시 바꿔준다. */
 function savePDF(){
-  const start = (state.period.start || '').replaceAll('-', '');
-  const end   = (state.period.end   || '').replaceAll('-', '');
-  const range = (start && end) ? `${start}-${end}` : new Date().toISOString().slice(0,10).replaceAll('-','');
+  const docNumber = computeDocNumber() || new Date().toISOString().slice(0,10).replaceAll('-','');
   const originalTitle = document.title;
-  document.title = `미디어채널_주간리포트_${range}`;
+  document.title = `미디어채널 주간리포트 ${docNumber}`;
   const restoreTitle = () => { document.title = originalTitle; window.removeEventListener('afterprint', restoreTitle); };
   window.addEventListener('afterprint', restoreTitle);
   showToast('인쇄 대화상자에서 "PDF로 저장"을 선택해주세요');
