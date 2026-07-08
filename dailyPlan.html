@@ -1695,6 +1695,41 @@ function renderEntryPage(found, dateObj, data) {
   const d = data || {};
   const manager = found.person.name;
   const teamLabel = found.team.name;
+  // SNS/홈페이지 현황은 BMD팀에만 노출 (다른 팀 업무일지에는 표시하지 않음)
+  const isBmdTeam = /bmd/i.test(teamLabel);
+
+  const snsSectionHtml = !isBmdTeam ? '' : `
+    <!-- SNS 현황 -->
+    <div class="section-label">SNS 현황 (팔로워 / 최근 영상 시청자수)</div>
+    <div class="sns-bar">
+      <div class="sns-tag youtube">
+        ▶ YouTube &nbsp;
+        <input id="f_yt" value="${esc(d.yt)}" placeholder="0" title="팔로워">
+        <span class="sns-slash" aria-hidden="true"></span>
+        <input id="f_yt_sub" value="${esc(d.yt_sub)}" placeholder="0" title="최근 시청자수">
+      </div>
+      <div class="sns-tag instagram">
+        📷 Instagram &nbsp;
+        <input id="f_ig" value="${esc(d.ig)}" placeholder="0" title="팔로워">
+        <span class="sns-slash" aria-hidden="true"></span>
+        <input id="f_ig_sub" value="${esc(d.ig_sub)}" placeholder="0" title="최근 시청자수">
+      </div>
+    </div>
+
+    <!-- 홈페이지 현황 -->
+    <div class="section-label" style="display:flex;align-items:center;justify-content:space-between;">
+      <span>홈페이지 현황 (방문자 / 페이지뷰)</span>
+      <button type="button" class="search-trigger-btn" onclick="dpCopySnsStats()" title="Word에 붙여넣기용 텍스트로 복사 (또는 이 서식 그대로 SNS 입력칸에 붙여넣으면 자동으로 채워집니다)">📋 SNS/홈페이지 복사</button>
+    </div>
+    <div class="sns-bar">
+      <div class="sns-tag homepage">
+        ✏️ Homepage &nbsp;
+        <input id="f_homepage" value="${esc(d.homepage)}" placeholder="0" title="방문자">
+        <span class="sns-slash" aria-hidden="true"></span>
+        <input id="f_homepage_sub" value="${esc(d.homepage_sub)}" placeholder="0" title="페이지뷰">
+      </div>
+    </div>
+`;
 
   document.getElementById('entryContent').innerHTML = `
     <div class="page-title-row">
@@ -1719,37 +1754,12 @@ function renderEntryPage(found, dateObj, data) {
     </div>
 
     <hr class="divider">
-
-    <!-- SNS 현황 -->
-    <div class="section-label">SNS 현황 (팔로워 / 최근 영상 시청자수)</div>
-    <div class="sns-bar">
-      <div class="sns-tag youtube">
-        ▶ YouTube &nbsp;
-        <input id="f_yt" value="${esc(d.yt)}" placeholder="0" title="팔로워">
-        <span class="sns-slash" aria-hidden="true"></span>
-        <input id="f_yt_sub" value="${esc(d.yt_sub)}" placeholder="0" title="최근 시청자수">
-      </div>
-      <div class="sns-tag instagram">
-        📷 Instagram &nbsp;
-        <input id="f_ig" value="${esc(d.ig)}" placeholder="0" title="팔로워">
-        <span class="sns-slash" aria-hidden="true"></span>
-        <input id="f_ig_sub" value="${esc(d.ig_sub)}" placeholder="0" title="최근 시청자수">
-      </div>
-    </div>
-
-    <!-- 홈페이지 현황 -->
-    <div class="section-label">홈페이지 현황 (방문자 / 페이지뷰)</div>
-    <div class="sns-bar">
-      <div class="sns-tag homepage">
-        ✏️ Homepage &nbsp;
-        <input id="f_homepage" value="${esc(d.homepage)}" placeholder="0" title="방문자">
-        <span class="sns-slash" aria-hidden="true"></span>
-        <input id="f_homepage_sub" value="${esc(d.homepage_sub)}" placeholder="0" title="페이지뷰">
-      </div>
-    </div>
-
+${snsSectionHtml}
     <!-- 본문 테이블 -->
-    <div class="section-label">일지</div>
+    <div class="section-label" style="display:flex;align-items:center;justify-content:space-between;">
+      <span>일지</span>
+      <button type="button" class="search-trigger-btn" onclick="dpCopyContentColumn()" title="교수님 지시사항 · 금일 진행 업무 · 익일 업무 · 미진행 업무 4칸을 한번에 복사합니다. Word 표에서 내용 칸 4개를 마우스로 드래그해 선택한 뒤 붙여넣기(Ctrl+V) 하면 한 번에 채워집니다.">📋 내용 4칸 복사</button>
+    </div>
     <div class="format-toolbar" id="dpFormatToolbar">
       <div class="format-toolbar-group">
         <span class="format-toolbar-label">글자색</span>
@@ -1885,6 +1895,146 @@ function renderEntryPage(found, dateObj, data) {
     if (ta) { ta.value = text; ta.addEventListener('input', () => { ta.style.height='auto'; ta.style.height=ta.scrollHeight+'px'; }); ta.style.height = ta.scrollHeight + 'px'; }
   });
   dpApplyProfMode();
+  dpAttachSnsPasteHandlers();
+}
+
+// ══════════════════════════════════════
+//  SNS/홈페이지 현황 ↔ Word 복사·붙여넣기
+//  · 복사: Y/I/H 서식의 일반 텍스트로 클립보드에 담아 Word 등에 그대로 붙여넣을 수 있게 함
+//  · 붙여넣기: 같은 서식의 텍스트를 SNS 입력칸 어디에든 붙여넣으면 6칸이 자동으로 채워짐
+// ══════════════════════════════════════
+function dpBuildSnsClipboardText() {
+  const g = id => (document.getElementById(id)?.value || '0').trim() || '0';
+  const yt = g('f_yt'), ytSub = g('f_yt_sub');
+  const ig = g('f_ig'), igSub = g('f_ig_sub');
+  const hp = g('f_homepage'), hpSub = g('f_homepage_sub');
+  return `팔로워 / 구독자\n(최근 영상 시청자수)\n\nY : ${yt} (${ytSub})\nI : ${ig} (${igSub})\nH : ${hp} (${hpSub})`;
+}
+
+async function dpCopySnsStats() {
+  const text = dpBuildSnsClipboardText();
+  // Word에 붙여넣었을 때 글씨 크기가 10pt로 고정되도록, 클립보드에 일반
+  // 텍스트뿐 아니라 font-size:10pt가 지정된 HTML도 함께 담는다.
+  const html = `<div style="font-size:10pt;white-space:pre-wrap;">${esc(text).replace(/\n/g, '<br>')}</div>`;
+  const ok = await dpCopyRichHtml(html, text);
+  showToast(ok ? '복사되었습니다. Word에 붙여넣기 하세요 ✓' : '복사에 실패했습니다.', !ok);
+}
+
+// "Y : 20,569 (415)" / "I : 5,555 (4,586)" / "H : 15 (39)" 형태의 줄을 인식.
+// 콜론 전각(：), 공백 유무, 순서 무관하게 매칭.
+function dpParseSnsClipboard(text) {
+  const patterns = {
+    Y: /Y\s*[:：]\s*([\d,]+)\s*\(\s*([\d,]+)\s*\)/i,
+    I: /I\s*[:：]\s*([\d,]+)\s*\(\s*([\d,]+)\s*\)/i,
+    H: /H\s*[:：]\s*([\d,]+)\s*\(\s*([\d,]+)\s*\)/i,
+  };
+  const result = {};
+  let matched = false;
+  for (const key in patterns) {
+    const m = text.match(patterns[key]);
+    if (m) { result[key] = [m[1], m[2]]; matched = true; }
+  }
+  return matched ? result : null;
+}
+
+function dpHandleSnsPaste(e) {
+  const text = (e.clipboardData || window.clipboardData)?.getData('text/plain') || '';
+  const parsed = dpParseSnsClipboard(text);
+  if (!parsed) return; // 인식된 서식이 아니면 평소대로 그 칸에만 붙여넣기
+  e.preventDefault();
+  const setVal = (id, v) => { const el = document.getElementById(id); if (el) el.value = v; };
+  if (parsed.Y) { setVal('f_yt', parsed.Y[0]); setVal('f_yt_sub', parsed.Y[1]); }
+  if (parsed.I) { setVal('f_ig', parsed.I[0]); setVal('f_ig_sub', parsed.I[1]); }
+  if (parsed.H) { setVal('f_homepage', parsed.H[0]); setVal('f_homepage_sub', parsed.H[1]); }
+  saveCurrentState(true);
+  showToast('SNS/홈페이지 현황이 자동으로 채워졌습니다 ✓');
+}
+
+function dpAttachSnsPasteHandlers() {
+  ['f_yt', 'f_yt_sub', 'f_ig', 'f_ig_sub', 'f_homepage', 'f_homepage_sub'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('paste', dpHandleSnsPaste);
+  });
+}
+
+// ══════════════════════════════════════
+//  내용 컬럼(교수님 지시사항 / 금일 진행 업무 / 익일 업무 / 미진행 업무) 4칸을
+//  한 번에 복사해서 Word 표에 한 번에 붙여넣기.
+//  · 클립보드에 4행짜리 미니 표(HTML)를 함께 담아두면, Word에서 대상 표의
+//    내용 칸 4개를 드래그로 선택한 뒤 붙여넣었을 때 Word가 표 대 표로 인식해서
+//    각 칸에 내용을 나눠 채워줌 (엑셀 범위를 다른 표에 붙여넣는 것과 동일한 원리).
+//  · HTML을 못 쓰는 대상(메모장 등)을 위해 일반 텍스트도 함께 담아둠.
+// ══════════════════════════════════════
+function dpBuildContentCellsHtml() {
+  return ['f_directive', 'f_tasks', 'f_tomorrow', 'f_pending'].map(id => {
+    const el = document.getElementById(id);
+    const html = el ? el.innerHTML : '';
+    return (!html || html === '<br>' || html.trim() === '') ? '' : html;
+  });
+}
+
+// stripHtml()은 textContent 기반이라 <br>/<div> 등 줄바꿈 경계가 사라져
+// 서로 다른 줄이 공백 없이 붙어버림 (예: "…수정- 카페24…"). 여기서는
+// 줄바꿈 요소를 실제 개행문자로 치환한 뒤 텍스트를 뽑아 그 문제를 피한다.
+function dpHtmlToPlainText(html) {
+  const tmp = document.createElement('div');
+  tmp.innerHTML = String(html ?? '');
+  tmp.querySelectorAll('br').forEach(br => br.replaceWith('\n'));
+  tmp.querySelectorAll('div, p').forEach(el => el.appendChild(document.createTextNode('\n')));
+  const text = tmp.textContent || tmp.innerText || '';
+  return text.replace(/\n{3,}/g, '\n\n').replace(/\n+$/, '').trim();
+}
+
+function dpBuildContentPlainText() {
+  const labels = ['[교수님 지시사항]', '[금일 진행 업무]', '[익일 업무]', '[미진행 업무]'];
+  return dpBuildContentCellsHtml()
+    .map((html, i) => `${labels[i]}\n${dpHtmlToPlainText(html)}`)
+    .join('\n\n');
+}
+
+// html/plainText를 함께 클립보드에 담는다. 최신 Clipboard API를 우선 시도하고,
+// (보안 컨텍스트가 아니거나 권한이 없어) 실패하면 예전부터 쓰이던
+// "숨긴 편집 가능 영역을 선택 → execCommand('copy')" 방식으로 대체한다.
+async function dpCopyRichHtml(html, plainText) {
+  try {
+    if (navigator.clipboard && window.ClipboardItem && window.isSecureContext) {
+      const item = new ClipboardItem({
+        'text/html': new Blob([html], { type: 'text/html' }),
+        'text/plain': new Blob([plainText], { type: 'text/plain' }),
+      });
+      await navigator.clipboard.write([item]);
+      return true;
+    }
+  } catch (e) { /* 아래 대체 방식으로 진행 */ }
+
+  try {
+    const holder = document.createElement('div');
+    holder.setAttribute('contenteditable', 'true');
+    holder.style.cssText = 'position:fixed;top:-9999px;left:-9999px;opacity:0;white-space:pre-wrap;';
+    holder.innerHTML = html;
+    document.body.appendChild(holder);
+    const range = document.createRange();
+    range.selectNodeContents(holder);
+    const sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(range);
+    const ok = document.execCommand('copy');
+    sel.removeAllRanges();
+    document.body.removeChild(holder);
+    return ok;
+  } catch (e) { return false; }
+}
+
+async function dpCopyContentColumn() {
+  const cellsHtml = dpBuildContentCellsHtml();
+  // font-size:10pt를 table과 각 td에 모두 지정 — Word가 상속을 무시하고
+  // 개별 셀 스타일을 우선 적용하는 경우까지 대비한 이중 안전장치.
+  const tableHtml = `<table style="font-size:10pt;"><tbody>${cellsHtml.map(h => `<tr><td style="font-size:10pt;">${h || '&nbsp;'}</td></tr>`).join('')}</tbody></table>`;
+  const plainText = dpBuildContentPlainText();
+  const ok = await dpCopyRichHtml(tableHtml, plainText);
+  showToast(ok
+    ? '복사되었습니다. Word 표에서 내용 칸 4개를 드래그로 선택한 뒤 붙여넣기(Ctrl+V) 하세요 ✓'
+    : '복사에 실패했습니다.', !ok);
 }
 
 // ══════════════════════════════════════
@@ -1892,7 +2042,10 @@ function renderEntryPage(found, dateObj, data) {
 // ══════════════════════════════════════
 async function saveCurrentState(silent) {
   if (!selectedPersonId) { if (!silent) showToast('선택된 구성원이 없습니다.', true); return; }
-  const anchorEl = document.getElementById('f_yt');
+  // f_title은 SNS/홈페이지 섹션 노출 여부(BMD팀 한정)와 무관하게 항상 렌더링되므로 앵커로 사용.
+  // (예전에는 f_yt를 앵커로 썼는데, SNS 섹션이 숨겨지는 팀에서는 f_yt가 없어 저장 자체가
+  //  통째로 스킵되는 버그가 있었음)
+  const anchorEl = document.getElementById('f_title');
   if (!anchorEl) return; // nothing rendered to save
 
   const found = findPerson(selectedPersonId);
