@@ -214,10 +214,6 @@ table.post-table th.th-ratio{text-align:left;}
 #grid-cardnews th:nth-child(4), #grid-cardnews td:nth-child(4){width:23%;}
 #grid-cardnews th:nth-child(5), #grid-cardnews td:nth-child(5){width:23%;}
 
-#grid-cafe th:nth-child(2), #grid-cafe td:nth-child(2){width:40%;}
-#grid-cafe th:nth-child(3), #grid-cafe td:nth-child(3){width:14%;}
-#grid-cafe th:nth-child(4), #grid-cafe td:nth-child(4){width:23%;}
-#grid-cafe th:nth-child(5), #grid-cafe td:nth-child(5){width:23%;}
 .mini-bar{width:28px; height:6px; border-radius:4px; background:#ececef; overflow:hidden; display:flex; flex-shrink:0;}
 .mini-bar-f{height:100%; background:linear-gradient(90deg,var(--ig4),var(--ig5));}
 .mini-bar-nf{height:100%; background:linear-gradient(90deg,#6a5cf5,#4630c9);}
@@ -440,13 +436,13 @@ table.hp-table mark.hp-max-hl{
   .content-subtitle{font-size:9.5px; margin-bottom:3px;}
   .content-subtitle .cnt-badge{display:none;}
 
-  /* 카페 활동부터 2페이지로: 롱폼·쇼츠·카드뉴스는 1페이지, 카페 활동+Blog+홈페이지 현황은
+  /* Blog부터 2페이지로: 롱폼·쇼츠·카드뉴스는 1페이지, Blog+홈페이지 현황은
      2페이지에 함께 배치. margin-top은 2페이지 맨 위에서도 고정 헤더와 겹치지 않도록
      확보한 여백(.wrap의 margin-top과 동일) — margin-top은 페이지가 바뀔 때마다는
      자동으로 재적용되지 않으므로, 강제 페이지 나눔 지점에 직접 지정해준다. */
-  #tab-cafe{page-break-before:always; break-before:page; margin-top:18mm !important;}
+  #tab-blog{page-break-before:always; break-before:page; margin-top:18mm !important;}
 
-  /* 홈페이지 현황: 카페 활동 바로 아래(2페이지)로 자연스럽게 이어지도록 여백만 확보 */
+  /* 홈페이지 현황: Blog 바로 아래(2페이지)로 자연스럽게 이어지도록 여백만 확보 */
   .section-hp{margin-top:3mm; margin-bottom:0;}
 
   /* 게시물 표: 고정 레이아웃 + 컬럼별 폭 지정으로 가로 넘침 방지 */
@@ -470,7 +466,7 @@ table.hp-table mark.hp-max-hl{
   .full-label{display:none;}
   .print-label{display:inline;}
 
-  /* 롱폼·쇼츠·카드뉴스(1페이지): 표 글씨 크기 확대 — 카페 활동·Blog(2페이지)는 기존 크기 유지 */
+  /* 롱폼·쇼츠·카드뉴스(1페이지): 표 글씨 크기 확대 — Blog(2페이지)는 기존 크기 유지 */
   #tab-longform .content-subtitle, #tab-shorts .content-subtitle, #tab-cardnews .content-subtitle{font-size:11px;}
   #tab-longform .post-table th, #tab-shorts .post-table th, #tab-cardnews .post-table th{font-size:9.2px;}
   #tab-longform .post-idx-cell, #tab-shorts .post-idx-cell, #tab-cardnews .post-idx-cell{font-size:9.2px;}
@@ -487,14 +483,12 @@ table.hp-table mark.hp-max-hl{
   #grid-longform th:nth-child(2), #grid-longform td:nth-child(2),
   #grid-blog th:nth-child(2), #grid-blog td:nth-child(2),
   #grid-shorts th:nth-child(2), #grid-shorts td:nth-child(2),
-  #grid-cardnews th:nth-child(2), #grid-cardnews td:nth-child(2),
-  #grid-cafe th:nth-child(2), #grid-cafe td:nth-child(2){width:40%;}
+  #grid-cardnews th:nth-child(2), #grid-cardnews td:nth-child(2){width:40%;}
 
   #grid-longform th:nth-child(3), #grid-longform td:nth-child(3),
   #grid-blog th:nth-child(3), #grid-blog td:nth-child(3),
   #grid-shorts th:nth-child(3), #grid-shorts td:nth-child(3),
-  #grid-cardnews th:nth-child(3), #grid-cardnews td:nth-child(3),
-  #grid-cafe th:nth-child(3), #grid-cafe td:nth-child(3){width:14%;}
+  #grid-cardnews th:nth-child(3), #grid-cardnews td:nth-child(3){width:14%;}
 
   #grid-longform th:nth-child(4), #grid-longform td:nth-child(4){width:41%;}
 
@@ -506,9 +500,6 @@ table.hp-table mark.hp-max-hl{
 
   #grid-cardnews th:nth-child(4), #grid-cardnews td:nth-child(4){width:22%;}
   #grid-cardnews th:nth-child(5), #grid-cardnews td:nth-child(5){width:19%;}
-
-  #grid-cafe th:nth-child(4), #grid-cafe td:nth-child(4){width:20%;}
-  #grid-cafe th:nth-child(5), #grid-cafe td:nth-child(5){width:21%;}
 
   /* 인쇄 시에는 모든 차트에서 Chart.js 캔버스 대신 정적 SVG를 사용 (캔버스는 인쇄 타이밍 문제가 있음) */
   .chart-canvas-wrap{display:none !important;}
@@ -696,10 +687,6 @@ table.hp-table mark.hp-max-hl{
           <h3 class="content-subtitle">카드뉴스 <span class="cnt-badge">Instagram 전용</span></h3>
           <div class="card post-card"><div class="post-grid" id="grid-cardnews"></div></div>
         </div>
-        <div id="tab-cafe" class="tab-panel">
-          <h3 class="content-subtitle">카페 활동 <span class="cnt-badge">셀인카페 · 지성아빠 등 네이버 카페</span></h3>
-          <div class="card post-card"><div class="post-grid" id="grid-cafe"></div></div>
-        </div>
         <div id="tab-blog" class="tab-panel">
           <h3 class="content-subtitle">Blog</h3>
           <div class="card post-card"><div class="post-grid" id="grid-blog"></div></div>
@@ -863,15 +850,12 @@ const CONTENT_TYPES = [
   {key:'longform', label:'롱폼', hasYoutube:true,  hasInstagram:false, hasCafe:false},
   {key:'shorts',   label:'쇼츠/릴스', hasYoutube:true,  hasInstagram:true,  hasCafe:false},
   {key:'cardnews', label:'카드뉴스', hasYoutube:false, hasInstagram:true, hasCafe:false},
-  {key:'cafe',     label:'카페 활동', hasYoutube:false, hasInstagram:false, hasCafe:true},
   {key:'blog',     label:'Blog', hasYoutube:true,  hasInstagram:false, hasCafe:false},
 ];
 const CARDNEWS_COLOR = '#1a9d6f';
-const CAFE_COLOR = '#6a5cf5';
 const BLOG_COLOR = '#17a2b8';
-const TYPE_COLOR = {longform:'#ff0000', shorts:'#f2994a', cardnews:CARDNEWS_COLOR, cafe:CAFE_COLOR, blog:BLOG_COLOR};
-const TYPE_SHORT  = {longform:'롱', shorts:'쇼', cardnews:'카', cafe:'페', blog:'블'};
-const CAFE_NAMES = ['셀인카페', '지성아빠'];
+const TYPE_COLOR = {longform:'#ff0000', shorts:'#f2994a', cardnews:CARDNEWS_COLOR, blog:BLOG_COLOR};
+const TYPE_SHORT  = {longform:'롱', shorts:'쇼', cardnews:'카', blog:'블'};
 
 let state = null;
 let historyReports = [];
@@ -922,8 +906,7 @@ function initState(){
       longform: Array.from({length:5}, ()=>emptyPost(CONTENT_TYPES[0])),
       shorts:   Array.from({length:5}, ()=>emptyPost(CONTENT_TYPES[1])),
       cardnews: Array.from({length:5}, ()=>emptyPost(CONTENT_TYPES[2])),
-      cafe:     Array.from({length:4}, ()=>emptyPost(CONTENT_TYPES[3])),
-      blog:     Array.from({length:5}, ()=>emptyPost(CONTENT_TYPES[4])),
+      blog:     Array.from({length:5}, ()=>emptyPost(CONTENT_TYPES[3])),
     },
     homepage:{rows:[]}
   };
@@ -1298,8 +1281,7 @@ function resetContentForPeriod(start, end){
     longform: Array.from({length:5}, ()=>emptyPost(CONTENT_TYPES[0])),
     shorts:   Array.from({length:5}, ()=>emptyPost(CONTENT_TYPES[1])),
     cardnews: Array.from({length:5}, ()=>emptyPost(CONTENT_TYPES[2])),
-    cafe:     Array.from({length:4}, ()=>emptyPost(CONTENT_TYPES[3])),
-    blog:     Array.from({length:5}, ()=>emptyPost(CONTENT_TYPES[4])),
+    blog:     Array.from({length:5}, ()=>emptyPost(CONTENT_TYPES[3])),
   };
   state.homepage = {rows:[]};
 }
@@ -1442,8 +1424,8 @@ function renderPostGrid(type){
             oninput="updatePostField('${type}',${idx},'title',this.value)"></td>
       <td><input type="date" value="${escAttr(p.date)}"
             oninput="updatePostField('${type}',${idx},'date',this.value)"
-            onchange="refreshHomepageChart(periodHomepageRows()); refreshHomepageInsights(periodHomepageRows()); renderMentionEffect();"></td>
-      ${ct.hasCafe ? `<td><select class="num-fill" style="text-align:left;" onchange="updatePostField('${type}',${idx},'cafeName',this.value); refreshHomepageInsights(periodHomepageRows()); renderMentionEffect();">
+            onchange="refreshHomepageChart(periodHomepageRows()); refreshHomepageInsights(periodHomepageRows());"></td>
+      ${ct.hasCafe ? `<td><select class="num-fill" style="text-align:left;" onchange="updatePostField('${type}',${idx},'cafeName',this.value); refreshHomepageInsights(periodHomepageRows());">
             <option value="" ${!p.cafeName ? 'selected' : ''}>카페 선택</option>
             ${CAFE_NAMES.map(n => `<option value="${escAttr(n)}" ${p.cafeName===n ? 'selected' : ''}>${escAttr(n)}</option>`).join('')}
           </select></td>` : ''}
@@ -1507,7 +1489,6 @@ function movePost(type, idx, dir){
   refreshSummary();
   refreshHomepageInsights(periodHomepageRows());
   refreshHomepageChart(periodHomepageRows());
-  renderMentionEffect();
   scheduleAutoSave();
 }
 
@@ -1533,7 +1514,6 @@ function deletePost(type, idx){
   refreshSummary();
   refreshHomepageInsights(periodHomepageRows());
   refreshHomepageChart(periodHomepageRows());
-  renderMentionEffect();
   scheduleAutoSave();
   showToast('행을 삭제했습니다');
 }
@@ -1549,7 +1529,6 @@ function resetPost(type, idx){
   refreshSummary();
   refreshHomepageInsights(periodHomepageRows());
   refreshHomepageChart(periodHomepageRows());
-  renderMentionEffect();
   scheduleAutoSave();
   showToast(`${idx+1}번째 줄을 초기화했습니다`);
 }
@@ -1613,7 +1592,6 @@ function toggleMention(type, idx){
   const row = document.getElementById(`post-${type}-${idx}`);
   if(row) row.classList.toggle('empty', !(p.title || p.cafeName || p.mentioned));
   refreshHomepageInsights(periodHomepageRows());
-  renderMentionEffect();
   scheduleAutoSave();
 }
 
@@ -1696,7 +1674,6 @@ function renderHomepage(){
     if(hpChart){ hpChart.destroy(); hpChart = null; }
     updateHpHeaderSummary(null, null);
     refreshSummary();
-    renderMentionEffect();
     return;
   }
   const totalPV = rows.reduce((s,r)=>s+r.pageviews,0);
@@ -1725,7 +1702,6 @@ function renderHomepage(){
   refreshHomepageChart(rows);
   refreshHomepageInsights(rows);
   refreshSummary();
-  renderMentionEffect();
 }
 
 function computeChartMarkers(rows){
@@ -2202,61 +2178,6 @@ function renderWindowImpactList(items){
   }).join('') + '</div>';
 }
 
-/* ===================================================================
-   차공조연 언급 효과: 셀인카페·지성아빠 등 카페 활동 게시일에 차공조연을
-   언급했는지 여부에 따라 같은 날 홈페이지 방문자·페이지뷰가 어떻게
-   달라지는지 비교 (여러 카페를 함께 활동해도 카페 이름과 무관하게 집계)
-=================================================================== */
-function computeMentionEffect(){
-  const rows = periodHomepageRows();
-  if(!rows.length) return null;
-  const dateIndex = {}; rows.forEach((r,i) => dateIndex[r.date] = i);
-  const mentioned = [], notMentioned = [];
-  const byCafe = {};
-  state.posts.cafe.forEach(p => {
-    if(!p.date || dateIndex[p.date] === undefined) return;
-    const row = rows[dateIndex[p.date]];
-    (p.mentioned ? mentioned : notMentioned).push(row);
-    const cafeKey = p.cafeName || '카페 미지정';
-    if(!byCafe[cafeKey]) byCafe[cafeKey] = {total:0, mentioned:0};
-    byCafe[cafeKey].total++;
-    if(p.mentioned) byCafe[cafeKey].mentioned++;
-  });
-  const avg = (arr, key) => arr.length ? Math.round(arr.reduce((s,r)=>s+r[key],0)/arr.length) : null;
-  return {
-    mentionedCount: mentioned.length, notMentionedCount: notMentioned.length,
-    mentionedV: avg(mentioned,'visitors'), mentionedPV: avg(mentioned,'pageviews'),
-    notMentionedV: avg(notMentioned,'visitors'), notMentionedPV: avg(notMentioned,'pageviews'),
-    byCafe,
-  };
-}
-
-function renderMentionEffect(){
-  const el = document.getElementById('mentionEffectCard');
-  if(!el) return;
-  const stats = computeMentionEffect();
-  if(!stats || (!stats.mentionedCount && !stats.notMentionedCount)){
-    el.innerHTML = `<div class="chart-title">차공조연 언급 효과</div>
-      <div class="section-desc" style="margin:0;">카페 활동에 카페 이름·게시일·차공조연 언급 여부를 입력하고 홈페이지 데이터 기간과 겹치면 언급 여부에 따른 방문자·페이지뷰 차이가 여기에 표시됩니다.</div>`;
-    return;
-  }
-  const diffV  = (stats.mentionedV!=null && stats.notMentionedV && stats.notMentionedV!==0) ? Math.round((stats.mentionedV-stats.notMentionedV)/stats.notMentionedV*100) : null;
-  const diffPV = (stats.mentionedPV!=null && stats.notMentionedPV && stats.notMentionedPV!==0) ? Math.round((stats.mentionedPV-stats.notMentionedPV)/stats.notMentionedPV*100) : null;
-  const cafeBreakdown = Object.entries(stats.byCafe)
-    .map(([name, c]) => `${escAttr(name)} ${c.mentioned}/${c.total}건 언급`)
-    .join(' · ');
-  el.innerHTML = `
-    <div class="chart-title">차공조연 언급 효과 (카페 활동 게시일 기준 홈페이지 유입)</div>
-    <div class="hp-stat-row" style="margin-top:0;">
-      <div class="hp-stat"><label>언급함 (${stats.mentionedCount}건)</label><b>${stats.mentionedV!=null ? stats.mentionedV.toLocaleString() : '—'}명</b>
-        <div class="sub" style="font-size:11px;color:var(--text-light)">페이지뷰 ${stats.mentionedPV!=null ? stats.mentionedPV.toLocaleString() : '—'}</div></div>
-      <div class="hp-stat"><label>언급안함 (${stats.notMentionedCount}건)</label><b>${stats.notMentionedV!=null ? stats.notMentionedV.toLocaleString() : '—'}명</b>
-        <div class="sub" style="font-size:11px;color:var(--text-light)">페이지뷰 ${stats.notMentionedPV!=null ? stats.notMentionedPV.toLocaleString() : '—'}</div></div>
-    </div>
-    ${diffV!=null ? `<div class="sub" style="margin-top:6px;font-size:11.5px;color:var(--text-muted);">언급한 날의 평균 방문자가 언급하지 않은 날보다 <mark class="hl">${diffV>=0?'+':''}${diffV}%</mark>${diffPV!=null ? `, 페이지뷰는 <mark class="hl">${diffPV>=0?'+':''}${diffPV}%</mark>` : ''} ${diffV>=0?'많습니다':'적습니다'}.</div>` : `<div class="sub" style="margin-top:6px;font-size:11.5px;color:var(--text-light);">두 그룹을 비교하려면 언급함/언급안함 게시물이 각각 하나 이상 필요합니다.</div>`}
-    ${cafeBreakdown ? `<div class="sub" style="margin-top:4px;font-size:10.5px;color:var(--text-light);">카페별 언급 현황 · ${cafeBreakdown}</div>` : ''}
-  `;
-}
 
 /* ===================================================================
    종합 요약
