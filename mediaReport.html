@@ -190,7 +190,7 @@ table.post-table th.th-yt-longform{text-align:left; width:130px;}
 .post-table input:hover, .post-table input:focus{border-color:var(--border); background:var(--surface-2); outline:none;}
 table.post-table th.th-ratio{text-align:left;}
 .ratio-cell{display:flex; align-items:center; justify-content:flex-start; gap:6px;}
-.ratio-cell input{width:40px; min-width:0; flex-shrink:0; text-align:left;}
+.ratio-cell input{width:40px; min-width:0; flex-shrink:0; text-align:left !important;}
 
 /* 화면에서도 컬럼 폭을 고정해 게시일~조회수 사이가 불필요하게 벌어지지 않도록 함 */
 .post-table{table-layout:fixed;}
@@ -206,8 +206,9 @@ table.post-table th.th-ratio{text-align:left;}
 #grid-shorts th:nth-child(2), #grid-shorts td:nth-child(2){width:40%;}
 #grid-shorts th:nth-child(3), #grid-shorts td:nth-child(3){width:14%;}
 #grid-shorts th:nth-child(4), #grid-shorts td:nth-child(4){width:15%;}
-#grid-shorts th:nth-child(5), #grid-shorts td:nth-child(5){width:15%;}
-#grid-shorts th:nth-child(6), #grid-shorts td:nth-child(6){width:16%;}
+#grid-shorts th:nth-child(5), #grid-shorts td:nth-child(5){width:12%;}
+#grid-shorts th:nth-child(6), #grid-shorts td:nth-child(6){width:10%;}
+#grid-shorts th:nth-child(7), #grid-shorts td:nth-child(7){width:9%;}
 
 #grid-cardnews th:nth-child(2), #grid-cardnews td:nth-child(2){width:40%;}
 #grid-cardnews th:nth-child(3), #grid-cardnews td:nth-child(3){width:14%;}
@@ -217,6 +218,8 @@ table.post-table th.th-ratio{text-align:left;}
 .mini-bar{width:28px; height:6px; border-radius:4px; background:#ececef; overflow:hidden; display:flex; flex-shrink:0;}
 .mini-bar-f{height:100%; background:linear-gradient(90deg,var(--ig4),var(--ig5));}
 .mini-bar-nf{height:100%; background:linear-gradient(90deg,#6a5cf5,#4630c9);}
+.mini-bar-sub-f{height:100%; background:linear-gradient(90deg,#2f80ed,#1c5fc4);}
+.mini-bar-sub-nf{height:100%; background:linear-gradient(90deg,#c9d9ec,#aabdd6);}
 .chart-box{padding:10px 12px;margin-bottom:0;}
 .chart-canvas-wrap{position:relative; width:100%; height:150px; overflow:visible;}
 .shorts-chart-wrap{height:280px;}
@@ -495,8 +498,9 @@ table.hp-table mark.hp-max-hl{
   #grid-blog th:nth-child(4), #grid-blog td:nth-child(4){width:41%;}
 
   #grid-shorts th:nth-child(4), #grid-shorts td:nth-child(4){width:14%;}
-  #grid-shorts th:nth-child(5), #grid-shorts td:nth-child(5){width:14%;}
-  #grid-shorts th:nth-child(6), #grid-shorts td:nth-child(6){width:13%;}
+  #grid-shorts th:nth-child(5), #grid-shorts td:nth-child(5){width:12%;}
+  #grid-shorts th:nth-child(6), #grid-shorts td:nth-child(6){width:10%;}
+  #grid-shorts th:nth-child(7), #grid-shorts td:nth-child(7){width:10%;}
 
   #grid-cardnews th:nth-child(4), #grid-cardnews td:nth-child(4){width:22%;}
   #grid-cardnews th:nth-child(5), #grid-cardnews td:nth-child(5){width:19%;}
@@ -847,10 +851,10 @@ function syncCurrentToHistory(){
 =================================================================== */
 const DAY_KO = ['일','월','화','수','목','금','토'];
 const CONTENT_TYPES = [
-  {key:'longform', label:'롱폼', hasYoutube:true,  hasInstagram:false, hasCafe:false},
-  {key:'shorts',   label:'쇼츠/릴스', hasYoutube:true,  hasInstagram:true,  hasCafe:false},
-  {key:'cardnews', label:'카드뉴스', hasYoutube:false, hasInstagram:true, hasCafe:false},
-  {key:'blog',     label:'Blog', hasYoutube:true,  hasInstagram:false, hasCafe:false},
+  {key:'longform', label:'롱폼', hasYoutube:true,  hasInstagram:false, hasCafe:false, hasSubRatio:false},
+  {key:'shorts',   label:'쇼츠/릴스', hasYoutube:true,  hasInstagram:true,  hasCafe:false, hasSubRatio:true},
+  {key:'cardnews', label:'카드뉴스', hasYoutube:false, hasInstagram:true, hasCafe:false, hasSubRatio:false},
+  {key:'blog',     label:'Blog', hasYoutube:true,  hasInstagram:false, hasCafe:false, hasSubRatio:false},
 ];
 const CARDNEWS_COLOR = '#1a9d6f';
 const BLOG_COLOR = '#17a2b8';
@@ -893,6 +897,7 @@ function emptyPost(ct){
   const o = {title:'', date:''};
   if(ct.hasYoutube) o.ytViews = '';
   if(ct.hasInstagram){ o.igViews=''; o.igFollowerPct=''; }
+  if(ct.hasSubRatio){ o.igSubscriberPct=''; }
   if(ct.hasCafe){ o.cafeName=''; o.mentioned=false; }
   return o;
 }
@@ -1433,7 +1438,14 @@ function renderPostGrid(type){
             oninput="formatNumberField(this); updatePostField('${type}',${idx},'ytViews',stripCommas(this.value)); refreshSummary(); refreshShortsChart(); refreshViewHighlights('${type}');"></td>` : ''}
       ${ct.hasInstagram ? `
       <td id="igcell-${type}-${idx}"><span class="view-max-mark" id="igmark-${type}-${idx}" style="display:none;"></span><input type="text" inputmode="numeric" class="num-fill" value="${escAttr(fmtNum(p.igViews))}" placeholder="0"
-            oninput="formatNumberField(this); updatePostField('${type}',${idx},'igViews',stripCommas(this.value)); refreshSummary(); refreshShortsChart(); refreshViewHighlights('${type}');"></td>
+            oninput="formatNumberField(this); updatePostField('${type}',${idx},'igViews',stripCommas(this.value)); refreshSummary(); refreshShortsChart(); refreshViewHighlights('${type}');"></td>` : ''}
+      ${ct.hasSubRatio ? `
+      <td><div class="ratio-cell">
+            <input type="number" min="0" max="100" value="${escAttr(p.igSubscriberPct)}" placeholder="0"
+              oninput="updatePostField('${type}',${idx},'igSubscriberPct',this.value); refreshRatioBar('bar-${type}-${idx}-s', this.value, 'sub');">
+            <div class="mini-bar" id="bar-${type}-${idx}-s"></div>
+          </div></td>` : ''}
+      ${ct.hasInstagram ? `
       <td><div class="ratio-cell">
             <input type="number" min="0" max="100" value="${escAttr(p.igFollowerPct)}" placeholder="0"
               oninput="updatePostField('${type}',${idx},'igFollowerPct',this.value); refreshRatioBar('bar-${type}-${idx}-f', this.value);">
@@ -1452,7 +1464,9 @@ function renderPostGrid(type){
           <th>제목</th><th>게시일</th>
           ${ct.hasCafe ? `<th><span class="full-label">카페</span><span class="print-label">카페</span></th>` : ''}
           ${ct.hasYoutube ? `<th${(type==='longform'||type==='blog') ? ' class="th-yt-longform"' : ' class="th-ratio"'}><span class="full-label">${type==='blog' ? '조회수' : 'Youtube 조회수'}</span><span class="print-label">${type==='blog' ? '조회수' : 'Youtube'}</span></th>` : ''}
-          ${ct.hasInstagram ? `<th class="th-ratio"><span class="full-label">Insta 조회수</span><span class="print-label">Instagram</span></th><th class="th-ratio"><span class="full-label">팔로워 비율(%)</span><span class="print-label">팔로워%</span></th>` : ''}
+          ${ct.hasInstagram ? `<th class="th-ratio"><span class="full-label">Insta 조회수</span><span class="print-label">Instagram</span></th>` : ''}
+          ${ct.hasSubRatio ? `<th class="th-ratio"><span class="full-label">구독자 비율(%)</span><span class="print-label">구독자%</span></th>` : ''}
+          ${ct.hasInstagram ? `<th class="th-ratio"><span class="full-label">팔로워 비율(%)</span><span class="print-label">팔로워%</span></th>` : ''}
           ${ct.hasCafe ? `<th style="text-align:center;"><span class="full-label">차공조연 언급</span><span class="print-label">언급</span></th>` : ''}
         </tr></thead>
         <tbody>${rowsHtml}</tbody>
@@ -1462,6 +1476,11 @@ function renderPostGrid(type){
   if(ct.hasInstagram){
     state.posts[type].forEach((p, idx) => {
       refreshRatioBar(`bar-${type}-${idx}-f`, p.igFollowerPct);
+    });
+  }
+  if(ct.hasSubRatio){
+    state.posts[type].forEach((p, idx) => {
+      refreshRatioBar(`bar-${type}-${idx}-s`, p.igSubscriberPct, 'sub');
     });
   }
   refreshViewHighlights(type);
@@ -1573,12 +1592,16 @@ function refreshViewHighlights(type, forPrint){
   });
 }
 
-function refreshRatioBar(containerId, pctValue){
+function refreshRatioBar(containerId, pctValue, variant){
   const el = document.getElementById(containerId);
   if(!el) return;
   const pct = Math.max(0, Math.min(100, Number(pctValue) || 0));
-  el.title = `팔로워 ${pct.toFixed(1)}% · 팔로워가 아닌 사람 ${(100-pct).toFixed(1)}%`;
-  el.innerHTML = `<div class="mini-bar-f" style="width:${pct}%"></div><div class="mini-bar-nf" style="width:${100-pct}%"></div>`;
+  const isSub = variant === 'sub';
+  const label = isSub ? '구독자' : '팔로워';
+  el.title = `${label} ${pct.toFixed(1)}% · ${label}가 아닌 사람 ${(100-pct).toFixed(1)}%`;
+  const fCls = isSub ? 'mini-bar-sub-f' : 'mini-bar-f';
+  const nfCls = isSub ? 'mini-bar-sub-nf' : 'mini-bar-nf';
+  el.innerHTML = `<div class="${fCls}" style="width:${pct}%"></div><div class="${nfCls}" style="width:${100-pct}%"></div>`;
 }
 
 function toggleMention(type, idx){
