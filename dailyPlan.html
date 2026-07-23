@@ -1718,7 +1718,7 @@ function renderEntryPage(found, dateObj, data) {
 
     <!-- 홈페이지 현황 -->
     <div class="section-label" style="display:flex;align-items:center;justify-content:space-between;">
-      <span>홈페이지 현황 (방문자 / 페이지뷰)</span>
+      <span>홈페이지 현황 (방문자 / 페이지뷰) - 어제 기준</span>
       <button type="button" class="search-trigger-btn" onclick="dpCopySnsStats()" title="Word에 붙여넣기용 텍스트로 복사 (또는 이 서식 그대로 SNS 입력칸에 붙여넣으면 자동으로 채워집니다)">📋 SNS/홈페이지 복사</button>
     </div>
     <div class="sns-bar">
@@ -1908,7 +1908,7 @@ function dpBuildSnsClipboardText() {
   const yt = g('f_yt'), ytSub = g('f_yt_sub');
   const ig = g('f_ig'), igSub = g('f_ig_sub');
   const hp = g('f_homepage'), hpSub = g('f_homepage_sub');
-  return `팔로워 / 구독자\n(최근 영상 시청자수)\n\nY : ${yt} (${ytSub})\nI : ${ig} (${igSub})\nH : ${hp} (${hpSub})`;
+  return `팔로워 / 구독자\n(최근 영상 시청자수)\n\nY : ${yt} (${ytSub})\nI : ${ig} (${igSub})\nH : ${hp}명/${hpSub}뷰(어제)`;
 }
 
 async function dpCopySnsStats() {
@@ -1920,13 +1920,13 @@ async function dpCopySnsStats() {
   showToast(ok ? '복사되었습니다. Word에 붙여넣기 하세요 ✓' : '복사에 실패했습니다.', !ok);
 }
 
-// "Y : 20,569 (415)" / "I : 5,555 (4,586)" / "H : 15 (39)" 형태의 줄을 인식.
+// "Y : 20,569 (415)" / "I : 5,555 (4,586)" / "H : 15명/39뷰(어제)" 형태의 줄을 인식.
 // 콜론 전각(：), 공백 유무, 순서 무관하게 매칭.
 function dpParseSnsClipboard(text) {
   const patterns = {
     Y: /Y\s*[:：]\s*([\d,]+)\s*\(\s*([\d,]+)\s*\)/i,
     I: /I\s*[:：]\s*([\d,]+)\s*\(\s*([\d,]+)\s*\)/i,
-    H: /H\s*[:：]\s*([\d,]+)\s*\(\s*([\d,]+)\s*\)/i,
+    H: /H\s*[:：]\s*([\d,]+)\s*명\s*\/\s*([\d,]+)\s*뷰\s*\(\s*어제\s*\)/i,
   };
   const result = {};
   let matched = false;
