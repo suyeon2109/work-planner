@@ -329,6 +329,16 @@ table.hp-table mark.hp-max-hl{
   padding:0 1px;
 }
 
+/* ===== 담당자 분석 의견 ===== */
+.opinion-card{padding:14px 16px;}
+.opinion-box{
+  min-height:100px; border:1px solid var(--border); border-radius:var(--radius-sm);
+  padding:12px 14px; font-size:12.5px; line-height:1.75; color:var(--text);
+  background:var(--surface-2); white-space:pre-wrap; word-break:break-word; cursor:text;
+}
+.opinion-box:focus{outline:none; border-color:var(--hp); background:#fff;}
+.opinion-box:empty:before{content:attr(data-placeholder); color:var(--text-light);}
+
 /* ===== Toast ===== */
 .toast{
   position:fixed; bottom:26px; left:50%; transform:translateX(-50%);
@@ -541,6 +551,12 @@ table.hp-table mark.hp-max-hl{
   .insight-list li.hp-top-impact{background:#fff4d6 !important; border:1px solid #f0b93d;}
   .insight-list li .hp-top-badge{font-size:6px; padding:1px 4px; border-radius:4px;}
   .legend-row{margin-top:4px; font-size:8px;}
+
+  /* 담당자 분석 의견: 내용이 길면 페이지에 걸쳐 자연스럽게 이어지도록
+     다른 카드와 달리 break-inside를 허용하고, 인쇄 폰트 크기에 맞춰 축소한다. */
+  .section-opinion{margin-top:3mm;}
+  .opinion-card{padding:6px 8px; break-inside:auto; page-break-inside:auto;}
+  .opinion-box{min-height:34px; padding:6px 8px; font-size:9px; line-height:1.6; border-color:#ddd; background:#fff;}
 }
 @media (max-width:1220px){
   .content-type-row{flex-direction:column;}
@@ -725,6 +741,21 @@ table.hp-table mark.hp-max-hl{
     </div>
   </div>
 
+  <!-- ============ 담당자 분석 의견 ============ -->
+  <div class="section section-opinion">
+    <div class="section-head collapsible" onclick="toggleSection('opinion')">
+      <span class="eyebrow">03</span>
+      <h2>담당자 분석 의견</h2>
+      <span class="section-toggle-btn" id="toggle-opinion">−</span>
+    </div>
+    <p class="section-desc">이번 주 리포트에 대한 담당자의 분석 의견을 작성하세요.</p>
+    <div class="section-body" id="body-opinion">
+      <div class="card opinion-card">
+        <div class="opinion-box" id="opinionBox" contenteditable="true" data-placeholder="담당자 분석 의견을 입력하세요..." oninput="onOpinionInput()"></div>
+      </div>
+    </div>
+  </div>
+
 </div>
 
 <div class="toast" id="toast"></div>
@@ -822,6 +853,7 @@ function reportHasContent(data){
   if(data.yt && (data.yt.followers || data.yt.prev)) return true;
   if(data.ig && (data.ig.followers || data.ig.prev)) return true;
   if(data.homepage && data.homepage.rows && data.homepage.rows.length) return true;
+  if(data.opinion && String(data.opinion).trim()) return true;
   for(const ct of CONTENT_TYPES){
     const list = (data.posts && data.posts[ct.key]) || [];
     for(const p of list){
@@ -913,7 +945,8 @@ function initState(){
       cardnews: Array.from({length:5}, ()=>emptyPost(CONTENT_TYPES[2])),
       blog:     Array.from({length:5}, ()=>emptyPost(CONTENT_TYPES[3])),
     },
-    homepage:{rows:[]}
+    homepage:{rows:[]},
+    opinion:''
   };
 }
 function escAttr(s){
@@ -1236,6 +1269,13 @@ function renderAll(){
   refreshShortsChart();
   renderHomepage();
   refreshSummary();
+  const opinionBox = document.getElementById('opinionBox');
+  if(opinionBox && opinionBox.innerText !== (state.opinion || '')) opinionBox.innerText = state.opinion || '';
+}
+
+function onOpinionInput(){
+  state.opinion = document.getElementById('opinionBox').innerText;
+  scheduleAutoSave();
 }
 
 let _periodChangeTimer = null;
@@ -2288,6 +2328,7 @@ function applyStateFromData(data){
     });
   }
   state.homepage = data.homepage || state.homepage;
+  state.opinion = (data.opinion !== undefined && data.opinion !== null) ? data.opinion : state.opinion;
 }
 
 /* 게시일(date)이 채워져 있는데 [start, end] 범위 밖인 글은 이번 기간의 데이터가
