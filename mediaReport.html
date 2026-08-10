@@ -696,10 +696,10 @@ table.hp-table mark.hp-max-hl{
           <div class="card post-card"><div class="post-grid" id="grid-longform"></div></div>
         </div>
         <div id="tab-shorts" class="tab-panel">
-          <h3 class="content-subtitle">쇼츠/릴스 <span class="cnt-badge">Youtube+Instagram</span></h3>
+          <h3 class="content-subtitle">쇼츠/릴스/클립 <span class="cnt-badge">Youtube+Instagram+Naver</span></h3>
           <div class="card post-card"><div class="post-grid" id="grid-shorts"></div></div>
           <div class="card chart-box" style="margin-top:10px;">
-            <div class="chart-title">쇼츠/릴스 조회수 비교 (Youtube vs Instagram)</div>
+            <div class="chart-title">쇼츠/릴스/클립 조회수 비교 (Youtube vs Instagram)</div>
             <div class="chart-canvas-wrap shorts-chart-wrap"><canvas id="chart-shorts"></canvas></div><div class="print-mini-chart" id="printchart-shorts"></div>
           </div>
         </div>
@@ -884,7 +884,7 @@ function syncCurrentToHistory(){
 const DAY_KO = ['일','월','화','수','목','금','토'];
 const CONTENT_TYPES = [
   {key:'longform', label:'롱폼', hasYoutube:true,  hasInstagram:false, hasCafe:false, hasSubRatio:false},
-  {key:'shorts',   label:'쇼츠/릴스', hasYoutube:true,  hasInstagram:true,  hasCafe:false, hasSubRatio:true},
+  {key:'shorts',   label:'쇼츠/릴스/클립', hasYoutube:true,  hasInstagram:true,  hasCafe:false, hasSubRatio:true, allowAddRow:true},
   {key:'cardnews', label:'카드뉴스', hasYoutube:false, hasInstagram:true, hasCafe:false, hasSubRatio:false},
   {key:'blog',     label:'Blog', hasYoutube:true,  hasInstagram:false, hasCafe:false, hasSubRatio:false},
 ];
@@ -1512,7 +1512,7 @@ function renderPostGrid(type){
         <tbody>${rowsHtml}</tbody>
       </table>
     </div>
-    ${ct.hasCafe ? `<button type="button" class="btn no-print" style="margin-top:2px;" onclick="addPostRow('${type}')">+ 행 추가</button>` : ''}`;
+    ${(ct.hasCafe || ct.allowAddRow) ? `<button type="button" class="btn no-print" style="margin-top:2px;" onclick="addPostRow('${type}')">+ 행 추가</button>` : ''}`;
   if(ct.hasInstagram){
     state.posts[type].forEach((p, idx) => {
       refreshRatioBar(`bar-${type}-${idx}-f`, p.igFollowerPct);
@@ -2289,7 +2289,7 @@ function refreshSummary(){
       ${renderWindowImpactList(longformImpacts)}
     </div>
     <div class="card summary-card summary-card-list">
-      <label><span class="type-badge" style="background:${TYPE_COLOR.shorts}">쇼츠/릴스</span> 업로드 48시간 효과</label>
+      <label><span class="type-badge" style="background:${TYPE_COLOR.shorts}">쇼츠/릴스/클립</span> 업로드 48시간 효과</label>
       ${renderWindowImpactList(shortsImpacts)}
     </div>
   `;
