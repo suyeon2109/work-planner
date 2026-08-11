@@ -376,8 +376,13 @@ table.hp-table mark.hp-max-hl{
   .card{box-shadow:none; border:1px solid #ddd;}
   .section{margin-bottom:9px;}
 
-  /* 표/카드/차트가 페이지 경계에서 중간에 잘리지 않도록 함(어색한 줄바꿈 방지) */
-  .tab-panel, .card, .chart-box, .channel-card, .post-table thead,
+  /* 표/카드/차트가 페이지 경계에서 중간에 잘리지 않도록 함(어색한 줄바꿈 방지).
+     주의: .tab-panel 자체는 포함하지 않는다 — 쇼츠/릴스/클립처럼 행 추가 버튼으로
+     표가 5줄을 넘어가면(최대 7줄) 표+비교 그래프를 하나의 통짜 블록으로 묶어 강제로
+     통째로 다음 페이지로 넘기다가 그 블록 자체가 한 페이지보다 커져서 잘리는 문제가
+     있었다. .card와 .chart-box는 각각 내부에서 쪼개지지 않게 유지하되, 표 카드와
+     그래프 카드끼리는 필요하면 서로 다른 페이지로 자연스럽게 나뉘도록 둔다. */
+  .card, .chart-box, .channel-card, .post-table thead,
   .post-table tbody tr, .hp-table thead, .hp-table tbody tr{
     break-inside:avoid; page-break-inside:avoid;
   }
@@ -487,6 +492,18 @@ table.hp-table mark.hp-max-hl{
   #tab-longform .post-table input[type="date"], #tab-shorts .post-table input[type="date"], #tab-cardnews .post-table input[type="date"]{font-size:9px !important;}
   #tab-shorts .ratio-cell input, #tab-cardnews .ratio-cell input{width:33px !important; font-size:9.8px !important;}
 
+  /* 쇼츠/릴스/클립은 '+ 행 추가' 버튼으로 5줄을 넘어(최대 7줄) 늘어날 수 있다.
+     위에서 페이지1용으로 확대해둔 글씨 크기를 그대로 쓰면 세로 공간이 부족해져
+     페이지가 밀리므로, 5줄을 초과하면(JS에서 #tab-shorts에 shorts-many 클래스를
+     붙임) 기본 크기 수준으로 되돌려 절약한다. */
+  #tab-shorts.shorts-many .content-subtitle{font-size:9.5px;}
+  #tab-shorts.shorts-many .post-table th{font-size:7.6px;}
+  #tab-shorts.shorts-many .post-idx-cell{font-size:7.6px;}
+  #tab-shorts.shorts-many .post-table input{font-size:8.2px !important;}
+  #tab-shorts.shorts-many .post-table input[type="date"]{font-size:7.6px !important;}
+  #tab-shorts.shorts-many .post-table th, #tab-shorts.shorts-many .post-table td{padding:1.5px 2px;}
+  #tab-shorts.shorts-many .ratio-cell input{width:29px !important; font-size:8.2px !important;}
+
   /* 컬럼별 고정폭: 표 전체 컬럼(인덱스~게시일)을 표 종류와 무관하게 항상 5%/40%/14%로
      통일한다. Chrome은 table-layout:fixed 상태에서 %와 px를 섞어 쓰면(합이 100%가 안 맞을 때)
      남은 여백을 px 컬럼들끼리 비율대로 재분배해버려 표마다 인덱스·조회수 컬럼 폭이 실제로는
@@ -523,6 +540,8 @@ table.hp-table mark.hp-max-hl{
   /* 쇼츠 유튜브 vs 인스타그램 조회수 비교 그래프 (인쇄용) */
   #tab-shorts .chart-box{padding:5px 8px; display:flex; flex-direction:column; margin-top:5px; height:170px;}
   #tab-shorts .chart-title{font-size:9px; margin-bottom:3px; flex:0 0 auto;}
+  #tab-shorts.shorts-many .chart-box{height:145px; margin-top:3px;}
+  #tab-shorts.shorts-many .chart-title{font-size:8px; margin-bottom:2px;}
   .post-card{padding:6px 8px !important;}
 
   .hp-main-row{
@@ -1513,6 +1532,12 @@ function renderPostGrid(type){
       </table>
     </div>
     ${(ct.hasCafe || ct.allowAddRow) ? `<button type="button" class="btn no-print" style="margin-top:2px;" onclick="addPostRow('${type}')">+ 행 추가</button>` : ''}`;
+  // 쇼츠/릴스/클립이 기본 5줄을 넘으면(최대 7줄까지 추가 가능) 인쇄용 확대 폰트 대신
+  // 축소 폰트를 쓰도록 표시해, 늘어난 줄 수 때문에 페이지1 레이아웃이 넘쳐 잘리는 것을 막는다.
+  if(type === 'shorts'){
+    const shortsTab = document.getElementById('tab-shorts');
+    if(shortsTab) shortsTab.classList.toggle('shorts-many', state.posts.shorts.length > 5);
+  }
   if(ct.hasInstagram){
     state.posts[type].forEach((p, idx) => {
       refreshRatioBar(`bar-${type}-${idx}-f`, p.igFollowerPct);
