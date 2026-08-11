@@ -72,6 +72,39 @@ button{cursor:pointer;}
 .insight-list li .tag{flex-shrink:0; font-size:9px; line-height:1.3; font-weight:400; padding:2px 7px; border-radius:5px; color:#fff;}
 .empty-note{font-size:12px;color:var(--text-light);padding:14px 2px;}
 
+/* ===== 담당자 분석 의견 & 서식 툴바 (글자색 / 형광펜) ===== */
+.opinion-card{padding:14px 16px;}
+.opinion-box{
+  min-height:100px; border:1px solid var(--border); border-radius:var(--radius-sm);
+  padding:12px 14px; font-size:12.5px; line-height:1.75; color:var(--text);
+  background:var(--surface-2); white-space:pre-wrap; word-break:break-word; cursor:text;
+}
+.opinion-box:focus{outline:none; border-color:var(--hp-visit); background:#fff;}
+.opinion-box:empty:before{content:attr(data-placeholder); color:var(--text-light);}
+.format-toolbar{
+  display:flex; align-items:center; flex-wrap:wrap; gap:10px;
+  background:var(--surface-2); border:1px solid var(--border); border-radius:var(--radius-sm);
+  padding:8px 12px; margin-bottom:10px; font-size:11px; color:var(--text-muted);
+}
+.format-toolbar-group{display:flex; align-items:center; gap:5px;}
+.format-toolbar-label{font-weight:600; letter-spacing:.02em; margin-right:2px;}
+.swatch-btn{
+  width:20px; height:20px; border-radius:50%; border:1px solid rgba(0,0,0,.12);
+  cursor:pointer; padding:0; flex-shrink:0; transition:transform .1s;
+}
+.swatch-btn:hover{transform:scale(1.15);}
+.swatch-btn.is-clear{background:#fff; position:relative;}
+.swatch-btn.is-clear:before{
+  content:''; position:absolute; left:2px; right:2px; top:50%; height:1px;
+  background:var(--danger); transform:rotate(45deg);
+}
+.format-toolbar-divider{width:1px; height:18px; background:var(--border);}
+.format-clear-btn{
+  border:none; background:none; cursor:pointer; color:var(--text-muted);
+  font-size:11px; padding:3px 8px; border-radius:4px; font-family:var(--font);
+}
+.format-clear-btn:hover{background:rgba(0,0,0,.06); color:var(--text);}
+
 .toast{position:fixed; bottom:26px; left:50%; transform:translateX(-50%); background:var(--text); color:#fff; padding:10px 20px; border-radius:20px; font-size:13px; box-shadow:0 6px 18px rgba(0,0,0,.2); z-index:999; opacity:0; pointer-events:none; transition:opacity .25s, transform .25s;}
 .toast.show{opacity:1; transform:translateX(-50%) translateY(-6px);}
 
@@ -98,6 +131,8 @@ button{cursor:pointer;}
   .summary-card b{font-size:16px;}
   /* 방문자·페이지뷰가 한 줄, 유튜브·인스타그램이 한 줄이 되도록 2열로 줄바꿈 */
   .summary-grid{grid-template-columns:repeat(2, 1fr) !important;}
+  .opinion-card{padding:8px 10px; break-inside:auto; page-break-inside:auto;}
+  .opinion-box{min-height:40px; padding:8px 10px; font-size:9.5px; line-height:1.6; border-color:#ddd; background:#fff;}
 }
 </style>
 </head>
@@ -146,6 +181,32 @@ button{cursor:pointer;}
 </div>
 
 <div class="wrap">
+  <!-- ============ 담당자 분석 의견 (최상단) ============ -->
+  <div class="section section-opinion">
+    <div class="section-head"><span class="eyebrow">MEMO</span><h2>담당자 분석 의견</h2></div>
+    <div class="card opinion-card">
+      <div class="format-toolbar no-print" id="opinionFormatToolbar">
+        <div class="format-toolbar-group">
+          <span class="format-toolbar-label">글자색</span>
+          <button type="button" class="swatch-btn" style="background:#1c1c22" title="검정" onmousedown="event.preventDefault()" onclick="applyOpinionColor('#1c1c22')"></button>
+          <button type="button" class="swatch-btn" style="background:#eb5757" title="빨강" onmousedown="event.preventDefault()" onclick="applyOpinionColor('#eb5757')"></button>
+          <button type="button" class="swatch-btn" style="background:#2f80ed" title="파랑" onmousedown="event.preventDefault()" onclick="applyOpinionColor('#2f80ed')"></button>
+        </div>
+        <div class="format-toolbar-divider"></div>
+        <div class="format-toolbar-group">
+          <span class="format-toolbar-label">형광펜</span>
+          <button type="button" class="swatch-btn" style="background:#fff3a3" title="노랑" onmousedown="event.preventDefault()" onclick="applyOpinionHighlight('#fff3a3')"></button>
+          <button type="button" class="swatch-btn" style="background:#ffd0d0" title="빨강" onmousedown="event.preventDefault()" onclick="applyOpinionHighlight('#ffd0d0')"></button>
+          <button type="button" class="swatch-btn" style="background:#cde3fb" title="파랑" onmousedown="event.preventDefault()" onclick="applyOpinionHighlight('#cde3fb')"></button>
+          <button type="button" class="swatch-btn is-clear" title="형광펜 지우기" onmousedown="event.preventDefault()" onclick="applyOpinionHighlight('transparent')"></button>
+        </div>
+        <div class="format-toolbar-divider"></div>
+        <button type="button" class="format-clear-btn" onmousedown="event.preventDefault()" onclick="clearOpinionFormat()">서식 지우기</button>
+      </div>
+      <div class="opinion-box" id="opinionBox" contenteditable="true" data-placeholder="담당자 분석 의견을 입력하세요..." oninput="onOpinionInput()"></div>
+    </div>
+  </div>
+
   <div class="section summary-section">
     <div class="section-head"><span class="eyebrow">SUMMARY</span><h2 id="summaryTitle">이번 분기 종합 요약</h2></div>
     <div class="summary-grid" id="summaryGrid"></div>
@@ -193,6 +254,14 @@ async function storeList(prefix){
       .get();
     return snap.docs.map(d => ({ id: d.id, v: d.data().v }));
   }catch(e){ console.error(e); return []; }
+}
+async function storeGet(key){
+  try{ const snap = await getDb().collection(FS_COL).doc(key).get(); return snap.exists ? snap.data().v : null; }
+  catch(e){ console.error(e); return null; }
+}
+async function storeSet(key, value){
+  try{ await getDb().collection(FS_COL).doc(key).set({ v: value }); return true; }
+  catch(e){ console.error(e); return false; }
 }
 function setCloudStatus(text, isError){
   const el = document.getElementById('cloudStatus');
@@ -303,6 +372,7 @@ function deltaBadge(cur, prev, opts){
 function pctChange(cur, prev){ if(prev === null || prev === undefined || prev === 0) return null; return ((cur-prev)/Math.abs(prev))*100; }
 
 function renderAll(){
+  loadOpinionForPeriod();
   const {start, end} = periodRange(curYear, curQuarter);
   const prev = prevPeriod(curYear, curQuarter);
   const prevRange = periodRange(prev.y, prev.q);
@@ -447,6 +517,134 @@ function showToast(msg, isError){
   t.classList.add('show');
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+/* ===================================================================
+   담당자 분석 의견 — 글자색 / 형광펜 서식 (주간 리포트와 동일한 방식).
+   기간(연도/분기/월)별로 따로 저장되며, 기간을 이동하면 그 기간에 저장된
+   의견을 새로 불러온다.
+=================================================================== */
+function opinionKeyForCurrentPeriod(){ return 'opinion_quarterly_' + curYear + '-Q' + curQuarter; }
+function escAttr(s){
+  return (s===null||s===undefined? '' : String(s))
+    .replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');
+}
+function opinionToDisplayHtml(raw){
+  if(!raw) return '';
+  if(/<[a-z][\s\S]*>/i.test(raw)) return raw; // 이미 색상/형광펜 서식(HTML)으로 저장된 값
+  return escAttr(raw).replace(/\n/g, '<br>'); // 예전 버전: 일반 텍스트로 저장됨
+}
+let _opinionLoadToken = 0;
+async function loadOpinionForPeriod(){
+  const key = opinionKeyForCurrentPeriod();
+  const myToken = ++_opinionLoadToken;
+  const raw = await storeGet(key);
+  if(myToken !== _opinionLoadToken) return; // 그 사이 다른 기간으로 이동했으면 이 결과는 버린다
+  const box = document.getElementById('opinionBox');
+  if(box) box.innerHTML = opinionToDisplayHtml(raw || '');
+}
+let _opinionSaveTimer = null;
+function onOpinionInput(){
+  clearTimeout(_opinionSaveTimer);
+  const key = opinionKeyForCurrentPeriod();
+  const html = document.getElementById('opinionBox').innerHTML;
+  _opinionSaveTimer = setTimeout(() => { storeSet(key, html); }, 800);
+}
+function opinionEnsureFocus(){
+  const el = document.getElementById('opinionBox');
+  if(!el) return null;
+  const sel = window.getSelection();
+  const inside = sel && sel.rangeCount > 0 && el.contains(sel.getRangeAt(0).commonAncestorContainer);
+  if(!inside){
+    el.focus();
+    const range = document.createRange();
+    range.selectNodeContents(el);
+    range.collapse(false);
+    sel.removeAllRanges();
+    sel.addRange(range);
+  }
+  return el;
+}
+function opinionGetSelRange(){
+  const sel = window.getSelection();
+  if(!sel || sel.rangeCount === 0) return null;
+  return {sel, range: sel.getRangeAt(0)};
+}
+function opinionEscapeStyledBoundary(root, range){
+  let container = range.startContainer;
+  let offset = range.startOffset;
+  while(container && container !== root){
+    const len = container.nodeType === 3 ? container.length : container.childNodes.length;
+    const parent = container.parentNode;
+    if(!parent) break;
+    if(offset === len){
+      const idx = Array.prototype.indexOf.call(parent.childNodes, container);
+      container = parent; offset = idx + 1;
+    } else if(offset === 0){
+      const idx = Array.prototype.indexOf.call(parent.childNodes, container);
+      container = parent; offset = idx;
+    } else {
+      break;
+    }
+  }
+  const r = document.createRange();
+  r.setStart(container, offset);
+  r.collapse(true);
+  return r;
+}
+function opinionInsertTypingMarker(el, range, styleProps){
+  const escapedRange = opinionEscapeStyledBoundary(el, range);
+  const span = document.createElement('span');
+  Object.assign(span.style, styleProps);
+  span.appendChild(document.createTextNode('\u200B'));
+  escapedRange.insertNode(span);
+  const sel = window.getSelection();
+  const newRange = document.createRange();
+  newRange.setStart(span.firstChild, 1);
+  newRange.collapse(true);
+  sel.removeAllRanges();
+  sel.addRange(newRange);
+}
+function applyOpinionColor(color){
+  const el = opinionEnsureFocus();
+  if(!el) return;
+  const info = opinionGetSelRange();
+  try{ document.execCommand('styleWithCSS', false, true); }catch(e){}
+  if(info && info.range.collapsed){
+    opinionInsertTypingMarker(el, info.range, {color});
+  } else {
+    document.execCommand('foreColor', false, color);
+  }
+  onOpinionInput();
+}
+function applyOpinionHighlight(color){
+  const el = opinionEnsureFocus();
+  if(!el) return;
+  const info = opinionGetSelRange();
+  try{ document.execCommand('styleWithCSS', false, true); }catch(e){}
+  if(info && info.range.collapsed){
+    opinionInsertTypingMarker(el, info.range, {backgroundColor:color});
+  } else {
+    const cmd = document.queryCommandSupported && document.queryCommandSupported('hiliteColor') ? 'hiliteColor' : 'backColor';
+    document.execCommand(cmd, false, color);
+  }
+  onOpinionInput();
+}
+function clearOpinionFormat(){
+  const el = opinionEnsureFocus();
+  if(!el) return;
+  const info = opinionGetSelRange();
+  try{ document.execCommand('styleWithCSS', false, true); }catch(e){}
+  document.execCommand('removeFormat');
+  const sel2 = window.getSelection();
+  if(info && info.range.collapsed && sel2 && sel2.rangeCount){
+    opinionInsertTypingMarker(el, sel2.getRangeAt(0), {color:'#1c1c22', backgroundColor:'transparent'});
+  } else {
+    document.execCommand('foreColor', false, '#1c1c22');
+    const hiliteCmd = document.queryCommandSupported && document.queryCommandSupported('hiliteColor') ? 'hiliteColor' : 'backColor';
+    document.execCommand(hiliteCmd, false, 'transparent');
+  }
+  onOpinionInput();
 }
 
 /* ===================================================================
