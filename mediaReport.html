@@ -18,12 +18,12 @@
   --success:#0f7b6c; --danger:#eb5757; --warn:#f2994a;
   --radius:12px; --radius-sm:8px;
   --font:-apple-system,'Apple SD Gothic Neo','Noto Sans KR',sans-serif;
-  --font-num:'SF Mono','Roboto Mono',ui-monospace,monospace;
+  --font-num:var(--font);
   --shadow:0 1px 2px rgba(20,20,30,.04),0 4px 16px rgba(20,20,30,.06);
 }
 *{box-sizing:border-box;margin:0;padding:0;}
 html{-webkit-text-size-adjust:100%;}
-body{font-family:var(--font);background:var(--bg);color:var(--text);font-size:14px;line-height:1.55;padding-bottom:80px;}
+body{font-family:var(--font);background:var(--bg);color:var(--text);font-size:15.1px;line-height:1.55;padding-bottom:80px;}
 ::selection{background:#cfe0fb;}
 h1,h2,h3{font-weight:800;letter-spacing:-.01em;}
 input,textarea,select,button{font-family:var(--font);}
@@ -42,20 +42,20 @@ button{cursor:pointer;}
 }
 .brand{display:flex; align-items:center; gap:10px; margin-right:auto;}
 .brand-mark{width:30px;height:30px;flex-shrink:0;display:block;}
-.brand-text h1{font-size:16px;}
-.brand-text span{font-size:11.5px;color:var(--text-muted);}
+.brand-text h1{font-size:17.3px;}
+.brand-text span{font-size:12.4px;color:var(--text-muted);}
 .doc-number{display:none;}
 .hp-header-summary{display:none;}
-.period-picker{display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--text-muted);}
-.period-picker input{border:1px solid var(--border);border-radius:7px;padding:6px 8px;font-size:12.5px;color:var(--text);background:var(--surface-2);}
-.period-label{font-size:11.5px;color:var(--text-light);margin-right:2px;white-space:nowrap;}
+.period-picker{display:flex;align-items:center;gap:6px;font-size:13.5px;color:var(--text-muted);}
+.period-picker input{border:1px solid var(--border);border-radius:7px;padding:6px 8px;font-size:13.5px;color:var(--text);background:var(--surface-2);}
+.period-label{font-size:12.4px;color:var(--text-light);margin-right:2px;white-space:nowrap;}
 .period-print-label{display:none;}
 .period-print-block{display:none;}
-.week-nav-btn{padding:6px 10px; font-size:12px; white-space:nowrap;}
+.week-nav-btn{padding:6px 10px; font-size:13px; white-space:nowrap;}
 .toolbar-actions{display:flex;gap:8px;}
 .btn{
   border:1px solid var(--border); background:var(--surface); color:var(--text);
-  padding:8px 14px; border-radius:8px; font-size:13px; font-weight:400;
+  padding:8px 14px; border-radius:8px; font-size:14px; font-weight:400;
   display:inline-flex; align-items:center; gap:6px; transition:.12s;
 }
 .btn:hover{background:var(--surface-2); border-color:#d5d5de;}
@@ -69,12 +69,12 @@ input[type="file"]{display:none;}
 .wrap{max-width:1320px;margin:0 auto;padding:18px 22px 40px;}
 .section{margin-bottom:16px;}
 .section-head{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
-.section-head h2{font-size:16px;}
+.section-head h2{font-size:17.3px;}
 .section-head .eyebrow{
-  font-size:10px; font-weight:400; letter-spacing:.09em; text-transform:uppercase;
+  font-size:10.8px; font-weight:400; letter-spacing:.09em; text-transform:uppercase;
   color:var(--text-light);
 }
-.section-desc{font-size:11.5px;color:var(--text-muted);margin-bottom:10px;}
+.section-desc{font-size:12.4px;color:var(--text-muted);margin-bottom:10px;}
 .card{
   background:var(--surface); border:1px solid var(--border); border-radius:var(--radius);
   box-shadow:var(--shadow);
@@ -100,7 +100,7 @@ input[type="file"]{display:none;}
 .section-head.collapsible{cursor:pointer; user-select:none;}
 .section-toggle-btn{
   margin-left:auto; width:22px; height:22px; border-radius:6px; border:1px solid var(--border);
-  background:var(--surface-2); color:var(--text-muted); font-size:14px; font-weight:400;
+  background:var(--surface-2); color:var(--text-muted); font-size:15.1px; font-weight:400;
   display:inline-flex; align-items:center; justify-content:center; flex-shrink:0;
 }
 .section-body{overflow:hidden;}
@@ -117,72 +117,72 @@ input[type="file"]{display:none;}
 .channel-card.ig{border-top:3px solid var(--insta-yellow);}
 .channel-card-head{display:flex;align-items:center;gap:6px;margin-bottom:8px;}
 .channel-badge{
-  font-size:9px;font-weight:400;letter-spacing:.03em;padding:1.5px 6px;border-radius:20px;color:#fff;
+  font-size:9.7px;font-weight:400;letter-spacing:.03em;padding:1.5px 6px;border-radius:20px;color:#fff;
 }
 .channel-badge.yt{background:var(--yt);}
 .channel-badge.ig{background:var(--insta-yellow); color:var(--insta-yellow-text);}
-.channel-card-head .ch-name{font-size:12px;font-weight:400;color:var(--text-muted);}
+.channel-card-head .ch-name{font-size:13px;font-weight:400;color:var(--text-muted);}
 .channel-stat-row{display:flex;align-items:flex-end;gap:10px;flex-wrap:wrap;}
 .channel-stat-main{flex:1;min-width:110px;}
-.channel-stat-main label{font-size:10.5px;color:var(--text-muted);display:block;margin-bottom:2px;}
+.channel-stat-main label{font-size:11.3px;color:var(--text-muted);display:block;margin-bottom:2px;}
 .stat-label-row{display:flex;align-items:baseline;gap:4px;}
 .stat-label-row label{margin-bottom:0;}
 .stat-label-row label:first-child{width:110px;flex-shrink:0;}
 .stat-label-row .prev-label{width:80px;flex-shrink:0;text-align:left;color:var(--text-light);}
 .channel-stat-main .stat-input-row{display:flex;align-items:baseline;gap:4px;flex-wrap:wrap;margin-top:2px;}
 .channel-stat-main input.big-num{
-  font-family:var(--font-num); font-size:18px; font-weight:400; border:none; background:transparent;
+  font-family:var(--font-num); font-size:19.4px; font-weight:400; border:none; background:transparent;
   width:110px; padding:0; color:var(--text); line-height:1.1; vertical-align:bottom;
 }
 .channel-stat-main input.big-num:focus{outline:none; border-bottom:2px solid var(--text);}
 .channel-spark{display:none;}
-.delta-badge{font-size:12.5px;font-weight:400;padding:4px 9px;border-radius:20px;display:inline-flex;align-items:center;gap:3px;}
+.delta-badge{font-size:13.5px;font-weight:400;padding:4px 9px;border-radius:20px;display:inline-flex;align-items:center;gap:3px;}
 .delta-badge.up{color:var(--success);background:#e7f5f2;}
 .delta-badge.down{color:var(--danger);background:#fdecec;}
 .delta-badge.flat{color:var(--text-muted);background:var(--surface-2);}
-.prev-input-wrap input{width:80px;border:1px solid var(--border);border-radius:6px;padding:3px 6px;font-size:12px;color:var(--text-muted);}
+.prev-input-wrap input{width:80px;border:1px solid var(--border);border-radius:6px;padding:3px 6px;font-size:13px;color:var(--text-muted);}
 .channel-spark{width:100%;height:54px;margin-top:10px;}
 
 /* ===== 콘텐츠 유형 구분(3열 배치) ===== */
 .tab-panel{display:block; margin-bottom:12px; padding-top:0; border-top:none;}
-.content-subtitle{font-size:12.5px; font-weight:800; color:var(--text); margin-bottom:6px; display:flex; align-items:baseline; gap:6px;}
-.content-subtitle .cnt-badge{font-size:10px; font-weight:400; color:var(--text-light); text-transform:none;}
+.content-subtitle{font-size:13.5px; font-weight:800; color:var(--text); margin-bottom:6px; display:flex; align-items:baseline; gap:6px;}
+.content-subtitle .cnt-badge{font-size:10.8px; font-weight:400; color:var(--text-light); text-transform:none;}
 
 /* ===== Post table (compact) ===== */
 .post-table-wrap{overflow-x:auto; margin-bottom:10px;}
 .print-label{display:none;}
 table.post-table{width:100%; border-collapse:collapse; min-width:620px;}
 table.post-table th{
-  text-align:left; font-size:9.5px; color:var(--text-light); font-weight:400; text-transform:uppercase;
+  text-align:left; font-size:10.3px; color:var(--text-light); font-weight:400; text-transform:uppercase;
   letter-spacing:.02em; padding:5px 6px; border-bottom:1px solid var(--border); white-space:nowrap;
 }
 table.post-table td{padding:3px 4px; border-bottom:1px solid #f0f0f3; vertical-align:middle;}
 table.post-table tr.post-row.empty{opacity:.5;}
 table.post-table tr.post-row:hover{background:var(--surface-2);}
-.post-idx-cell{font-family:var(--font-num); font-size:10.5px; color:var(--text-light); width:68px; white-space:nowrap;}
+.post-idx-cell{font-family:var(--font-num); font-size:11.3px; color:var(--text-light); width:68px; white-space:nowrap;}
 .post-idx-cell .idx-num{display:inline-block; min-width:12px; text-align:right; margin-right:3px; vertical-align:middle;}
 .reorder-btns{display:inline-flex; flex-direction:column; vertical-align:middle; line-height:0;}
 .reorder-btn{
-  border:none; background:transparent; color:var(--text-light); font-size:8px; line-height:9px;
+  border:none; background:transparent; color:var(--text-light); font-size:8.6px; line-height:9px;
   padding:0 2px; cursor:pointer; border-radius:3px;
 }
 .reorder-btn:hover:not(:disabled){color:var(--text); background:var(--surface-2);}
 .reorder-btn:disabled{opacity:.2; cursor:default;}
 .row-reset-btn, .row-delete-btn{
-  border:none; background:transparent; color:var(--text-light); font-size:12px; line-height:1;
+  border:none; background:transparent; color:var(--text-light); font-size:13px; line-height:1;
   padding:2px 3px; margin-left:2px; cursor:pointer; border-radius:4px; vertical-align:middle;
 }
 .row-reset-btn:hover{color:var(--danger); background:#fdf2f2;}
 .row-delete-btn:hover{color:#fff; background:var(--danger);}
-.post-table input[type="text"]{width:100%; min-width:50px; border:1px solid transparent; background:transparent; border-radius:6px; padding:4px 4px; font-size:11.5px; font-weight:400;}
-.post-table input[type="date"]{width:94px; border:1px solid transparent; background:transparent; border-radius:6px; padding:4px 1px; font-size:10px; color:var(--text-muted);}
-.post-table input[type="number"]{width:56px; border:1px solid transparent; background:transparent; border-radius:6px; padding:4px 3px; font-size:11.5px; font-family:var(--font-num); text-align:right;}
+.post-table input[type="text"]{width:100%; min-width:50px; border:1px solid transparent; background:transparent; border-radius:6px; padding:4px 4px; font-size:12.4px; font-weight:400;}
+.post-table input[type="date"]{width:94px; border:1px solid transparent; background:transparent; border-radius:6px; padding:4px 1px; font-size:10.8px; color:var(--text-muted);}
+.post-table input[type="number"]{width:56px; border:1px solid transparent; background:transparent; border-radius:6px; padding:4px 3px; font-size:12.4px; font-family:var(--font-num); text-align:right;}
 .post-table input[type="number"]::-webkit-inner-spin-button, .post-table input[type="number"]::-webkit-outer-spin-button{-webkit-appearance:none; margin:0;}
 .post-table input[type="number"]{-moz-appearance:textfield;}
-.post-table input.num-fill{width:100%; min-width:0; box-sizing:border-box; text-align:left; border:1px solid transparent; background:transparent; border-radius:6px; padding:4px 6px; font-size:11.5px; font-family:var(--font-num);}
-.post-table select.num-fill{width:100%; min-width:0; box-sizing:border-box; text-align:left; border:1px solid transparent; background:transparent; border-radius:6px; padding:4px 6px; font-size:11.5px; font-family:var(--font);}
+.post-table input.num-fill{width:100%; min-width:0; box-sizing:border-box; text-align:left; border:1px solid transparent; background:transparent; border-radius:6px; padding:4px 6px; font-size:12.4px; font-family:var(--font-num);}
+.post-table select.num-fill{width:100%; min-width:0; box-sizing:border-box; text-align:left; border:1px solid transparent; background:transparent; border-radius:6px; padding:4px 6px; font-size:12.4px; font-family:var(--font);}
 .post-table select.num-fill:hover, .post-table select.num-fill:focus{border-color:var(--border); background:var(--surface-2); outline:none;}
-.mention-toggle{border:1px solid var(--border); background:var(--surface-2); color:var(--text-muted); font-size:10.5px; padding:4px 9px; border-radius:20px; white-space:nowrap; font-weight:400;}
+.mention-toggle{border:1px solid var(--border); background:var(--surface-2); color:var(--text-muted); font-size:11.3px; padding:4px 9px; border-radius:20px; white-space:nowrap; font-weight:400;}
 .mention-toggle:hover{background:#eee;}
 .mention-toggle.on{background:#e7f5f2; border-color:#bfe6de; color:var(--success);}
 table.post-table th.th-yt-longform{text-align:left; width:130px;}
@@ -205,15 +205,12 @@ table.post-table th.th-ratio{text-align:left;}
 
 #grid-shorts th:nth-child(2), #grid-shorts td:nth-child(2){width:40%;}
 #grid-shorts th:nth-child(3), #grid-shorts td:nth-child(3){width:14%;}
-#grid-shorts th:nth-child(4), #grid-shorts td:nth-child(4){width:15%;}
-#grid-shorts th:nth-child(5), #grid-shorts td:nth-child(5){width:12%;}
-#grid-shorts th:nth-child(6), #grid-shorts td:nth-child(6){width:10%;}
-#grid-shorts th:nth-child(7), #grid-shorts td:nth-child(7){width:9%;}
+#grid-shorts th:nth-child(4), #grid-shorts td:nth-child(4){width:23%;}
+#grid-shorts th:nth-child(5), #grid-shorts td:nth-child(5){width:23%;}
 
 #grid-cardnews th:nth-child(2), #grid-cardnews td:nth-child(2){width:40%;}
 #grid-cardnews th:nth-child(3), #grid-cardnews td:nth-child(3){width:14%;}
-#grid-cardnews th:nth-child(4), #grid-cardnews td:nth-child(4){width:23%;}
-#grid-cardnews th:nth-child(5), #grid-cardnews td:nth-child(5){width:23%;}
+#grid-cardnews th:nth-child(4), #grid-cardnews td:nth-child(4){width:46%;}
 
 .mini-bar{width:28px; height:6px; border-radius:4px; background:#ececef; overflow:hidden; display:flex; flex-shrink:0;}
 .mini-bar-f{height:100%; background:linear-gradient(90deg,var(--ig4),var(--ig5));}
@@ -225,25 +222,25 @@ table.post-table th.th-ratio{text-align:left;}
 .shorts-chart-wrap{height:280px;}
 .chart-canvas-wrap canvas{width:100% !important; height:100% !important; display:block;}
 .hp-chart-wrap{flex:1 1 auto; min-height:340px; height:auto;}
-.chart-title{font-size:11px;font-weight:400;color:var(--text-muted);margin-bottom:6px;flex-shrink:0;}
+.chart-title{font-size:11.9px;font-weight:400;color:var(--text-muted);margin-bottom:6px;flex-shrink:0;}
 .print-mini-chart{display:none;}
 
 /* ===== Homepage section ===== */
 .hp-card{padding:12px 14px;}
 .paste-zone{
   border:2px dashed var(--border); border-radius:var(--radius-sm); padding:10px 12px;
-  font-size:11.5px; color:var(--text-muted); background:var(--surface-2); min-height:20px;
+  font-size:12.4px; color:var(--text-muted); background:var(--surface-2); min-height:20px;
   display:flex; align-items:center; gap:10px; cursor:text; transition:.12s;
 }
 .paste-zone:focus, .paste-zone.drag{border-color:var(--hp); background:var(--hp-soft); outline:none;}
 .paste-zone:empty:before{content:attr(data-placeholder); color:var(--text-light);}
-.paste-zone .paste-icon{font-size:20px;}
+.paste-zone .paste-icon{font-size:21.6px;}
 .hp-table-wrap{margin-top:0; overflow-x:auto; border:1px solid var(--border); border-radius:8px; padding:0 10px;}
-table.hp-table{width:100%; border-collapse:collapse; font-size:11.5px; table-layout:fixed;}
+table.hp-table{width:100%; border-collapse:collapse; font-size:12.4px; table-layout:fixed;}
 table.hp-table th:first-child, table.hp-table td:first-child{width:24%;}
 table.hp-table th:not(:first-child), table.hp-table td:not(:first-child){width:38%;}
 table.hp-table th{
-  text-align:right; font-size:10.5px; color:var(--text-light); font-weight:400; text-transform:uppercase;
+  text-align:right; font-size:11.3px; color:var(--text-light); font-weight:400; text-transform:uppercase;
   letter-spacing:.03em; padding:6px 10px; border-bottom:1px solid var(--border);
 }
 table.hp-table th:first-child, table.hp-table td:first-child{text-align:left;}
@@ -256,35 +253,35 @@ table.hp-table tfoot td{font-weight:400; border-top:1.5px solid var(--text); bac
 #hpStatRow{grid-template-columns:repeat(5,1fr);}
 #hpStatRow .hp-stat-group{display:contents;}
 #hpStatRow .hp-stat{min-width:0;}
-#hpStatRow .hp-stat label{font-size:8px;}
-#hpStatRow .hp-stat b{font-size:13px;}
+#hpStatRow .hp-stat label{font-size:8.6px;}
+#hpStatRow .hp-stat b{font-size:14px;}
 .hp-stat-group{display:flex; gap:8px; flex-wrap:wrap; min-width:0;}
 .hp-stat{flex:1;min-width:90px;background:var(--surface-2);border:1px solid var(--border);border-radius:8px;padding:8px 10px;}
-.hp-stat label{font-size:9.5px;color:var(--text-light);font-weight:400;text-transform:uppercase;letter-spacing:.02em;}
-.hp-stat b{display:block;font-family:var(--font-num);font-size:16px;margin-top:2px;white-space:nowrap;font-weight:400;}
-.legend-row{display:flex;gap:10px;flex-wrap:wrap;font-size:10.5px;color:var(--text-muted);margin-top:6px;flex-shrink:0;}
+.hp-stat label{font-size:10.3px;color:var(--text-light);font-weight:400;text-transform:uppercase;letter-spacing:.02em;}
+.hp-stat b{display:block;font-family:var(--font-num);font-size:17.3px;margin-top:2px;white-space:nowrap;font-weight:400;}
+.legend-row{display:flex;gap:10px;flex-wrap:wrap;font-size:11.3px;color:var(--text-muted);margin-top:6px;flex-shrink:0;}
 .legend-dot{width:8px;height:8px;border-radius:2px;display:inline-block;margin-right:3px;}
 .insight-list{list-style:none;margin-top:8px;}
 .insight-list li{
-  font-size:11.5px; padding:6px 10px; border-radius:7px; background:var(--surface-2);
+  font-size:12.4px; padding:6px 10px; border-radius:7px; background:var(--surface-2);
   margin-bottom:5px; display:flex; gap:7px; align-items:center;
 }
 .insight-list li .tag{
-  flex-shrink:0; font-size:8.5px; line-height:1.3; font-weight:400; padding:2px 6px; border-radius:5px; color:#fff;
+  flex-shrink:0; font-size:9.2px; line-height:1.3; font-weight:400; padding:2px 6px; border-radius:5px; color:#fff;
 }
 .insight-list li.hp-top-impact{background:#fff4d6; border:1px solid #f2c14e;}
 .insight-list li .hp-top-badge{
-  flex-shrink:0; font-size:8.5px; line-height:1.3; font-weight:700; padding:2px 6px; border-radius:5px;
+  flex-shrink:0; font-size:9.2px; line-height:1.3; font-weight:700; padding:2px 6px; border-radius:5px;
   background:#e2432b; color:#fff; letter-spacing:.02em;
 }
 
 /* ===== Summary section ===== */
 .summary-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;}
 .summary-card{padding:10px 14px;}
-.summary-card label{font-size:10px;color:var(--text-muted);display:block;margin-bottom:3px;}
-.summary-card b{font-family:var(--font-num);font-size:19px;font-weight:400;}
-.summary-card .sub{font-size:10.5px;color:var(--text-light);margin-top:2px;}
-.summary-card .sub.sub-breakdown{font-size:12px;}
+.summary-card label{font-size:10.8px;color:var(--text-muted);display:block;margin-bottom:3px;}
+.summary-card b{font-family:var(--font-num);font-size:20.5px;font-weight:400;}
+.summary-card .sub{font-size:11.3px;color:var(--text-light);margin-top:2px;}
+.summary-card .sub.sub-breakdown{font-size:13px;}
 .sub mark.hl{
   background:transparent;
   background-image:linear-gradient(120deg, #fff299 0%, #ffe066 100%);
@@ -299,16 +296,16 @@ table.hp-table tfoot td{font-weight:400; border-top:1.5px solid var(--text); bac
 .wi-list{margin-top:3px;}
 .wi-line{margin-bottom:5px;}
 .wi-line:last-child{margin-bottom:0;}
-.wi-row{font-size:10.5px; display:flex; align-items:baseline; gap:1px; row-gap:1px; flex-wrap:wrap;}
-.wi-idx{font-family:var(--font-num); font-size:9.5px; color:var(--text-light); flex-shrink:0; min-width:9px;}
-.wi-row b{font-family:var(--font-num); font-weight:400; font-size:17px;}
+.wi-row{font-size:11.3px; display:flex; align-items:baseline; gap:1px; row-gap:1px; flex-wrap:wrap;}
+.wi-idx{font-family:var(--font-num); font-size:10.3px; color:var(--text-light); flex-shrink:0; min-width:9px;}
+.wi-row b{font-family:var(--font-num); font-weight:400; font-size:18.4px;}
 .wi-metric{white-space:nowrap; flex-shrink:0;}
 .wi-lbl-print{display:none;}
-.wi-title{font-size:10.5px; color:var(--text-light); display:flex; align-items:baseline; gap:3px; max-width:100%; margin-top:1px; min-width:0;}
+.wi-title{font-size:11.3px; color:var(--text-light); display:flex; align-items:baseline; gap:3px; max-width:100%; margin-top:1px; min-width:0;}
 .wi-title-text{overflow:hidden; text-overflow:ellipsis; white-space:nowrap; min-width:0; flex:1;}
-.wi-empty{font-size:11px; color:var(--text-light);}
-.wi-tag{flex-shrink:0; max-width:56px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:8.5px; line-height:1.3; font-weight:400; padding:1px 4px; border-radius:5px; color:#fff;}
-.type-badge{display:inline-block; font-size:9px; line-height:1.4; font-weight:400; padding:1px 8px; border-radius:999px; color:#fff;}
+.wi-empty{font-size:11.9px; color:var(--text-light);}
+.wi-tag{flex-shrink:0; max-width:56px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:9.2px; line-height:1.3; font-weight:400; padding:1px 4px; border-radius:5px; color:#fff;}
+.type-badge{display:inline-block; font-size:9.7px; line-height:1.4; font-weight:400; padding:1px 8px; border-radius:999px; color:#fff;}
 /* 표 안에서 최고 조회수 숫자 밑에 숫자 길이만큼만 형광펜 표시 */
 .post-table td.view-max-cell{position:relative;}
 .view-max-mark{
@@ -333,7 +330,7 @@ table.hp-table mark.hp-max-hl{
 .opinion-card{padding:14px 16px;}
 .opinion-box{
   min-height:100px; border:1px solid var(--border); border-radius:var(--radius-sm);
-  padding:12px 14px; font-size:12.5px; line-height:1.75; color:var(--text);
+  padding:12px 14px; font-size:13.5px; line-height:1.75; color:var(--text);
   background:var(--surface-2); white-space:pre-wrap; word-break:break-word; cursor:text;
 }
 .opinion-box:focus{outline:none; border-color:var(--hp); background:#fff;}
@@ -342,7 +339,7 @@ table.hp-table mark.hp-max-hl{
 /* ===== Toast ===== */
 .toast{
   position:fixed; bottom:26px; left:50%; transform:translateX(-50%);
-  background:var(--text); color:#fff; padding:10px 20px; border-radius:20px; font-size:13px;
+  background:var(--text); color:#fff; padding:10px 20px; border-radius:20px; font-size:14px;
   box-shadow:0 6px 18px rgba(0,0,0,.2); z-index:999; opacity:0; pointer-events:none; transition:opacity .25s, transform .25s;
 }
 .toast.show{opacity:1; transform:translateX(-50%) translateY(-6px);}
@@ -351,33 +348,40 @@ table.hp-table mark.hp-max-hl{
 .history-manager-overlay{position:fixed; inset:0; background:rgba(20,20,26,.45); z-index:2000; display:flex; align-items:center; justify-content:center; padding:20px;}
 .history-manager-modal{background:#fff; border-radius:14px; padding:20px 22px; width:min(640px, 92vw); max-height:80vh; overflow:auto; box-shadow:0 24px 60px rgba(0,0,0,.35);}
 .history-manager-head{display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; gap:10px;}
-.history-manager-head h3{font-size:16px;}
-.history-manager-desc{font-size:12.5px; color:var(--text-muted); margin-bottom:14px; line-height:1.6;}
-.history-manager-row{display:flex; align-items:center; justify-content:space-between; gap:10px; padding:9px 12px; border:1px solid var(--border); border-radius:9px; margin-bottom:6px; font-size:12.5px;}
+.history-manager-head h3{font-size:17.3px;}
+.history-manager-desc{font-size:13.5px; color:var(--text-muted); margin-bottom:14px; line-height:1.6;}
+.history-manager-row{display:flex; align-items:center; justify-content:space-between; gap:10px; padding:9px 12px; border:1px solid var(--border); border-radius:9px; margin-bottom:6px; font-size:13.5px;}
 .history-manager-row .hm-period{font-weight:600; margin-bottom:3px;}
-.history-manager-row .hm-status{font-size:11px; padding:2px 8px; border-radius:10px; display:inline-block; margin-right:4px;}
+.history-manager-row .hm-status{font-size:11.9px; padding:2px 8px; border-radius:10px; display:inline-block; margin-right:4px;}
 .history-manager-row .hm-status.has{background:#e7f5f2; color:var(--success);}
 .history-manager-row .hm-status.empty{background:var(--surface-2); color:var(--text-muted);}
-.history-manager-row .hm-del{color:var(--danger); border-color:#f6c9c9; font-size:11.5px; padding:5px 10px; flex-shrink:0;}
-.history-manager-empty{font-size:12.5px; color:var(--text-light); padding:8px 2px;}
+.history-manager-row .hm-del{color:var(--danger); border-color:#f6c9c9; font-size:12.4px; padding:5px 10px; flex-shrink:0;}
+.history-manager-empty{font-size:13.5px; color:var(--text-light); padding:8px 2px;}
 
 /* ===== Print (A4 세로형, 2페이지 목표) ===== */
 @page{ size:A4 portrait; margin:19mm 9mm 18mm 9mm; }
 /* 1페이지는 아래 여백을 조금 더 넉넉하게(위 여백은 모든 페이지 공통) */
 @page :first{ margin:19mm 9mm 20mm 9mm; }
 /* 페이지 우측 하단에 1/2, 2/2 형식의 쪽 번호 표시 (아래쪽 여백 확보) */
-@page{ @bottom-right{ content: counter(page) "/" counter(pages); font-size:21px; color:#6b6b7a; padding-bottom:3mm; } }
+@page{ @bottom-right{ content: counter(page) "/" counter(pages); font-size:22.7px; color:#333; padding-bottom:3mm; } }
 @media print{
-  :root{ --text-muted:#26263a; --text-light:#3d3d52; }
+  /* 화면용 --text/--text-muted/--text-light는 미세하게 푸른빛이 도는 색(예: #1c1c22 -
+     R,G보다 B가 높음)이었다. 이런 색은 인쇄 시 검정 토너만으로 표현되지 않고
+     청록(C) 잉크가 섞인 '리치 블랙'으로 인쇄되는데, 프린터의 색판(CMYK) 정렬이
+     아주 살짝만 어긋나도 글씨 가장자리에 색이 도는 그림자/번짐처럼 보인다(실제로
+     doc-number처럼 순수 #000으로 강제했던 부분만 유독 깨끗하게 나온 것도 이 때문).
+     그래서 인쇄용 색은 전부 R=G=B인 무채색(순수 검정 계열)으로 바꿔, 어떤 프린터에서도
+     검정 토너 한 채널만으로 인쇄되도록 한다. */
+  :root{ --text:#000; --text-muted:#333; --text-light:#555; }
   html, body{-webkit-print-color-adjust:exact; print-color-adjust:exact;}
   .paste-zone, .btn, .no-print, .section-toggle-btn, .detail-toggle, .toast{display:none !important;}
-  body{background:#fff; padding:0; font-size:9.4px;}
-  .wrap{max-width:100%; padding:0; margin-top:18mm !important; margin-left:0; margin-right:0; margin-bottom:0;}
+  body{background:#fff; padding:0; font-size:9.8px;}
+  .wrap{max-width:100%; padding:0; margin-top:3mm; margin-left:0; margin-right:0; margin-bottom:0;}
   .card{box-shadow:none; border:1px solid #ddd;}
-  .section{margin-bottom:9px;}
+  .section{margin-bottom:5px;}
 
   /* 표/카드/차트가 페이지 경계에서 중간에 잘리지 않도록 함(어색한 줄바꿈 방지).
-     주의: .tab-panel 자체는 포함하지 않는다 — 쇼츠/릴스/클립처럼 행 추가 버튼으로
+     주의: .tab-panel 자체는 포함하지 않는다 — SRC처럼 행 추가 버튼으로
      표가 5줄을 넘어가면(최대 7줄) 표+비교 그래프를 하나의 통짜 블록으로 묶어 강제로
      통째로 다음 페이지로 넘기다가 그 블록 자체가 한 페이지보다 커져서 잘리는 문제가
      있었다. .card와 .chart-box는 각각 내부에서 쪼개지지 않게 유지하되, 표 카드와
@@ -388,121 +392,132 @@ table.hp-table mark.hp-max-hl{
   }
 
   /* 상단 바: 로고/제목과 리포트 기간만 인쇄에 남기고, 조작용 버튼류는 숨김.
-     모든 페이지 맨 위에 반복해서 나오도록 고정 위치로 배치(각 페이지 여백 안에 그려짐). */
+     예전에는 모든 페이지 맨 위에 반복되도록 position:fixed로 고정했는데, 그러면
+     페이지가 몇 장이 되든 매 페이지 시작 지점에 고정 헤더가 겹치지 않을 만큼의
+     여백을 미리 확보해둬야 했다. 그 여백 계산이 실제 인쇄 환경(브라우저·PDF 엔진)
+     마다 미묘하게 달라 텍스트가 겹치거나 불필요한 빈 페이지가 생기는 문제가
+     반복됐다. 그래서 이제는 고정하지 않고 문서 맨 앞(1페이지 상단)에 한 번만
+     자연스럽게 흐르는 요소로 둔다 — 이러면 어떤 지점에서 페이지가 나뉘든(자동이든
+     실측 강제든) 겹칠 고정 요소 자체가 없어 안전하다.
+     주의: 화면(스크린)용 기본 규칙은 .topbar가 position:sticky다. 이걸 인쇄에서
+     명시적으로 취소하지 않으면, Chrome 인쇄 엔진이 sticky 요소를 페이지 중간에
+     "붙어있는" 상태로 한 번 더 그려서 원래 내용 위에 글씨가 겹쳐 보이는 문제가
+     생긴다(제보된 "글씨가 두 겹으로 겹쳐 보인다" 현상의 원인). 그래서 반드시
+     position:static으로 되돌린다. */
   .topbar{
-    display:block !important; position:fixed !important; top:0; left:0; right:0;
-    background:#fff; backdrop-filter:none;
+    display:block !important; position:static !important; background:#fff; backdrop-filter:none;
     border-bottom:1px solid #ddd; box-shadow:none; margin-bottom:0;
   }
   .topbar-inner{padding:0 0 6px; gap:8px;}
   .brand-mark{width:20px; height:20px;}
-  .brand-text h1{font-size:12px;}
-  .brand-text span{font-size:8px;}
-  .doc-number{display:inline-block !important; font-size:15px !important; color:#000 !important; font-weight:800 !important; margin-left:4px; align-self:flex-end; padding:1px 7px; background:#eef0f4; border-radius:4px; letter-spacing:.02em;}
+  .brand-text h1{font-size:12.5px;}
+  .brand-text span{font-size:8.3px;}
+  .doc-number{display:inline-block !important; font-size:15.6px !important; color:#000 !important; font-weight:800 !important; margin-left:4px; align-self:flex-end; padding:1px 7px; background:#eef0f4; border-radius:4px; letter-spacing:.02em;}
   .doc-number.doc-number-hidden{display:none !important;}
-  .hp-header-summary{display:flex !important; align-items:center; gap:5px; align-self:flex-end; margin-left:6px; font-size:12px !important; font-weight:700 !important; color:#000 !important;}
-  .hp-header-summary .delta-badge{font-size:10px; padding:2px 7px; border-radius:10px; font-weight:600;}
+  .hp-header-summary{display:flex !important; align-items:center; gap:5px; align-self:flex-end; margin-left:6px; font-size:12.5px !important; font-weight:700 !important; color:#000 !important;}
+  .hp-header-summary .delta-badge{font-size:10.4px; padding:2px 7px; border-radius:10px; font-weight:600;}
   .toolbar-actions, #cloudStatus{display:none !important;}
   .period-label, .period-sep, .period-picker input[type="date"]{display:none !important;}
-  .period-picker{font-size:9.5px; gap:0;}
+  .period-picker{font-size:9.9px; gap:0;}
   .period-print-block{display:flex !important; flex-direction:column; align-items:flex-end; gap:2px;}
-  .period-print-label{display:inline !important; font-size:9.5px; color:var(--text-muted); white-space:nowrap;}
-  .print-date-label{display:inline !important; font-size:8px; color:var(--text-muted); white-space:nowrap;}
+  .period-print-label{display:inline !important; font-size:9.9px; color:var(--text-muted); white-space:nowrap;}
+  .print-date-label{display:inline !important; font-size:8.3px; color:var(--text-muted); white-space:nowrap;}
 
-  /* 종합 요약: 5칸 항상 한 줄, 세로 크기 2배로 확대 */
-  .summary-section{margin-bottom:9px; padding-top:12px;}
+  /* 종합 요약(SUMMARY) 섹션: mediaReport.html(정식 버전)에서는 인쇄 시 2페이지 안에
+     들어오지 않아 이미 제거된 구버전 섹션이다. personal 버전에는 아직 남아있어
+     1페이지 공간을 크게 차지해 카드뉴스 표가 2페이지로 밀려나는 원인이 되므로,
+     화면에서는 계속 보이돼 인쇄에서는 숨겨 2페이지 안에 들어오도록 한다. */
+  .summary-section{display:none !important;}
   .section-sns{padding-top:4px;}
   #tab-longform{padding-top:4px;}
   .summary-grid{display:grid !important; grid-template-columns:repeat(5, 1fr) !important; gap:5px !important;}
-  .summary-card{padding:7px 7px;}
-  .summary-card b{font-size:13px;}
-  .summary-card label{font-size:8.5px; margin-bottom:5px;}
-  .summary-card .sub{font-size:7.5px; line-height:1.4; margin-top:4px;}
-  .summary-card .sub.sub-breakdown{font-size:8.5px;}
-  .wi-list{margin-top:2px;}
+  .summary-card{padding:5px 6px;}
+  .summary-card b{font-size:13.5px;}
+  .summary-card label{font-size:8.8px; margin-bottom:2px;}
+  .summary-card .sub{font-size:7.8px; line-height:1.3; margin-top:2px;}
+  .summary-card .sub.sub-breakdown{font-size:8.8px;}
+  .wi-list{margin-top:1px;}
   .wi-line{margin-bottom:1px;}
-  .wi-row{font-size:6px; gap:0.4px; row-gap:0.5px;}
-  .wi-row b{font-size:11px;}
-  .wi-idx{font-size:5.2px; min-width:5px;}
-  .wi-title{font-size:7.2px; max-width:150px;}
-  .wi-empty{font-size:6.5px;}
-  .wi-tag{font-size:5.5px; padding:0.3px 2px; border-radius:3px; max-width:22px;}
-  .type-badge{font-size:7px; padding:0.5px 5px;}
+  .wi-row{font-size:6.2px; gap:0.4px; row-gap:0.5px;}
+  .wi-row b{font-size:11.4px;}
+  .wi-idx{font-size:5.4px; min-width:5px;}
+  .wi-title{font-size:7.5px; max-width:150px;}
+  .wi-empty{font-size:6.8px;}
+  .wi-tag{font-size:5.7px; padding:0.3px 2px; border-radius:3px; max-width:22px;}
+  .type-badge{font-size:7.3px; padding:0.5px 5px;}
   .wi-lbl-full{display:none;}
   .wi-lbl-print{display:inline;}
 
-  .section-head{margin-bottom:7px; gap:6px;}
-  .section-head h2{font-size:11.5px;}
-  .section-head .eyebrow{font-size:7px;}
+  .section-head{margin-bottom:5px; gap:6px;}
+  .section-head h2{font-size:12px;}
+  .section-head .eyebrow{font-size:7.3px;}
   .section-body.collapsed{display:block !important;}
   .section-desc{display:none;}
   .hp-table-wrap, .insight-list{max-height:none !important; overflow:visible !important;}
 
   /* SNS 현황: Youtube/Instagram 항상 한 줄 */
-  .channel-row{display:grid !important; grid-template-columns:1fr 1fr !important; gap:8px; margin-bottom:7px;}
-  .channel-card{padding:6px 10px;}
+  .channel-row{display:grid !important; grid-template-columns:1fr 1fr !important; gap:8px; margin-bottom:3px;}
+  .channel-card{padding:4px 10px;}
   .channel-card-head{margin-bottom:3px;}
-  .channel-badge{font-size:6.5px; padding:1px 5px;}
-  .channel-card-head .ch-name{font-size:9px;}
-  .channel-stat-main label{font-size:8px;}
-  .channel-stat-main input.big-num{font-size:14px; line-height:1.1;}
-  .prev-input-wrap input{font-size:9px; padding:2px 5px;}
-  .delta-badge{font-size:8px; padding:2px 6px;}
+  .channel-badge{font-size:6.8px; padding:1px 5px;}
+  .channel-card-head .ch-name{font-size:9.4px;}
+  .channel-stat-main label{font-size:8.3px;}
+  .channel-stat-main input.big-num{font-size:14.6px; line-height:1.1;}
+  .prev-input-wrap input{font-size:9.4px; padding:2px 5px;}
+  .delta-badge{font-size:8.3px; padding:2px 6px;}
 
-  .content-type-columns{gap:4px;}
-  .tab-panel{margin-bottom:3px !important; padding-top:0; border-top:none;}
-  .content-subtitle{font-size:9.5px; margin-bottom:3px;}
+  .content-type-columns{gap:2px;}
+  .tab-panel{margin-bottom:2px !important; padding-top:0; border-top:none;}
+  .content-subtitle{font-size:9.9px; margin-bottom:2px;}
   .content-subtitle .cnt-badge{display:none;}
 
-  /* Blog부터 2페이지로: 롱폼·쇼츠·카드뉴스는 1페이지, Blog+홈페이지 현황은
-     2페이지에 함께 배치. margin-top은 2페이지 맨 위에서도 고정 헤더와 겹치지 않도록
-     확보한 여백(.wrap의 margin-top과 동일) — margin-top은 페이지가 바뀔 때마다는
-     자동으로 재적용되지 않으므로, 강제 페이지 나눔 지점에 직접 지정해준다. */
-  #tab-blog{page-break-before:always; break-before:page; margin-top:18mm !important;}
-
-  /* 홈페이지 현황: Blog 바로 아래(2페이지)로 자연스럽게 이어지도록 여백만 확보 */
-  .section-hp{margin-top:3mm; margin-bottom:0;}
+  /* Blog까지는 억지로 페이지를 나누지 않고, 앞의 카드들이 자연스럽게 채워지다가
+     실제로 한 페이지에 다 안 들어갈 때만 브라우저가 알아서 다음 페이지로 넘긴다
+     (위의 .card/.chart-box 등에 건 break-inside:avoid 덕분에 카드 중간이 잘리지는
+     않는다). 다만 "홈페이지 현황"(02)은 요청에 따라 항상 새 페이지에서 시작한다.
+     담당자 분석 의견은 그 뒤에 자연스럽게 이어진다. */
+  .section-hp{margin-top:1.5mm; margin-bottom:0; page-break-before:always; break-before:page;}
 
   /* 게시물 표: 고정 레이아웃 + 컬럼별 폭 지정으로 가로 넘침 방지 */
   .post-row.empty{display:none !important;}
   .post-table-wrap{overflow:visible;}
   .post-table{min-width:0 !important; width:100%; table-layout:fixed;}
-  .post-table th, .post-table td{padding:2.5px 2px; vertical-align:middle; overflow:hidden;}
-  .post-table th{font-size:7.6px;}
+  .post-table th, .post-table td{padding:2px 2px; vertical-align:middle; overflow:hidden;}
+  .post-table th{font-size:7.9px;}
   .post-table td:first-child, .post-table th:first-child{width:5%;}
-  .post-table input{padding:1.5px 2px !important; font-size:8.2px !important;}
-  .post-table select{padding:1.5px 2px !important; font-size:8.2px !important; -webkit-appearance:none !important; -moz-appearance:none !important; appearance:none !important; background-image:none !important;}
-  .post-table input[type="date"]{width:100%; min-width:0; padding:1px 0 !important; font-size:7.6px !important; text-align:left;}
+  .post-table input{padding:1.5px 2px !important; font-size:8.5px !important;}
+  .post-table select{padding:1.5px 2px !important; font-size:8.5px !important; -webkit-appearance:none !important; -moz-appearance:none !important; appearance:none !important; background-image:none !important;}
+  .post-table input[type="date"]{width:100%; min-width:0; padding:1px 0 !important; font-size:7.9px !important; text-align:left;}
   .post-table input[type="date"]::-webkit-calendar-picker-indicator{display:none !important;}
   .post-table input[type="text"]{overflow:hidden; text-overflow:ellipsis;}
-  .post-idx-cell{font-size:7.6px; width:5%;}
+  .post-idx-cell{font-size:7.9px; width:5%;}
   .ratio-cell{flex-wrap:nowrap; white-space:nowrap; gap:3px !important;}
-  .ratio-cell input{width:29px !important; min-width:0 !important; font-size:8.2px !important; flex-shrink:0; padding:1px !important;}
+  .ratio-cell input{width:29px !important; min-width:0 !important; font-size:8.5px !important; flex-shrink:0; padding:1px !important;}
   .mini-bar{width:13px !important; height:5px; flex-shrink:0;}
-  .mention-toggle{font-size:7.6px !important; padding:1.5px 5px !important;}
+  .mention-toggle{font-size:7.9px !important; padding:1.5px 5px !important;}
   .view-max-mark{left:5px !important; bottom:2.5px !important; height:4px !important;}
   .full-label{display:none;}
   .print-label{display:inline;}
 
   /* 롱폼·쇼츠·카드뉴스(1페이지): 표 글씨 크기 확대 — Blog(2페이지)는 기존 크기 유지 */
-  #tab-longform .content-subtitle, #tab-shorts .content-subtitle, #tab-cardnews .content-subtitle{font-size:11px;}
-  #tab-longform .post-table th, #tab-shorts .post-table th, #tab-cardnews .post-table th{font-size:9.2px;}
-  #tab-longform .post-idx-cell, #tab-shorts .post-idx-cell, #tab-cardnews .post-idx-cell{font-size:9.2px;}
-  #tab-longform .post-table input, #tab-shorts .post-table input, #tab-cardnews .post-table input{font-size:9.8px !important;}
-  #tab-longform .post-table input[type="date"], #tab-shorts .post-table input[type="date"], #tab-cardnews .post-table input[type="date"]{font-size:9px !important;}
-  #tab-shorts .ratio-cell input, #tab-cardnews .ratio-cell input{width:33px !important; font-size:9.8px !important;}
+  #tab-longform .content-subtitle, #tab-shorts .content-subtitle, #tab-cardnews .content-subtitle{font-size:11.4px;}
+  #tab-longform .post-table th, #tab-shorts .post-table th, #tab-cardnews .post-table th{font-size:9.6px;}
+  #tab-longform .post-idx-cell, #tab-shorts .post-idx-cell, #tab-cardnews .post-idx-cell{font-size:9.6px;}
+  #tab-longform .post-table input, #tab-shorts .post-table input, #tab-cardnews .post-table input{font-size:10.2px !important;}
+  #tab-longform .post-table input[type="date"], #tab-shorts .post-table input[type="date"], #tab-cardnews .post-table input[type="date"]{font-size:9.4px !important;}
+  #tab-shorts .ratio-cell input, #tab-cardnews .ratio-cell input{width:33px !important; font-size:10.2px !important;}
 
-  /* 쇼츠/릴스/클립은 '+ 행 추가' 버튼으로 5줄을 넘어(최대 7줄) 늘어날 수 있다.
+  /* SRC은 '+ 행 추가' 버튼으로 5줄을 넘어(최대 7줄) 늘어날 수 있다.
      위에서 페이지1용으로 확대해둔 글씨 크기를 그대로 쓰면 세로 공간이 부족해져
      페이지가 밀리므로, 5줄을 초과하면(JS에서 #tab-shorts에 shorts-many 클래스를
      붙임) 기본 크기 수준으로 되돌려 절약한다. */
-  #tab-shorts.shorts-many .content-subtitle{font-size:9.5px;}
-  #tab-shorts.shorts-many .post-table th{font-size:7.6px;}
-  #tab-shorts.shorts-many .post-idx-cell{font-size:7.6px;}
-  #tab-shorts.shorts-many .post-table input{font-size:8.2px !important;}
-  #tab-shorts.shorts-many .post-table input[type="date"]{font-size:7.6px !important;}
+  #tab-shorts.shorts-many .content-subtitle{font-size:9.9px;}
+  #tab-shorts.shorts-many .post-table th{font-size:7.9px;}
+  #tab-shorts.shorts-many .post-idx-cell{font-size:7.9px;}
+  #tab-shorts.shorts-many .post-table input{font-size:8.5px !important;}
+  #tab-shorts.shorts-many .post-table input[type="date"]{font-size:7.9px !important;}
   #tab-shorts.shorts-many .post-table th, #tab-shorts.shorts-many .post-table td{padding:1.5px 2px;}
-  #tab-shorts.shorts-many .ratio-cell input{width:29px !important; font-size:8.2px !important;}
+  #tab-shorts.shorts-many .ratio-cell input{width:29px !important; font-size:8.5px !important;}
 
   /* 컬럼별 고정폭: 표 전체 컬럼(인덱스~게시일)을 표 종류와 무관하게 항상 5%/40%/14%로
      통일한다. Chrome은 table-layout:fixed 상태에서 %와 px를 섞어 쓰면(합이 100%가 안 맞을 때)
@@ -524,13 +539,10 @@ table.hp-table mark.hp-max-hl{
 
   #grid-blog th:nth-child(4), #grid-blog td:nth-child(4){width:41%;}
 
-  #grid-shorts th:nth-child(4), #grid-shorts td:nth-child(4){width:14%;}
-  #grid-shorts th:nth-child(5), #grid-shorts td:nth-child(5){width:12%;}
-  #grid-shorts th:nth-child(6), #grid-shorts td:nth-child(6){width:10%;}
-  #grid-shorts th:nth-child(7), #grid-shorts td:nth-child(7){width:10%;}
+  #grid-shorts th:nth-child(4), #grid-shorts td:nth-child(4){width:23%;}
+  #grid-shorts th:nth-child(5), #grid-shorts td:nth-child(5){width:23%;}
 
-  #grid-cardnews th:nth-child(4), #grid-cardnews td:nth-child(4){width:22%;}
-  #grid-cardnews th:nth-child(5), #grid-cardnews td:nth-child(5){width:19%;}
+  #grid-cardnews th:nth-child(4), #grid-cardnews td:nth-child(4){width:41%;}
 
   /* 인쇄 시에는 모든 차트에서 Chart.js 캔버스 대신 정적 SVG를 사용 (캔버스는 인쇄 타이밍 문제가 있음) */
   .chart-canvas-wrap{display:none !important;}
@@ -538,10 +550,10 @@ table.hp-table mark.hp-max-hl{
   .hp-chart-card{max-width:none !important; margin-left:0 !important; margin-right:0 !important;}
 
   /* 쇼츠 유튜브 vs 인스타그램 조회수 비교 그래프 (인쇄용) */
-  #tab-shorts .chart-box{padding:5px 8px; display:flex; flex-direction:column; margin-top:5px; height:170px;}
-  #tab-shorts .chart-title{font-size:9px; margin-bottom:3px; flex:0 0 auto;}
-  #tab-shorts.shorts-many .chart-box{height:145px; margin-top:3px;}
-  #tab-shorts.shorts-many .chart-title{font-size:8px; margin-bottom:2px;}
+  #tab-shorts .chart-box{padding:4px 8px; display:flex; flex-direction:column; margin-top:3px; height:190px;}
+  #tab-shorts .chart-title{font-size:9.4px; margin-bottom:2px; flex:0 0 auto;}
+  #tab-shorts.shorts-many .chart-box{height:165px; margin-top:2px;}
+  #tab-shorts.shorts-many .chart-title{font-size:8.3px; margin-bottom:1px;}
   .post-card{padding:6px 8px !important;}
 
   .hp-main-row{
@@ -557,25 +569,30 @@ table.hp-table mark.hp-max-hl{
   .hp-stat-row{display:flex !important; flex-wrap:nowrap !important; gap:5px !important; margin:3px 0 !important;}
   .hp-stat-group{display:contents;}
   #hpStatRow{display:none !important;}
-  .hp-chart-wrap{height:128px !important;}
+  .hp-chart-wrap{height:116px !important;}
   .hp-mention-card{padding:6px 8px !important;}
   .hp-stat{padding:3px 5px !important; flex:1 1 0; min-width:0;}
-  .hp-stat label{font-size:6.6px; white-space:nowrap;}
-  .hp-stat b{font-size:10px; white-space:nowrap;}
-  .hp-stat .sub{font-size:6px !important; line-height:1.25 !important; margin-top:1px !important; white-space:nowrap !important; overflow:hidden; text-overflow:ellipsis;}
-  table.hp-table th, table.hp-table td{padding:1.5px 4px !important; font-size:8.2px;}
-  .insight-list{margin-top:6px !important;}
-  .insight-list li{padding:3.5px 6px; font-size:8.6px; line-height:1.45; margin-bottom:3.5px;}
-  .insight-list li .tag{font-size:6.8px; padding:2px 6px; border-radius:4px;}
+  .hp-stat label{font-size:6.9px; white-space:nowrap;}
+  .hp-stat b{font-size:10.4px; white-space:nowrap;}
+  .hp-stat .sub{font-size:6.2px !important; line-height:1.25 !important; margin-top:1px !important; white-space:nowrap !important; overflow:hidden; text-overflow:ellipsis;}
+  table.hp-table th, table.hp-table td{padding:1.5px 4px !important; font-size:8.5px;}
+  .insight-list{margin-top:4px !important;}
+  /* 게시물 제목이 긴 경우 항목이 2줄로 늘어나 지면을 많이 차지하지 않도록,
+     인쇄 시에는 항목 높이를 한 줄로 고정하고 넘치는 텍스트는 잘라낸다. */
+  .insight-list li{padding:2px 6px; font-size:8.9px; line-height:1.3; margin-bottom:1px; height:17px; overflow:hidden; white-space:nowrap; text-overflow:ellipsis;}
+  .insight-list li .tag{font-size:7.1px; padding:2px 6px; border-radius:4px;}
   .insight-list li.hp-top-impact{background:#fff4d6 !important; border:1px solid #f0b93d;}
-  .insight-list li .hp-top-badge{font-size:6px; padding:1px 4px; border-radius:4px;}
-  .legend-row{margin-top:4px; font-size:8px;}
+  .insight-list li .hp-top-badge{font-size:6.2px; padding:1px 4px; border-radius:4px;}
+  .legend-row{margin-top:2px; font-size:8.3px;}
 
-  /* 담당자 분석 의견: 내용이 길면 페이지에 걸쳐 자연스럽게 이어지도록
-     다른 카드와 달리 break-inside를 허용하고, 인쇄 폰트 크기에 맞춰 축소한다. */
-  .section-opinion{margin-top:3mm;}
-  .opinion-card{padding:6px 8px; break-inside:auto; page-break-inside:auto;}
-  .opinion-box{min-height:34px; padding:6px 8px; font-size:9px; line-height:1.6; border-color:#ddd; background:#fff;}
+  /* 담당자 분석 의견: break-inside:auto로 걸쳐 나누면 나머지 내용이 사라져 보이는
+     문제가 있었으므로(Chromium 인쇄 렌더링 한계로 추정), break-inside:avoid로
+     통째로 다음 페이지로 넘어가게 한다 — 넘어갈지 여부는 브라우저의 기본 인쇄
+     레이아웃 엔진이 실제 남은 공간을 보고 결정한다. 내용 길이에 맞춰 자연스럽게
+     높이가 늘어난다. */
+  .section-opinion{margin-top:0.5mm;}
+  .opinion-card{padding:3px 6px; break-inside:avoid; page-break-inside:avoid;}
+  .opinion-box{min-height:0; padding:4px 6px; font-size:9.4px; line-height:1.45; border-color:#ddd; background:#fff;}
 }
 @media (max-width:1220px){
   .content-type-row{flex-direction:column;}
@@ -614,7 +631,7 @@ table.hp-table mark.hp-max-hl{
       </svg>
       <div class="brand-text">
         <h1>미디어채널 주간 리포트</h1>
-        <span>SNS · 홈페이지 통합 분석</span>
+        <span>BMD팀 임수연PD</span>
       </div>
       <span class="doc-number" id="docNumber"></span>
       <div class="hp-header-summary" id="hpHeaderSummary"></div>
@@ -715,10 +732,10 @@ table.hp-table mark.hp-max-hl{
           <div class="card post-card"><div class="post-grid" id="grid-longform"></div></div>
         </div>
         <div id="tab-shorts" class="tab-panel">
-          <h3 class="content-subtitle">쇼츠/릴스/클립 <span class="cnt-badge">Youtube+Instagram+Naver</span></h3>
+          <h3 class="content-subtitle">SRC <span class="cnt-badge">Youtube+Instagram+Naver</span></h3>
           <div class="card post-card"><div class="post-grid" id="grid-shorts"></div></div>
           <div class="card chart-box" style="margin-top:10px;">
-            <div class="chart-title">쇼츠/릴스/클립 조회수 비교 (Youtube vs Instagram)</div>
+            <div class="chart-title">SRC 조회수 비교 (Youtube vs Instagram)</div>
             <div class="chart-canvas-wrap shorts-chart-wrap"><canvas id="chart-shorts"></canvas></div><div class="print-mini-chart" id="printchart-shorts"></div>
           </div>
         </div>
@@ -903,7 +920,7 @@ function syncCurrentToHistory(){
 const DAY_KO = ['일','월','화','수','목','금','토'];
 const CONTENT_TYPES = [
   {key:'longform', label:'롱폼', hasYoutube:true,  hasInstagram:false, hasCafe:false, hasSubRatio:false},
-  {key:'shorts',   label:'쇼츠/릴스/클립', hasYoutube:true,  hasInstagram:true,  hasCafe:false, hasSubRatio:true, allowAddRow:true},
+  {key:'shorts',   label:'SRC', hasYoutube:true,  hasInstagram:true,  hasCafe:false, hasSubRatio:true, allowAddRow:true},
   {key:'cardnews', label:'카드뉴스', hasYoutube:false, hasInstagram:true, hasCafe:false, hasSubRatio:false},
   {key:'blog',     label:'Blog', hasYoutube:true,  hasInstagram:false, hasCafe:false, hasSubRatio:false},
 ];
@@ -1078,7 +1095,7 @@ const barValueLabelPlugin = {
         if(!value) return;
         const text = Number(value).toLocaleString();
         ctx.save();
-        ctx.font = '9px -apple-system, sans-serif';
+        ctx.font = '10px -apple-system, sans-serif';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'bottom';
         ctx.lineWidth = 3;
@@ -1163,7 +1180,7 @@ function buildShortsChartSVG(posts, ytData, igData){
     bars += `<rect x="${x.toFixed(1)}" y="${yI.toFixed(1)}" width="${barW.toFixed(1)}" height="${hI.toFixed(1)}" fill="#ffb300" rx="1"/>`;
     if(vI > 0) bars += `<text x="${(x+barW/2).toFixed(1)}" y="${(yI-3).toFixed(1)}" font-size="9.5" text-anchor="middle" fill="#333">${vI.toLocaleString()}</text>`;
     const labelX = padLeft + i*groupW + groupW/2;
-    bars += `<text x="${labelX.toFixed(1)}" y="${H-3}" font-size="10" text-anchor="middle" fill="#3d3d52">#${i+1}</text>`;
+    bars += `<text x="${labelX.toFixed(1)}" y="${H-3}" font-size="10" text-anchor="middle" fill="#555">#${i+1}</text>`;
   }
   // 범례: 왼쪽에 한 줄씩(세로로) 배치
   const legend = `<rect x="2" y="${(H/2-16).toFixed(1)}" width="7" height="7" fill="#ff0000"/><text x="12" y="${(H/2-10).toFixed(1)}" font-size="10" fill="#333">YouTube</text>
@@ -1498,18 +1515,6 @@ function renderPostGrid(type){
       ${ct.hasInstagram ? `
       <td id="igcell-${type}-${idx}"><span class="view-max-mark" id="igmark-${type}-${idx}" style="display:none;"></span><input type="text" inputmode="numeric" class="num-fill" value="${escAttr(fmtNum(p.igViews))}" placeholder="0"
             oninput="formatNumberField(this); updatePostField('${type}',${idx},'igViews',stripCommas(this.value)); refreshSummary(); refreshShortsChart(); refreshViewHighlights('${type}');"></td>` : ''}
-      ${ct.hasSubRatio ? `
-      <td><div class="ratio-cell">
-            <input type="number" min="0" max="100" value="${escAttr(p.igSubscriberPct)}" placeholder="0"
-              oninput="updatePostField('${type}',${idx},'igSubscriberPct',this.value); refreshRatioBar('bar-${type}-${idx}-s', this.value, 'sub');">
-            <div class="mini-bar" id="bar-${type}-${idx}-s"></div>
-          </div></td>` : ''}
-      ${ct.hasInstagram ? `
-      <td><div class="ratio-cell">
-            <input type="number" min="0" max="100" value="${escAttr(p.igFollowerPct)}" placeholder="0"
-              oninput="updatePostField('${type}',${idx},'igFollowerPct',this.value); refreshRatioBar('bar-${type}-${idx}-f', this.value);">
-            <div class="mini-bar" id="bar-${type}-${idx}-f"></div>
-          </div></td>` : ''}
       ${ct.hasCafe ? `
       <td style="text-align:center;"><button type="button" class="mention-toggle ${p.mentioned ? 'on' : ''}" id="mention-${type}-${idx}"
             onclick="toggleMention('${type}',${idx})">${p.mentioned ? '✓ 언급함' : '언급안함'}</button></td>` : ''}
@@ -1524,29 +1529,17 @@ function renderPostGrid(type){
           ${ct.hasCafe ? `<th><span class="full-label">카페</span><span class="print-label">카페</span></th>` : ''}
           ${ct.hasYoutube ? `<th${(type==='longform'||type==='blog') ? ' class="th-yt-longform"' : ' class="th-ratio"'}><span class="full-label">${type==='blog' ? '조회수' : 'Youtube 조회수'}</span><span class="print-label">${type==='blog' ? '조회수' : 'Youtube'}</span></th>` : ''}
           ${ct.hasInstagram ? `<th class="th-ratio"><span class="full-label">Insta 조회수</span><span class="print-label">Instagram</span></th>` : ''}
-          ${ct.hasSubRatio ? `<th class="th-ratio"><span class="full-label">구독자 비율(%)</span><span class="print-label">구독자%</span></th>` : ''}
-          ${ct.hasInstagram ? `<th class="th-ratio"><span class="full-label">팔로워 비율(%)</span><span class="print-label">팔로워%</span></th>` : ''}
           ${ct.hasCafe ? `<th style="text-align:center;"><span class="full-label">차공조연 언급</span><span class="print-label">언급</span></th>` : ''}
         </tr></thead>
         <tbody>${rowsHtml}</tbody>
       </table>
     </div>
     ${(ct.hasCafe || ct.allowAddRow) ? `<button type="button" class="btn no-print" style="margin-top:2px;" onclick="addPostRow('${type}')">+ 행 추가</button>` : ''}`;
-  // 쇼츠/릴스/클립이 기본 5줄을 넘으면(최대 7줄까지 추가 가능) 인쇄용 확대 폰트 대신
+  // SRC이 기본 5줄을 넘으면(최대 7줄까지 추가 가능) 인쇄용 확대 폰트 대신
   // 축소 폰트를 쓰도록 표시해, 늘어난 줄 수 때문에 페이지1 레이아웃이 넘쳐 잘리는 것을 막는다.
   if(type === 'shorts'){
     const shortsTab = document.getElementById('tab-shorts');
     if(shortsTab) shortsTab.classList.toggle('shorts-many', state.posts.shorts.length > 5);
-  }
-  if(ct.hasInstagram){
-    state.posts[type].forEach((p, idx) => {
-      refreshRatioBar(`bar-${type}-${idx}-f`, p.igFollowerPct);
-    });
-  }
-  if(ct.hasSubRatio){
-    state.posts[type].forEach((p, idx) => {
-      refreshRatioBar(`bar-${type}-${idx}-s`, p.igSubscriberPct, 'sub');
-    });
   }
   refreshViewHighlights(type);
 }
@@ -2036,7 +2029,7 @@ function buildHomepageChartSVG(rows, markers, labels, dataV, dataPV){
   labels.forEach((lb,i) => {
     if(i % labelStep !== 0) return;
     const x = padLeft + i*groupW + groupW/2;
-    xLabels += `<text x="${x.toFixed(1)}" y="${H-3}" font-size="7" text-anchor="middle" fill="#3d3d52">${lb}</text>`;
+    xLabels += `<text x="${x.toFixed(1)}" y="${H-3}" font-size="7" text-anchor="middle" fill="#555">${lb}</text>`;
   });
 
   const legend = `
@@ -2146,7 +2139,7 @@ function refreshHomepageInsights(rows){
     }).slice(0,3);
   const rankOf = {}; rankOrder.forEach((idx,r) => rankOf[idx] = r+1);
 
-  ul.innerHTML = items.map((it,idx) => {
+  ul.innerHTML = items.map((it, idx) => {
     const rank = rankOf[idx];
     const cls = rank ? ' class="hp-top-impact"' : '';
     return `<li${cls}><span class="tag" style="background:${it.color}">${it.tagLabel}</span>${it.txt}</li>`;
@@ -2314,7 +2307,7 @@ function refreshSummary(){
       ${renderWindowImpactList(longformImpacts)}
     </div>
     <div class="card summary-card summary-card-list">
-      <label><span class="type-badge" style="background:${TYPE_COLOR.shorts}">쇼츠/릴스/클립</span> 업로드 48시간 효과</label>
+      <label><span class="type-badge" style="background:${TYPE_COLOR.shorts}">SRC</span> 업로드 48시간 효과</label>
       ${renderWindowImpactList(shortsImpacts)}
     </div>
   `;
@@ -2410,6 +2403,16 @@ function resizeAllCharts(){
     try{ c.resize(); c.update('none'); }catch(e){}
   });
 }
+/* 예전에는 인쇄 직전에 각 블록의 위치를 JS로 실측해서 페이지가 넘칠 것 같은
+   지점에 강제로 페이지 나눔을 넣었다. 하지만 이 실측은 화면(헤드리스 테스트)
+   환경과 실제 사용자의 브라우저/PDF 인쇄 엔진 사이에서 미묘하게 어긋나는 경우가
+   있었고, 그 결과 오히려 불필요한 빈 페이지가 생기거나 페이지가 예상보다 늘어나는
+   문제가 반복됐다. 상단바를 더 이상 고정 반복하지 않게 되면서(위 .topbar 참고)
+   "강제로 넘긴 지점에만 상단바를 피하는 여백을 준다"는 실측의 존재 이유도 사라져,
+   이제는 페이지 나눔을 브라우저의 기본 인쇄 레이아웃 엔진에 완전히 맡긴다 — 이
+   엔진은 항상 실제 인쇄 결과와 정확히 일치하므로 헤드리스 테스트와 어긋날 일이
+   없다. .card/.chart-box/.opinion-card 등에 걸어둔 break-inside:avoid만으로
+   카드 중간이 잘리지 않게 막는다. */
 window.addEventListener('beforeprint', () => {
   resizeAllCharts();
   ['longform','shorts','cardnews'].forEach(t => refreshViewHighlights(t, true));
